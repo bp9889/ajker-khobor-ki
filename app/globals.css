@@ -156,7 +156,7 @@ html[data-akk="dark"]{background:#1A1714;color-scheme:dark}
 html[data-akk="dark"] .np3-light{--bg:#1A1714;--ink:#F3EFE7;--muted:#B4AA9C;--panel:#24201C;--line:#3A332C;--hl:#FFD400;--accent:#FFD400;--accent2:#FF4A3D;--dot:rgba(243,239,231,.10);--bld:#2E2823;--win:#FFD400;--road:#0F0D0B;--canvas:#201C18;--mark:#5C4A00}
 @media (max-width:700px){.fz-shell h2.np3-disp{font-size:40px!important}.fz-shell section{padding-left:18px!important;padding-right:18px!important}}
 
-.fz-lead{margin:-18px 0 36px;font-size:24px;line-height:1.5;font-weight:500;max-width:760px}
+.fz-lead{margin:-18px 0 36px;font-size:22px;line-height:1.65;font-weight:500;max-width:720px}
 .fz-terms{margin:0;display:grid;gap:12px}
 .fz-terms>div{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:14px 18px}
 .fz-terms dt{font-weight:800;font-size:19px;margin:0 0 2px}
@@ -170,4 +170,4 @@ html[data-akk="dark"] .np3-light{--bg:#1A1714;--ink:#F3EFE7;--muted:#B4AA9C;--pa
 .fz-readtag{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;border:1.5px solid var(--line);font-size:12px;font-weight:700;color:var(--muted);vertical-align:middle;letter-spacing:0;font-stretch:100%}
 .np3-quiz{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 @media (prefers-reduced-motion:reduce){.fz-srcbtn{transition:none}.fz-srcbtn:hover{transform:none}}
-@media (max-width:700px){.fz-lead{font-size:20px}}
+@media (max-width:700px){.fz-lead{font-size:19px;line-height:1.65}}

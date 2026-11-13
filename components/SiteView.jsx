@@ -779,7 +779,7 @@ export default function view(v) {
                     {"Read the full story"}
                   </h2>
                   <p style={css("margin:0 0 16px;font-size:17px;line-height:1.5;color:var(--muted)")}>
-                    {v.noAI ? "The simple version of this one arrives with the next update. Until then, here is the publisher's own report." : "This simple version was written by AI from the publisher's headline and short description, so it covers only the basics and can contain mistakes. The full details are in the original report."}
+                    {v.noAI ? "The simple version of this one arrives with the next update. Until then, here is the publisher's own report." : (v.s.deep ? "This overview was written by AI in its own words after reading the report. It can leave things out or contain mistakes, so for the full details and exact quotes, read the original report." : "This overview was written by AI from the publisher's headline and short description only, so it covers just the basics and can contain mistakes. The full details are in the original report.")}
                   </p>
                   <a className={"fz-srcbtn"} href={v.s.link} target={"_blank"} rel={"noopener noreferrer"}>
                     <span style={css("font-weight:700;font-size:15px;color:var(--muted)")}>

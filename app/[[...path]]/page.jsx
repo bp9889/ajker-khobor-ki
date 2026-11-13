@@ -20,7 +20,7 @@ async function load(params) {
   if (r.view === 'story') {
     const live = digest && digest.items.find((x) => x.id === r.sid);
     const sample = STORIES.find((s) => s.slug === r.sid);
-    story = live ? { title: live.headline || live.title, text: live.summary || live.desc || '', art: live.tag } : sample ? { title: sample.title, text: sample.quick[0], art: sample.art } : null;
+    story = live ? { title: live.headline || live.title, text: live.brief || live.desc || '', art: live.tag } : sample ? { title: sample.title, text: sample.quick[0], art: sample.art } : null;
   }
   return { r: r, digest: digest, story: story };
 }

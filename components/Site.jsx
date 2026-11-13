@@ -31,7 +31,7 @@ export default class Site extends DCLogic {
     if (D && D.items && D.items.length >= 5) {
       L = D.items.map((x, i) => ({ id: x.id, live: true, hasAI: !!x.summary, cat: x.section, color: SC[x.section] || '#1A1714', title: x.headline || x.title, orig: x.title, time: '60 sec',
         summary: x.summary || '', quick: x.points && x.points.length ? x.points : (x.desc ? [x.desc] : []), quickTitle: x.summary ? 'The quick read' : "From the publisher's feed", why: x.why || '', terms: x.terms || [],
-        link: x.link, source: x.source, date: x.date, art: x.tag, alt: 'Illustration for this story', brief: x.summary || x.desc || '', ask: x.ask || '', day: i < 5 ? "Today's five" : 'More live headlines' }));
+        link: x.link, source: x.source, date: x.date, art: x.tag, alt: 'Illustration for this story', brief: x.brief || (x.summary ? x.summary.split(/(?<=[.!?])\s/)[0] : '') || x.desc || '', deep: !!x.deep, ask: x.ask || '', day: i < 5 ? "Today's five" : 'More live headlines' }));
       const pin = STORIES.find((s) => s.slug === this.props.sid);
       if (pin) L.push(Object.assign({ id: pin.slug, quickTitle: 'The quick read' }, pin, { day: 'Sample explainers' }));
     } else L = STORIES.map((s) => Object.assign({ id: s.slug, quickTitle: 'The quick read' }, s));
@@ -317,7 +317,7 @@ export default class Site extends DCLogic {
     ];
     const faq = [
       ['Is it free?', 'Yes. Every story and quiz is free to read.'],
-      ['Who writes the summaries?', 'An AI model writes each one from the publisher\'s headline and short description, using simple words and adding nothing of its own. It can still make mistakes, so every story links to the original report. Summaries and the quiz refresh every 6 hours.'],
+      ['Who writes the summaries?', 'An AI model reads the public text of each article and retells what happened in one short paragraph of simple words, adding nothing of its own. It can still leave things out or make mistakes, so every story links to the original report. Overviews and the quiz refresh every 6 hours.'],
       ['Will there be a Bangla edition?', 'Yes. A full Bangla edition is planned, so you can read every story in the language you prefer.'],
       ['Why is there a rickshaw game?', 'Because news should be something you want to open. Ride, pick up passengers and their stories, or skip the game and read all five straight away.']
     ];
