@@ -1,10 +1,54 @@
 [
-  { "source": "Prothom Alo English", "section": "Bangladesh", "url": "https://en.prothomalo.com/feed/" },
-  { "source": "Dhaka Tribune", "section": "Bangladesh", "url": "https://www.dhakatribune.com/feed/" },
-  { "source": "The Daily Star", "section": "Bangladesh", "url": "https://www.thedailystar.net/frontpage/rss.xml" },
-  { "source": "BBC News", "section": "World", "url": "https://feeds.bbci.co.uk/news/world/rss.xml" },
-  { "source": "Al Jazeera", "section": "World", "url": "https://www.aljazeera.com/xml/rss/all.xml" },
-  { "source": "BBC News", "section": "Tech", "url": "https://feeds.bbci.co.uk/news/technology/rss.xml" },
-  { "source": "BBC Sport", "section": "Sport", "url": "https://feeds.bbci.co.uk/sport/cricket/rss.xml" },
-  { "source": "BBC Sport", "section": "Sport", "url": "https://feeds.bbci.co.uk/sport/football/rss.xml" }
+  {
+    "source": "Prothom Alo English",
+    "section": "Bangladesh",
+    "url": "https://en.prothomalo.com/feed/"
+  },
+  {
+    "source": "Dhaka Tribune",
+    "section": "Bangladesh",
+    "url": "https://www.dhakatribune.com/feed/"
+  },
+  {
+    "source": "The Daily Star",
+    "section": "Bangladesh",
+    "url": "https://www.thedailystar.net/frontpage/rss.xml"
+  },
+  {
+    "source": "The Business Standard",
+    "section": "Bangladesh",
+    "url": "https://www.tbsnews.net/top-news/rss.xml"
+  },
+  {
+    "source": "bdnews24.com",
+    "section": "Bangladesh",
+    "url": "https://bdnews24.com/?widgetName=rssfeed&widgetId=1150&getXmlFeed=true"
+  },
+  {
+    "source": "BBC News",
+    "section": "World",
+    "url": "https://feeds.bbci.co.uk/news/world/rss.xml"
+  },
+  {
+    "source": "Al Jazeera",
+    "section": "World",
+    "url": "https://www.aljazeera.com/xml/rss/all.xml"
+  },
+  {
+    "source": "BBC News",
+    "section": "Tech",
+    "url": "https://feeds.bbci.co.uk/news/technology/rss.xml"
+  },
+  {
+    "source": "BBC Sport",
+    "section": "Sport",
+    "url": "https://feeds.bbci.co.uk/sport/cricket/rss.xml",
+    "tag": "cricket"
+  },
+  {
+    "source": "BBC Sport",
+    "section": "Sport",
+    "url": "https://feeds.bbci.co.uk/sport/football/rss.xml",
+    "tag": "football"
+  }
 ]

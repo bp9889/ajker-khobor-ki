@@ -1,5 +1,5 @@
 {
-  "note": "Each story gets ONE tag. Check tags in this order (protest/clash before police, fuel before market, etc.) and use the first whose keywords appear in the headline or summary. If none match, use fallbackBySection. Later this can be swapped for an AI picking from the same fixed list.",
+  "note": "Each headline gets ONE tag. Tags are checked in this order and the first whose keyword appears as a whole word in the headline wins. If none match, the feed's own tag (data/feeds.json) or fallbackBySection is used.",
   "fallbackBySection": {
     "Bangladesh": "government",
     "World": "diplomacy",
@@ -151,7 +151,8 @@
       "keywords": [
         "fire",
         "blaze",
-        "burn"
+        "burnt",
+        "gutted"
       ]
     },
     {
@@ -274,7 +275,15 @@
         "smartphone",
         "semiconductor",
         "gadget",
-        "internet"
+        "internet",
+        "outage",
+        "Microsoft",
+        "Google",
+        "Apple",
+        "Nvidia",
+        "app",
+        "cyber",
+        "hack"
       ]
     },
     {
@@ -319,7 +328,13 @@
         "FIFA",
         "transfer",
         "Premier League",
-        "goal"
+        "goal",
+        "Man Utd",
+        "Liverpool",
+        "Arsenal",
+        "Chelsea",
+        "Real Madrid",
+        "Barcelona"
       ]
     },
     {
@@ -332,7 +347,6 @@
         "trophy",
         "champion",
         "medal",
-        "final",
         "title"
       ]
     },
@@ -377,7 +391,10 @@
         "bank",
         "dollar",
         "IMF",
-        "reserve"
+        "reserve",
+        "rate hike",
+        "economy",
+        "tax"
       ]
     },
     {
@@ -393,7 +410,7 @@
         "rice",
         "vegetable",
         "bazaar",
-        "market"
+        "kitchen market"
       ]
     },
     {
@@ -424,8 +441,9 @@
         "train",
         "traffic",
         "road",
-        "launch",
-        "accident"
+        "launch capsize",
+        "crash",
+        "highway"
       ]
     },
     {
@@ -453,7 +471,10 @@
         "murder",
         "robbery",
         "detained",
-        "crime"
+        "crime",
+        "shooting",
+        "killed in",
+        "gang"
       ]
     },
     {
@@ -465,8 +486,7 @@
       "keywords": [
         "RAB",
         "police",
-        "raid",
-        "drive"
+        "raid"
       ]
     },
     {
@@ -482,7 +502,11 @@
         "deal",
         "summit",
         "MoU",
-        "envoy"
+        "envoy",
+        "UN",
+        "sanction",
+        "visa",
+        "treaty"
       ]
     },
     {
@@ -507,11 +531,9 @@
       "day": "/art/speech.svg",
       "night": "/art/speech-n.svg",
       "keywords": [
-        "said",
         "speech",
         "press conference",
-        "announced",
-        "addressed"
+        "addresses the nation"
       ]
     },
     {
@@ -540,7 +562,11 @@
         "festival",
         "concert",
         "Eid",
-        "Pohela"
+        "Pohela",
+        "album",
+        "Grammy",
+        "Bollywood",
+        "Oscar"
       ]
     }
   ]
