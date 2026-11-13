@@ -1,0 +1,547 @@
+{
+  "note": "Each story gets ONE tag. Check tags in this order (protest/clash before police, fuel before market, etc.) and use the first whose keywords appear in the headline or summary. If none match, use fallbackBySection. Later this can be swapped for an AI picking from the same fixed list.",
+  "fallbackBySection": {
+    "Bangladesh": "government",
+    "World": "diplomacy",
+    "Tech": "tech",
+    "Sport": "trophy"
+  },
+  "tags": [
+    {
+      "tag": "clash",
+      "label": "Clash",
+      "group": "Politics and government",
+      "day": "/art/clash.svg",
+      "night": "/art/clash-n.svg",
+      "keywords": [
+        "clash",
+        "tear gas",
+        "baton",
+        "police fired",
+        "injured in"
+      ]
+    },
+    {
+      "tag": "protest",
+      "label": "Protest",
+      "group": "Politics and government",
+      "day": "/art/protest.svg",
+      "night": "/art/protest-n.svg",
+      "keywords": [
+        "protest",
+        "rally",
+        "strike",
+        "march",
+        "demonstration",
+        "hartal",
+        "blockade"
+      ]
+    },
+    {
+      "tag": "dengue",
+      "label": "Dengue",
+      "group": "Health",
+      "day": "/art/dengue.svg",
+      "night": "/art/dengue-n.svg",
+      "keywords": [
+        "dengue",
+        "mosquito",
+        "Aedes"
+      ]
+    },
+    {
+      "tag": "air",
+      "label": "Air quality",
+      "group": "Health",
+      "day": "/art/air.svg",
+      "night": "/art/air-n.svg",
+      "keywords": [
+        "AQI",
+        "air quality",
+        "pollution",
+        "smog"
+      ]
+    },
+    {
+      "tag": "power",
+      "label": "Power cuts",
+      "group": "Money and daily life",
+      "day": "/art/power.svg",
+      "night": "/art/power-n.svg",
+      "keywords": [
+        "load-shedding",
+        "power cut",
+        "electricity",
+        "power plant",
+        "grid"
+      ]
+    },
+    {
+      "tag": "fuel",
+      "label": "Fuel, gas and LPG",
+      "group": "Money and daily life",
+      "day": "/art/fuel.svg",
+      "night": "/art/fuel-n.svg",
+      "keywords": [
+        "fuel",
+        "LPG",
+        "gas",
+        "diesel",
+        "petrol",
+        "oil price"
+      ]
+    },
+    {
+      "tag": "garments",
+      "label": "Garments (RMG)",
+      "group": "Money and daily life",
+      "day": "/art/garments.svg",
+      "night": "/art/garments-n.svg",
+      "keywords": [
+        "garment",
+        "RMG",
+        "apparel",
+        "factory workers",
+        "wage"
+      ]
+    },
+    {
+      "tag": "flood",
+      "label": "Flood",
+      "group": "Weather and disasters",
+      "day": "/art/flood.svg",
+      "night": "/art/flood-n.svg",
+      "keywords": [
+        "flood",
+        "inundat",
+        "embankment"
+      ]
+    },
+    {
+      "tag": "cyclone",
+      "label": "Cyclone",
+      "group": "Weather and disasters",
+      "day": "/art/cyclone.svg",
+      "night": "/art/cyclone-n.svg",
+      "keywords": [
+        "cyclone",
+        "storm",
+        "signal no",
+        "depression"
+      ]
+    },
+    {
+      "tag": "heat",
+      "label": "Heatwave",
+      "group": "Weather and disasters",
+      "day": "/art/heat.svg",
+      "night": "/art/heat-n.svg",
+      "keywords": [
+        "heatwave",
+        "heat wave",
+        "temperature"
+      ]
+    },
+    {
+      "tag": "fire",
+      "label": "Fire",
+      "group": "Weather and disasters",
+      "day": "/art/fire.svg",
+      "night": "/art/fire-n.svg",
+      "keywords": [
+        "fire",
+        "blaze",
+        "burn"
+      ]
+    },
+    {
+      "tag": "camp",
+      "label": "Refugee camps",
+      "group": "Society",
+      "day": "/art/camp.svg",
+      "night": "/art/camp-n.svg",
+      "keywords": [
+        "Rohingya",
+        "refugee",
+        "camp"
+      ]
+    },
+    {
+      "tag": "border",
+      "label": "Border",
+      "group": "Politics and government",
+      "day": "/art/border.svg",
+      "night": "/art/border-n.svg",
+      "keywords": [
+        "border",
+        "BSF",
+        "BGB",
+        "push-in"
+      ]
+    },
+    {
+      "tag": "election",
+      "label": "Election",
+      "group": "Politics and government",
+      "day": "/art/election.svg",
+      "night": "/art/election-n.svg",
+      "keywords": [
+        "election",
+        "vote",
+        "ballot",
+        "poll",
+        "EC "
+      ]
+    },
+    {
+      "tag": "court",
+      "label": "Court and justice",
+      "group": "Politics and government",
+      "day": "/art/court.svg",
+      "night": "/art/court-n.svg",
+      "keywords": [
+        "court",
+        "verdict",
+        "bail",
+        "judge",
+        "tribunal",
+        "case filed"
+      ]
+    },
+    {
+      "tag": "peace",
+      "label": "Ceasefire and peace",
+      "group": "World",
+      "day": "/art/peace.svg",
+      "night": "/art/peace-n.svg",
+      "keywords": [
+        "ceasefire",
+        "truce",
+        "peace"
+      ]
+    },
+    {
+      "tag": "conflict",
+      "label": "War and conflict",
+      "group": "World",
+      "day": "/art/conflict.svg",
+      "night": "/art/conflict-n.svg",
+      "keywords": [
+        "war",
+        "strike on",
+        "missile",
+        "attack",
+        "troops",
+        "Gaza",
+        "Ukraine"
+      ]
+    },
+    {
+      "tag": "climate",
+      "label": "Climate",
+      "group": "World",
+      "day": "/art/climate.svg",
+      "night": "/art/climate-n.svg",
+      "keywords": [
+        "climate",
+        "COP",
+        "emission",
+        "warming"
+      ]
+    },
+    {
+      "tag": "ai",
+      "label": "AI",
+      "group": "Tech, science and culture",
+      "day": "/art/ai.svg",
+      "night": "/art/ai-n.svg",
+      "keywords": [
+        "AI",
+        "artificial intelligence",
+        "chatbot",
+        "OpenAI"
+      ]
+    },
+    {
+      "tag": "tech",
+      "label": "Phones and chips",
+      "group": "Tech, science and culture",
+      "day": "/art/tech.svg",
+      "night": "/art/tech-n.svg",
+      "keywords": [
+        "chip",
+        "phone",
+        "smartphone",
+        "semiconductor",
+        "gadget",
+        "internet"
+      ]
+    },
+    {
+      "tag": "space",
+      "label": "Space and science",
+      "group": "Tech, science and culture",
+      "day": "/art/space.svg",
+      "night": "/art/space-n.svg",
+      "keywords": [
+        "space",
+        "NASA",
+        "rocket",
+        "satellite",
+        "moon"
+      ]
+    },
+    {
+      "tag": "cricket",
+      "label": "Cricket",
+      "group": "Sport",
+      "day": "/art/cricket.svg",
+      "night": "/art/cricket-n.svg",
+      "keywords": [
+        "cricket",
+        "Tigers",
+        "BPL",
+        "Test",
+        "ODI",
+        "T20",
+        "Shakib",
+        "BCB"
+      ]
+    },
+    {
+      "tag": "football",
+      "label": "Football",
+      "group": "Sport",
+      "day": "/art/football.svg",
+      "night": "/art/football-n.svg",
+      "keywords": [
+        "football",
+        "FIFA",
+        "transfer",
+        "Premier League",
+        "goal"
+      ]
+    },
+    {
+      "tag": "trophy",
+      "label": "Tournaments and wins",
+      "group": "Sport",
+      "day": "/art/trophy.svg",
+      "night": "/art/trophy-n.svg",
+      "keywords": [
+        "trophy",
+        "champion",
+        "medal",
+        "final",
+        "title"
+      ]
+    },
+    {
+      "tag": "migrant",
+      "label": "Migrant workers",
+      "group": "Money and daily life",
+      "day": "/art/migrant.svg",
+      "night": "/art/migrant-n.svg",
+      "keywords": [
+        "remittance",
+        "migrant",
+        "expatriate",
+        "abroad workers"
+      ]
+    },
+    {
+      "tag": "port",
+      "label": "Ports and trade",
+      "group": "Money and daily life",
+      "day": "/art/port.svg",
+      "night": "/art/port-n.svg",
+      "keywords": [
+        "port",
+        "Chattogram",
+        "Mongla",
+        "export",
+        "import",
+        "shipping"
+      ]
+    },
+    {
+      "tag": "money",
+      "label": "Economy and taka",
+      "group": "Money and daily life",
+      "day": "/art/money.svg",
+      "night": "/art/money-n.svg",
+      "keywords": [
+        "taka",
+        "inflation",
+        "budget",
+        "bank",
+        "dollar",
+        "IMF",
+        "reserve"
+      ]
+    },
+    {
+      "tag": "market",
+      "label": "Prices and bazaar",
+      "group": "Money and daily life",
+      "day": "/art/market.svg",
+      "night": "/art/market-n.svg",
+      "keywords": [
+        "price",
+        "onion",
+        "egg",
+        "rice",
+        "vegetable",
+        "bazaar",
+        "market"
+      ]
+    },
+    {
+      "tag": "education",
+      "label": "Exams and education",
+      "group": "Society",
+      "day": "/art/education.svg",
+      "night": "/art/education-n.svg",
+      "keywords": [
+        "SSC",
+        "HSC",
+        "exam",
+        "admission",
+        "university",
+        "school",
+        "students"
+      ]
+    },
+    {
+      "tag": "transport",
+      "label": "Transport",
+      "group": "Society",
+      "day": "/art/transport.svg",
+      "night": "/art/transport-n.svg",
+      "keywords": [
+        "metro",
+        "bus",
+        "train",
+        "traffic",
+        "road",
+        "launch",
+        "accident"
+      ]
+    },
+    {
+      "tag": "hospital",
+      "label": "Hospitals and health",
+      "group": "Health",
+      "day": "/art/hospital.svg",
+      "night": "/art/hospital-n.svg",
+      "keywords": [
+        "hospital",
+        "health",
+        "doctor",
+        "medicine",
+        "DGHS"
+      ]
+    },
+    {
+      "tag": "crime",
+      "label": "Crime and arrests",
+      "group": "Society",
+      "day": "/art/crime.svg",
+      "night": "/art/crime-n.svg",
+      "keywords": [
+        "arrested",
+        "murder",
+        "robbery",
+        "detained",
+        "crime"
+      ]
+    },
+    {
+      "tag": "police",
+      "label": "Law and order",
+      "group": "Politics and government",
+      "day": "/art/police.svg",
+      "night": "/art/police-n.svg",
+      "keywords": [
+        "RAB",
+        "police",
+        "raid",
+        "drive"
+      ]
+    },
+    {
+      "tag": "diplomacy",
+      "label": "Diplomacy and deals",
+      "group": "Politics and government",
+      "day": "/art/diplomacy.svg",
+      "night": "/art/diplomacy-n.svg",
+      "keywords": [
+        "talks",
+        "visit",
+        "agreement",
+        "deal",
+        "summit",
+        "MoU",
+        "envoy"
+      ]
+    },
+    {
+      "tag": "government",
+      "label": "Government",
+      "group": "Politics and government",
+      "day": "/art/government.svg",
+      "night": "/art/government-n.svg",
+      "keywords": [
+        "cabinet",
+        "ministry",
+        "parliament",
+        "government",
+        "law passed",
+        "ordinance"
+      ]
+    },
+    {
+      "tag": "speech",
+      "label": "Leader speaks",
+      "group": "Politics and government",
+      "day": "/art/speech.svg",
+      "night": "/art/speech-n.svg",
+      "keywords": [
+        "said",
+        "speech",
+        "press conference",
+        "announced",
+        "addressed"
+      ]
+    },
+    {
+      "tag": "rain",
+      "label": "Rain and weather",
+      "group": "Weather and disasters",
+      "day": "/art/rain.svg",
+      "night": "/art/rain-n.svg",
+      "keywords": [
+        "rain",
+        "monsoon",
+        "waterlogging",
+        "forecast"
+      ]
+    },
+    {
+      "tag": "culture",
+      "label": "Film and music",
+      "group": "Tech, science and culture",
+      "day": "/art/culture.svg",
+      "night": "/art/culture-n.svg",
+      "keywords": [
+        "film",
+        "movie",
+        "music",
+        "festival",
+        "concert",
+        "Eid",
+        "Pohela"
+      ]
+    }
+  ]
+}
