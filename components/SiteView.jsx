@@ -666,8 +666,8 @@ export default function view(v) {
               </>) : null}
               <section aria-labelledby={"l1"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
                 <h2 id={"l1"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 16px")}>
-                  <span aria-hidden={"true"} lang={"bn"} style={css("width:44px;height:44px;border-radius:50%;background:#FFD400;color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:24px")}>
-                    {"১"}
+                  <span aria-hidden={"true"} style={css("width:44px;height:44px;border-radius:50%;background:#FFD400;color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:Anek Bangla,sans-serif")}>
+                    {"1"}
                   </span>
                   {v.s.quickTitle}
                 </h2>
@@ -682,8 +682,8 @@ export default function view(v) {
               {v.hasWhy ? (<>
               <section aria-labelledby={"l2"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
                 <h2 id={"l2"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 16px")}>
-                  <span aria-hidden={"true"} lang={"bn"} style={css("width:44px;height:44px;border-radius:50%;background:#1A1714;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px")}>
-                    {"২"}
+                  <span aria-hidden={"true"} style={css("width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:Anek Bangla,sans-serif")}>
+                    {"2"}
                   </span>
                   {"Why should I care?"}
                 </h2>
@@ -698,8 +698,8 @@ export default function view(v) {
               {v.hasTerms ? (<>
                 <section aria-labelledby={"l4"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
                   <h2 id={"l4"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 16px")}>
-                    <span aria-hidden={"true"} lang={"bn"} style={css("width:44px;height:44px;border-radius:50%;background:#D21F14;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px")}>
-                      {"৩"}
+                    <span aria-hidden={"true"} style={css("width:44px;height:44px;border-radius:50%;background:#D21F14;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:Anek Bangla,sans-serif")}>
+                      {"3"}
                     </span>
                     {"Words to know"}
                   </h2>
@@ -714,8 +714,8 @@ export default function view(v) {
               {v.isSample ? (<>
               <section aria-labelledby={"l3"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
                 <h2 id={"l3"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 20px")}>
-                  <span aria-hidden={"true"} lang={"bn"} style={css("width:44px;height:44px;border-radius:50%;background:#D21F14;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px")}>
-                    {"৩"}
+                  <span aria-hidden={"true"} style={css("width:44px;height:44px;border-radius:50%;background:#D21F14;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:Anek Bangla,sans-serif")}>
+                    {"3"}
                   </span>
                   {"The full story"}
                 </h2>
