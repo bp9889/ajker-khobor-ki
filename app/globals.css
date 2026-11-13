@@ -155,3 +155,19 @@ html{background:#F3EFE7}
 html[data-akk="dark"]{background:#1A1714;color-scheme:dark}
 html[data-akk="dark"] .np3-light{--bg:#1A1714;--ink:#F3EFE7;--muted:#B4AA9C;--panel:#24201C;--line:#3A332C;--hl:#FFD400;--accent:#FFD400;--accent2:#FF4A3D;--dot:rgba(243,239,231,.10);--bld:#2E2823;--win:#FFD400;--road:#0F0D0B;--canvas:#201C18;--mark:#5C4A00}
 @media (max-width:700px){.fz-shell h2.np3-disp{font-size:40px!important}.fz-shell section{padding-left:18px!important;padding-right:18px!important}}
+
+.fz-lead{margin:-18px 0 36px;font-size:24px;line-height:1.5;font-weight:500;max-width:760px}
+.fz-terms{margin:0;display:grid;gap:12px}
+.fz-terms>div{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:14px 18px}
+.fz-terms dt{font-weight:800;font-size:19px;margin:0 0 2px}
+.fz-terms dd{margin:0;font-size:18px;line-height:1.5;color:var(--muted)}
+.fz-src{background:var(--panel);border:2px solid var(--ink);border-radius:20px;padding:24px;margin-bottom:40px}
+.fz-srcbtn{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:16px;padding:18px 20px;transition:border-color 200ms ease,transform 200ms cubic-bezier(.2,.7,.2,1)}
+.fz-srcbtn:hover{border-color:var(--accent2);transform:translateY(-3px);color:var(--ink)}
+.fz-srcgo{align-self:flex-start;margin-top:4px;font-weight:700;font-size:17px;padding:10px 18px;border-radius:12px;background:#D21F14;color:#FFFFFF}
+.fz-gone{margin:0 0 24px;padding:14px 18px;border-radius:14px;background:var(--mark);font-size:17px;font-weight:600}
+.fz-topicchip{display:inline-block;margin:0 10px 8px 0;padding:2px 10px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:13px;font-weight:700;vertical-align:middle}
+.fz-readtag{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;border:1.5px solid var(--line);font-size:12px;font-weight:700;color:var(--muted);vertical-align:middle;letter-spacing:0;font-stretch:100%}
+.np3-quiz{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+@media (prefers-reduced-motion:reduce){.fz-srcbtn{transition:none}.fz-srcbtn:hover{transform:none}}
+@media (max-width:700px){.fz-lead{font-size:20px}}

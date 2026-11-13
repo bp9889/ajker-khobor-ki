@@ -1,8 +1,9 @@
-import { getNews } from '../../../lib/news';
+import { getDigest } from '../../../lib/digest';
 
-export const revalidate = 1800; // refresh the headlines every 30 minutes
+export const dynamic = 'force-dynamic';
+export const maxDuration = 300;
 
+// The same data the pages use. Handy for checking what is live right now.
 export async function GET() {
-  const items = await getNews();
-  return Response.json({ items: items, updated: new Date().toISOString() });
+  return Response.json(await getDigest());
 }

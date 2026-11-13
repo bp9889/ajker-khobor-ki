@@ -317,7 +317,7 @@ export default function view(v) {
                     {"Today in pictures"}
                   </h2>
                   <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                    {"Tap a picture to read the story"}
+                    {v.picsNote}
                   </span>
                 </div>
                 <div className={"fz-pics"}>
@@ -326,7 +326,7 @@ export default function view(v) {
                       <img src={pc.img} alt={""} width={"400"} height={"260"} />
                       <span style={css(`display:flex;flex-direction:column;gap:6px;padding:16px 18px 20px;border-top:6px solid ${pc.color}`)}>
                         <span style={css("font-weight:600;font-size:15px;color:var(--muted)")}>
-                          {`${pc.cat}, ${pc.time} read`}
+                          {`${pc.cat}, ${pc.from}`}
                         </span>
                         <span className={"np3-disp"} style={css("font-weight:800;font-size:26px;line-height:1.06")}>
                           {pc.title}
@@ -347,7 +347,7 @@ export default function view(v) {
                       {"Live headlines"}
                     </h2>
                     <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                      {"Straight from publishers' feeds. Each one opens the original report."}
+                      {"Tap a headline for the simple version. The original report is linked at the end."}
                     </span>
                   </div>
                   <div role={"group"} aria-label={"Filter live headlines"} style={css("display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px")}>
@@ -359,17 +359,18 @@ export default function view(v) {
                   </div>
                   <div className={"fz-live"}>
                     {(v.live || []).map((h, hI) => (<React.Fragment key={hI}>
-                      <a className={"fz-livec"} href={h.link} target={"_blank"} rel={"noopener noreferrer"}>
+                      <a className={"fz-livec"} href={h.href} onClick={h.open}>
                         <img src={h.img} alt={""} width={"400"} height={"260"} loading={"lazy"} />
                         <span style={css("display:flex;flex-direction:column;gap:4px;min-width:0")}>
                           <span style={css("font-weight:600;font-size:14px;color:var(--muted)")}>
                             <span style={css(`color:${h.color};font-weight:700`)}>
                               {h.section}
                             </span>
-                            {`, ${h.source}, ${h.ago}`}
+                            {`, ${h.from}`}
                           </span>
                           <span className={"np3-disp"} style={css("font-weight:800;font-size:21px;line-height:1.12")}>
                             {h.title}
+                            {h.read ? <span className={"fz-readtag"}>{h.read}</span> : null}
                           </span>
                         </span>
                       </a>
@@ -524,11 +525,12 @@ export default function view(v) {
                   {(v.quiz || []).map((qz, qzI) => (<React.Fragment key={qzI}>
                     <fieldset style={css("margin:0;background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:20px 22px;min-width:0")}>
                       <legend style={css("float:left;width:100%;padding:0;margin:0 0 14px;font-weight:700;font-size:20px;line-height:1.35")}>
+                        <span className={"fz-topicchip"}>{qz.topic}</span>
                         {qz.q}
                       </legend>
                       <div style={css("display:flex;flex-direction:column;gap:8px;clear:both")}>
                         {(qz.opts || []).map((op, opI) => (<React.Fragment key={opI}>
-                          <button type={"button"} className={"np3-chip"} onClick={op.pick} aria-pressed={op.picked} disabled style={css(op.style)}>
+                          <button type={"button"} className={"np3-chip"} onClick={op.pick} aria-pressed={op.picked} disabled={op.locked} style={css(op.style)}>
                             {op.t}
                           </button>
                         </React.Fragment>))}
@@ -617,7 +619,7 @@ export default function view(v) {
                   <a href={"/"} onClick={v.goHome}>
                     {"Today's five"}
                   </a>
-                  {` / ${v.crumb} / Story ${v.pos} of 5`}
+                  {` / ${v.crumb} / ${v.posText}`}
                 </p>
                 <div style={css("display:flex;gap:8px")}>
                   <button type={"button"} className={"pg-btn"} onClick={v.prev} style={css("font-family:inherit;font-weight:700;font-size:16px;padding:9px 14px;border-radius:10px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer")}>
@@ -640,8 +642,9 @@ export default function view(v) {
                     {v.s.title}
                   </h1>
                   <p style={css("margin:0 0 36px;font-size:17px;color:var(--muted)")}>
-                    {`${v.s.time} quick read, sample explainer`}
+                    {v.storyMeta}
                   </p>
+                  {v.hasSummary ? <p className={"fz-lead"}>{v.s.summary}</p> : null}
                 </div>
               </>) : null}
               {v.odd ? (<>
@@ -656,8 +659,9 @@ export default function view(v) {
                     {v.s.title}
                   </h1>
                   <p style={css("margin:0 0 36px;font-size:17px;color:var(--muted)")}>
-                    {`${v.s.time} quick read, sample explainer`}
+                    {v.storyMeta}
                   </p>
+                  {v.hasSummary ? <p className={"fz-lead"}>{v.s.summary}</p> : null}
                 </div>
               </>) : null}
               <section aria-labelledby={"l1"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
@@ -665,7 +669,7 @@ export default function view(v) {
                   <span aria-hidden={"true"} lang={"bn"} style={css("width:44px;height:44px;border-radius:50%;background:#FFD400;color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:24px")}>
                     {"১"}
                   </span>
-                  {"The quick read"}
+                  {v.s.quickTitle}
                 </h2>
                 <ul style={css("margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:21px;line-height:1.5")}>
                   {(v.s.quick || []).map((q, qI) => (<React.Fragment key={qI}>
@@ -675,6 +679,7 @@ export default function view(v) {
                   </React.Fragment>))}
                 </ul>
               </section>
+              {v.hasWhy ? (<>
               <section aria-labelledby={"l2"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
                 <h2 id={"l2"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 16px")}>
                   <span aria-hidden={"true"} lang={"bn"} style={css("width:44px;height:44px;border-radius:50%;background:#1A1714;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px")}>
@@ -689,6 +694,24 @@ export default function view(v) {
                   {v.s.why}
                 </blockquote>
               </section>
+              </>) : null}
+              {v.hasTerms ? (<>
+                <section aria-labelledby={"l4"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
+                  <h2 id={"l4"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 16px")}>
+                    <span aria-hidden={"true"} lang={"bn"} style={css("width:44px;height:44px;border-radius:50%;background:#D21F14;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px")}>
+                      {"৩"}
+                    </span>
+                    {"Words to know"}
+                  </h2>
+                  <dl className={"fz-terms"}>
+                    {(v.s.terms || []).map((t, tI) => (<div key={tI}>
+                      <dt>{t.term}</dt>
+                      <dd>{t.meaning}</dd>
+                    </div>))}
+                  </dl>
+                </section>
+              </>) : null}
+              {v.isSample ? (<>
               <section aria-labelledby={"l3"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
                 <h2 id={"l3"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 20px")}>
                   <span aria-hidden={"true"} lang={"bn"} style={css("width:44px;height:44px;border-radius:50%;background:#D21F14;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px")}>
@@ -749,23 +772,28 @@ export default function view(v) {
                   {"."}
                 </p>
               </section>
-              <section aria-labelledby={"ask-h"} style={css("background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:24px;margin-bottom:40px")}>
-                <h2 id={"ask-h"} className={"pg-disp"} style={css("font-weight:800;font-size:30px;margin:0 0 6px")}>
-                  {"Ask about this story"}
-                </h2>
-                <p style={css("margin:0 0 14px;font-size:17px;color:var(--muted);line-height:1.45")}>
-                  {"Coming soon: ask anything, and get an answer drawn only from the sources above, with citations."}
-                </p>
-                <div style={css("display:flex;gap:10px;flex-wrap:wrap")}>
-                  <label htmlFor={"pg-ask"} style={css("position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)")}>
-                    {"Your question"}
-                  </label>
-                  <input id={"pg-ask"} type={"text"} disabled placeholder={"e.g. Will this affect prices in my area?"} style={css("flex:1 1 260px;min-width:0;font-family:inherit;font-size:18px;padding:13px 16px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--muted)")} />
-                  <button type={"button"} disabled style={css("font-family:inherit;font-weight:700;font-size:17px;padding:13px 20px;border-radius:12px;border:0;background:var(--line);color:var(--muted);cursor:not-allowed")}>
-                    {"Ask"}
-                  </button>
-                </div>
-              </section>
+              </>) : null}
+              {v.isLive ? (<>
+                <section aria-labelledby={"src-h"} className={"fz-src"}>
+                  <h2 id={"src-h"} className={"pg-disp"} style={css("font-weight:800;font-size:30px;margin:0 0 8px")}>
+                    {"Read the full story"}
+                  </h2>
+                  <p style={css("margin:0 0 16px;font-size:17px;line-height:1.5;color:var(--muted)")}>
+                    {v.noAI ? "The simple version of this one arrives with the next update. Until then, here is the publisher's own report." : "This simple version was written by AI from the publisher's headline and short description, so it covers only the basics and can contain mistakes. The full details are in the original report."}
+                  </p>
+                  <a className={"fz-srcbtn"} href={v.s.link} target={"_blank"} rel={"noopener noreferrer"}>
+                    <span style={css("font-weight:700;font-size:15px;color:var(--muted)")}>
+                      {`Original report from ${v.s.source}`}
+                    </span>
+                    <span className={"pg-disp"} style={css("font-weight:800;font-size:24px;line-height:1.15")}>
+                      {v.s.orig}
+                    </span>
+                    <span className={"fz-srcgo"}>
+                      {"Open the original (new tab)"}
+                    </span>
+                  </a>
+                </section>
+              </>) : null}
               <section aria-labelledby={"rel-h"} style={css("margin-bottom:34px")}>
                 <h2 id={"rel-h"} className={"pg-disp"} style={css("font-weight:800;font-size:32px;margin:0 0 14px")}>
                   {"Keep exploring"}
@@ -800,8 +828,9 @@ export default function view(v) {
                 {"All stories"}
               </h1>
               <p style={css("margin:0 0 30px;font-size:20px;color:var(--muted);max-width:620px;line-height:1.5")}>
-                {"Ten sample explainers that show how a story reads here. For today's real news, see Live headlines on the home page."}
+                {v.allIntro}
               </p>
+              {v.gone ? <p role={"status"} className={"fz-gone"}>{"That headline has rolled off the live list. Here is everything that is live now."}</p> : null}
               <div style={css("display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:30px")}>
                 <label htmlFor={"pg-search"} style={css("position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)")}>
                   {"Search stories"}

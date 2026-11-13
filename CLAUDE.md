@@ -4,13 +4,15 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 
 ## How the code is laid out
 
-- `components/SiteView.jsx`: the whole layout (header, home, story, all stories, about, footer). It was converted from the approved Claude Design board "B. Rickshaw ride", so styles are inline text passed through `css()`.
-- `components/Site.jsx`: all behaviour. `renderVals()` builds the values the view shows. Also holds the rickshaw game (canvas), dark mode, the kite page transition and the quiz.
-- `data/stories.js`: the ten sample explainers. Index 0-4 are "Today", 5-9 "Yesterday".
-- `data/feeds.json`: RSS feeds for Live headlines. `lib/news.js` reads them, `app/api/news/route.js` serves them (cached 30 minutes).
-- `data/art-tags.json`: keywords that pick a picture for a headline. Pictures are in `public/art/<tag>.svg` (day) and `<tag>-n.svg` (night).
-- `lib/route.js`: web addresses (`/`, `/story/<slug>`, `/stories`, `/about`).
-- `app/[[...path]]/page.jsx`: one page component serves every address, so page changes animate without a reload.
+- `components/SiteView.jsx`: the whole layout (header, home, story, all stories, about, footer). Converted from the approved Claude Design board "B. Rickshaw ride", so styles are inline text passed through `css()`.
+- `components/Site.jsx`: all behaviour. `list()` is the story list (live headlines, today's five first), `renderVals()` builds what the view shows. Also holds the rickshaw game, dark mode, the kite page transition and the quiz.
+- `lib/news.js`: reads the RSS feeds in `data/feeds.json` (cached 30 minutes) and picks a picture tag for each headline using `data/art-tags.json`.
+- `lib/digest.js`: every 6 hours, one AI call (Claude Haiku through Vercel AI Gateway, no API key needed on Vercel) writes a simple summary, key points, "why care", tricky words and a quiz for the main headlines. It may only use the publisher's headline and short description. If the AI call fails, stories fall back to the publisher's own description.
+- `data/stories.js`: built-in sample explainers, used only when no live news can be loaded.
+- `lib/route.js`: web addresses (`/`, `/news/<id>`, `/story/<slug>`, `/stories`, `/about`).
+- `app/[[...path]]/page.jsx`: one page component serves every address, so page changes animate without a reload. Pages refresh every 10 minutes.
+- Pictures are in `public/art/<tag>.svg` (day) and `<tag>-n.svg` (night). Share images are in `public/og`.
+- To work offline: `AKK_FIXTURE=path/to/digest.json npm run dev` serves a saved copy of `/api/news`.
 
 ## Rules
 
@@ -22,8 +24,8 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 
 ## Not done yet
 
-- The ten explainers are samples. Real daily explainers need an editor (or a Claude API draft that a person checks) and real source links.
+- Summaries are AI-written from the feed's headline and short description only. A person does not check them.
+- A live story's page disappears once the headline leaves the feeds (old links then show the all-stories page). Saving stories to a database would fix that.
 - "Join the waitlist" only shows a thank-you. It does not save the email anywhere yet.
-- "Ask about this story" is a disabled placeholder.
 - Bangla edition.
-- `SiteView.jsx` is one big file. Splitting it into smaller components (Header, Game, StoryPage...) is a good first clean-up.
+- `SiteView.jsx` is one big file. Splitting it into smaller components is a good first clean-up.
