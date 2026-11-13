@@ -1,36 +1,18 @@
 import Parser from 'rss-parser';
-import { getArticleText } from '../../../lib/article';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 120;
+export const maxDuration = 60;
 const C = [
-  ['PA en', 'https://en.prothomalo.com/feed/'],
-  ['PA en2', 'https://en.prothomalo.com/feed/bangladesh'],
-  ['Star', 'https://www.thedailystar.net/rss.xml'],
   ['Star front', 'https://www.thedailystar.net/frontpage/rss.xml'],
   ['Star bd', 'https://www.thedailystar.net/news/bangladesh/rss.xml'],
+  ['Star rss', 'https://www.thedailystar.net/rss.xml'],
+  ['PA en', 'https://en.prothomalo.com/feed/'],
+  ['PA en nos', 'https://en.prothomalo.com/feed'],
+  ['PA bd', 'https://en.prothomalo.com/bangladesh/feed'],
+  ['PA sitemap', 'https://en.prothomalo.com/sitemap/sitemap-news.xml'],
   ['bdnews24', 'https://bdnews24.com/rss.xml'],
-  ['bdnews24 w', 'https://bdnews24.com/?widgetName=rssfeed&widgetId=1150&getXmlFeed=true'],
-  ['NewAge', 'https://www.newagebd.net/rss/rss.xml'],
-  ['NewAge2', 'https://www.newagebd.net/rss'],
-  ['FE', 'https://thefinancialexpress.com.bd/feed'],
-  ['DailySun', 'https://www.daily-sun.com/rss'],
-  ['DhakaPost', 'https://en.dhakapost.com/rss'],
-  ['Observer', 'https://www.observerbd.com/rss.xml'],
-  ['BSS', 'https://www.bssnews.net/rss'],
-  ['UNB', 'https://unb.com.bd/rss'],
-  ['TBS bd', 'https://www.tbsnews.net/bangladesh/rss.xml'],
-  ['TBS sports', 'https://www.tbsnews.net/sports/rss.xml'],
-  ['TBS tech', 'https://www.tbsnews.net/tech/rss.xml'],
-  ['Star sports', 'https://www.thedailystar.net/sports/rss.xml'],
-  ['Star tech', 'https://www.thedailystar.net/tech-startup/rss.xml'],
-  ['Guardian world', 'https://www.theguardian.com/world/rss'],
-  ['Guardian tech', 'https://www.theguardian.com/technology/rss'],
-  ['DW', 'https://rss.dw.com/rdf/rss-en-all'],
-  ['France24', 'https://www.france24.com/en/rss'],
-  ['NPR', 'https://feeds.npr.org/1001/rss.xml'],
-  ['Cricinfo', 'https://www.espncricinfo.com/rss/content/story/feeds/0.xml'],
-  ['Verge', 'https://www.theverge.com/rss/index.xml'],
-  ['Ars', 'https://feeds.arstechnica.com/arstechnica/index'],
+  ['bdn w', 'https://bdnews24.com/?widgetName=rssfeed&widgetId=1150&getXmlFeed=true'],
+  ['bdn bd', 'https://bdnews24.com/bangladesh/rss.xml'],
+  ['bdn feed', 'https://bdnews24.com/feed'],
 ];
 const UA = 'Mozilla/5.0 (compatible; AjkerKhoborKi/1.0; RSS reader)';
 const parser = new Parser();
@@ -38,16 +20,10 @@ async function one([name, url]) {
   const out = { name };
   try {
     const r = await fetch(url, { headers: { 'user-agent': UA, accept: 'application/rss+xml, application/xml, text/xml, */*' }, cache: 'no-store', signal: AbortSignal.timeout(9000) });
-    out.feed = r.status;
-    if (!r.ok) return out;
-    const f = await parser.parseString(await r.text());
-    const items = f.items || [];
-    out.items = items.length;
-    const link = items.map((i) => i.link).find((l) => /^https?:/.test(l || ''));
-    if (link) { const t = await getArticleText(link); out.textLen = t.length; out.sample = link.slice(0, 90); }
+    const txt = await r.text();
+    out.status = r.status; out.len = txt.length; out.type = r.headers.get('content-type'); out.head = txt.slice(0, 160).replace(/\s+/g, ' ');
+    try { const f = await parser.parseString(txt); out.items = (f.items || []).length; out.dates = (f.items || []).slice(0, 3).map((i) => i.isoDate || i.pubDate || 'none'); out.titles = (f.items || []).slice(0, 2).map((i) => (i.title || '').slice(0, 60)); } catch (e) { out.parseErr = String(e.message).slice(0, 80); }
   } catch (e) { out.err = String(e.message || e).slice(0, 60); }
   return out;
 }
-export async function GET() {
-  return Response.json(await Promise.all(C.map(one)));
-}
+export async function GET() { return Response.json(await Promise.all(C.map(one))); }
