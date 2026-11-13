@@ -512,6 +512,46 @@ export default function view(v) {
                   </React.Fragment>))}
                 </div>
               </section>
+              {v.dyk && v.dyk.has ? (<>
+              <section aria-labelledby={"dyk-h"} style={css("max-width:1240px;margin:0 auto;padding:10px 32px 70px")}>
+                <div style={css("display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:22px")}>
+                  <h2 id={"dyk-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>
+                    {"Did you know?"}
+                  </h2>
+                  <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
+                    {"New facts every 6 hours. Pick a topic."}
+                  </span>
+                </div>
+                <div role={"group"} aria-label={"Fact topics"} style={css("display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px")}>
+                  {(v.dyk.tabs || []).map((t, tI) => (<React.Fragment key={tI}>
+                    <button type={"button"} onClick={t.go} aria-pressed={t.on} style={css(t.style)}>
+                      {t.name}
+                    </button>
+                  </React.Fragment>))}
+                </div>
+                <div className={"fz-dyk"} style={css(`border-left-color:${v.dyk.color}`)}>
+                  <p className={"np3-disp fz-dykhook"} aria-live={"polite"}>
+                    {v.dyk.hook}
+                  </p>
+                  {v.dyk.open ? (<>
+                    <p className={"np3-in fz-dykmore"}>
+                      {v.dyk.more}
+                    </p>
+                  </>) : null}
+                  <div className={"fz-dykbar"}>
+                    <button type={"button"} className={"fz-dykbtn"} onClick={v.dyk.toggle} aria-expanded={v.dyk.open ? "true" : "false"}>
+                      {v.dyk.label}
+                    </button>
+                    <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.dyk.next}>
+                      {"Next fact"}
+                    </button>
+                    <span className={"fz-dykpos"}>
+                      {v.dyk.section + ", " + v.dyk.pos}
+                    </span>
+                  </div>
+                </div>
+              </section>
+              </>) : null}
               <section aria-labelledby={"quiz-h"} style={css("max-width:1240px;margin:0 auto;padding:10px 32px 70px")}>
                 <div style={css("display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:22px")}>
                   <h2 id={"quiz-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>

@@ -5,6 +5,7 @@ import React from 'react';
 import view from './SiteView';
 import { STORIES } from '../data/stories';
 import { pathFor, parsePath, titleFor, artFor } from '../lib/route';
+import { factsForSlot, FACT_SECTIONS } from '../data/facts';
 
 class DCLogic extends React.Component {
   render() { return view(this.renderVals()); }
@@ -13,7 +14,7 @@ class DCLogic extends React.Component {
 export default class Site extends DCLogic {
   constructor(props){
     super(props);
-    this.state = { view: 'home', si: 0, f: 'all', q: '', liveF: 'all', gone: false, now: 0, faqOpen: 0, trN: 0, tr: 'none', dir: 1, read: [], dark: false, trDone: true, word: 0, phase: 'ambient', invite: true, answers: {}, onboard: -1, picked: [], flash: 0, best: 0, crashMsg: '', all: false, score: 0, rushBest: 0, overMsg: '', joined: false };
+    this.state = { view: 'home', si: 0, f: 'all', q: '', liveF: 'all', gone: false, now: 0, faqOpen: 0, trN: 0, tr: 'none', dir: 1, read: [], dark: false, trDone: true, word: 0, phase: 'ambient', invite: true, answers: {}, ansSlot: null, dykTab: 0, dykIdx: {}, dykOpen: false, onboard: -1, picked: [], flash: 0, best: 0, crashMsg: '', all: false, score: 0, rushBest: 0, overMsg: '', joined: false };
     // Open the story named in the address. If it is no longer on the live list, show all stories instead.
     const at = props.view === 'story' ? this.list().findIndex((s) => s.id === props.sid) : -1;
     this.state.view = props.view === 'story' && at < 0 ? 'all' : (props.view || 'home');
@@ -311,13 +312,29 @@ export default class Site extends DCLogic {
     const liveChips = ['all', 'Bangladesh', 'World', 'Tech', 'Sport'].filter((c) => c === 'all' || liveAll.some((o) => o.x.cat === c)).map((c) => { const on = lf === c; return { name: c === 'all' ? 'All' : c, on: on ? 'true' : 'false', go: () => this.setState({ liveF: c }), style: 'font-family:inherit;font-weight:700;font-size:16px;padding:9px 14px;border-radius:999px;cursor:pointer;border:2px solid ' + (on ? 'var(--ink)' : 'var(--line)') + ';background:' + (on ? 'var(--ink)' : 'transparent') + ';color:' + (on ? 'var(--bg)' : 'var(--ink)') }; });
     const until = (t) => { if (!now || !t) return ''; const m = Math.max(1, Math.round((t - now) / 60000)); return m >= 60 ? Math.floor(m / 60) + ' hr ' + (m % 60) + ' min' : m + ' min'; };
     const QUIZ = D.quiz && D.quiz.length >= 3 ? D.quiz : [
-      { topic: 'Health', q: 'Above which AQI number is the air unhealthy for everyone?', opts: ['50', '100', '150', '300'], a: 2, why: 'From 151 up, the air is classed as unhealthy for everyone, not just sensitive groups.' },
-      { topic: 'Sport', q: 'Who receives a football transfer fee?', opts: ['The player', 'The selling club', 'The league'], a: 1, why: 'The buying club pays the selling club. The player is paid through wages and bonuses.' },
-      { topic: 'Money', q: 'What fills the onion supply between local harvests?', opts: ['Imports', 'Nothing, prices just rise', 'Government farms'], a: 0, why: 'Imports cover the gaps, so changes abroad show up in shop prices here.' }
+      { topic: 'Sports', q: 'How many players from one team are on the pitch in a standard football match?', opts: ['9', '11', '12'], a: 1, why: 'Each side plays with 11, including the goalkeeper. A team must have at least 7 to start or carry on.' },
+      { topic: 'Health', q: 'About how much sleep do most teenagers need each night?', opts: ['6 to 7 hours', '8 to 10 hours', '11 to 12 hours'], a: 1, why: 'Teenagers need around 8 to 10 hours. Less than that makes it harder to focus, learn and stay in a good mood.' },
+      { topic: 'Sex ed', q: 'What does "consent" mean?', opts: ['Staying silent and not saying no', 'Agreeing freely and clearly, and being free to change your mind', 'Agreeing because someone keeps pushing'], a: 1, why: 'Consent must be given freely, can be taken back at any time, and is never real if someone is pressured, scared or unable to decide.' },
+      { topic: 'Politics', q: 'What does a country\'s constitution do?', opts: ['Sets the basic rules for how the country is run and protects people\'s rights', 'Lists the prices of everyday goods', 'Chooses the national sports team'], a: 0, why: 'A constitution is the highest set of rules. Laws and leaders have to follow it.' },
+      { topic: 'Tech', q: 'Which password is the hardest to guess?', opts: ['password123', 'A long phrase of unrelated words with a number', 'Your name and birth year'], a: 1, why: 'Length matters most. A long, unusual phrase is far harder to crack than a short word or something people can find out about you.' },
+      { topic: 'Science', q: 'Which gas do plants take in to make their food?', opts: ['Oxygen', 'Carbon dioxide', 'Nitrogen'], a: 1, why: 'Plants use sunlight to turn carbon dioxide and water into sugar, and they release oxygen as a by-product.' },
+      { topic: 'Bangladesh', q: 'Which day is International Mother Language Day?', opts: ['26 March', '16 December', '21 February'], a: 2, why: 'It honours the 1952 Language Movement in Dhaka. UNESCO made it an international day in 1999.' }
     ];
+    // Answers belong to one quiz. When a fresh quiz arrives (every 6 hours), start clean.
+    const ANS = this.state.ansSlot === (D.slot || null) ? this.state.answers : {};
+    const DYK = (() => {
+      const F = D.facts || factsForSlot(D.slot || 0), tab = Math.min(this.state.dykTab, FACT_SECTIONS.length - 1), sec = FACT_SECTIONS[tab], list = F[sec] || [];
+      const i = list.length ? (this.state.dykIdx[sec] || 0) % list.length : 0, cur = list[i] || { hook: '', more: '' }, open = !!this.state.dykOpen;
+      return {
+        has: list.length > 0, tabs: FACT_SECTIONS.map((n, k) => { const on = k === tab; return { name: n, on: on ? 'true' : 'false', go: () => this.setState({ dykTab: k, dykOpen: false }), style: 'font-family:inherit;font-weight:700;font-size:17px;padding:10px 16px;border-radius:999px;cursor:pointer;border:2px solid ' + (on ? 'var(--ink)' : 'var(--line)') + ';background:' + (on ? 'var(--ink)' : 'transparent') + ';color:' + (on ? 'var(--bg)' : 'var(--ink)') }; }),
+        section: sec, color: SC[sec] || 'var(--ink)', hook: cur.hook, more: cur.more, open: open, pos: (i + 1) + ' of ' + list.length,
+        toggle: () => this.setState({ dykOpen: !open }), next: () => this.setState({ dykIdx: Object.assign({}, this.state.dykIdx, { [sec]: (i + 1) % Math.max(1, list.length) }), dykOpen: false }),
+        label: open ? 'Hide the explanation' : 'Tell me more'
+      };
+    })();
     const faq = [
       ['Is it free?', 'Yes. Every story and quiz is free to read.'],
-      ['Who writes the summaries?', 'An AI model reads the public text of each article and retells what happened in one short paragraph of simple words, adding nothing of its own. It can still leave things out or make mistakes, so every story links to the original report. Overviews and the quiz refresh every 6 hours.'],
+      ['Who writes the summaries?', 'An AI model reads the public text of each article and retells what happened in one short paragraph of simple words, adding nothing of its own. It can still leave things out or make mistakes, so every story links to the original report. Overviews, the quiz and the Did you know facts refresh every 6 hours.'],
       ['Will there be a Bangla edition?', 'Yes. A full Bangla edition is planned, so you can read every story in the language you prefer.'],
       ['Why is there a rickshaw game?', 'Because news should be something you want to open. Ride, pick up passengers and their stories, or skip the game and read all five straight away.']
     ];
@@ -384,18 +401,19 @@ export default class Site extends DCLogic {
       quiz: (() => {
         const Q = QUIZ;
         return Q.map((x, i) => {
-          const ans = this.state.answers[i], done = ans !== undefined;
+          const ans = ANS[i], done = ans !== undefined;
           return { q: x.q, topic: x.topic || 'News', done: done, why: x.why, verdict: done && ans === x.a ? 'Right.' : 'Not quite. The answer is ' + x.opts[x.a] + '.', verdictColor: done && ans === x.a ? '#00924A' : 'var(--accent2)',
             opts: x.opts.map((t, j) => {
               const picked = ans === j, right = j === x.a;
               let st = 'width:100%;text-align:left;font-family:inherit;font-weight:600;font-size:17px;padding:11px 14px;border-radius:12px;color:var(--ink);cursor:' + (done ? 'default' : 'pointer') + ';border:2px solid var(--line);background:transparent';
               if (done && right) st += ';border-color:#00924A;background:rgba(0,146,74,.12)';
               if (done && picked && !right) st += ';border-color:var(--accent2);background:rgba(210,31,20,.10)';
-              return { t: t, picked: picked ? 'true' : 'false', locked: done, style: st, pick: () => { if (this.state.answers[i] !== undefined) return; this.setState({ answers: Object.assign({}, this.state.answers, { [i]: j }) }); } };
+              return { t: t, picked: picked ? 'true' : 'false', locked: done, style: st, pick: () => { if (ANS[i] !== undefined) return; this.setState({ ansSlot: D.slot || null, answers: Object.assign({}, ANS, { [i]: j }) }); } };
             }) };
         });
       })(),
-      quizMeta: (() => { const A = this.state.answers, n = Object.keys(A).length, T = QUIZ.length, right = QUIZ.filter((x, i) => A[i] === x.a).length, next = until(D.nextAt); return (n === T ? 'You got ' + right + ' of ' + T + '.' : T + ' questions from the news. Tap an answer.') + (next ? ' New quiz in ' + next + '.' : ' A new quiz every 6 hours.'); })(),
+      quizMeta: (() => { const A = ANS, n = Object.keys(A).length, T = QUIZ.length, right = QUIZ.filter((x, i) => A[i] === x.a).length, next = until(D.nextAt); return (n === T ? 'You got ' + right + ' of ' + T + '.' : T + ' questions on sport, health, politics, science and more. Tap an answer.') + (next ? ' New quiz in ' + next + '.' : ' A new quiz every 6 hours.'); })(),
+      dyk: DYK,
       pickedCount: this.state.picked.length,
       empty: on < 0, evenFlash: on >= 0 && fl % 2 === 0, oddFlash: on >= 0 && fl % 2 === 1,
       ride: on >= 0 ? R[on] : R[0],
