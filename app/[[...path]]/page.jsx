@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Site from '../../components/Site';
 import { STORIES } from '../../data/stories';
 import { getDigest } from '../../lib/digest';
+import { getToday } from '../../lib/today';
 import { parsePath, titleFor } from '../../lib/route';
 
 export const revalidate = 600; // pages pick up new headlines every 10 minutes
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function Page({ params }) {
-  const d = await load(params);
+  const [d, today] = await Promise.all([load(params), getToday().catch(() => null)]);
   if (!d) notFound();
-  return <Site view={d.r.view} sid={d.r.sid || ''} digest={d.digest} />;
+  return <Site view={d.r.view} sid={d.r.sid || ''} digest={d.digest} today={today} />;
 }

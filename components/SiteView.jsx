@@ -2,6 +2,77 @@
 import React from 'react';
 import { css } from '../lib/css';
 
+
+// A taxi-meter style number: each digit is a column of 0-9 that rolls to its value when the block scrolls into view.
+function Odo({ pre, value, post }) {
+  return (<span className={"ak-odo"} role={"img"} aria-label={(pre || '') + value + (post || '')}>
+    {pre ? <span aria-hidden={"true"}>{pre}</span> : null}
+    {String(value).split('').map((ch, k) => /\d/.test(ch)
+      ? <span key={k} className={"ak-dg"} aria-hidden={"true"}><span className={"ak-dr"} style={{ '--n': ch, '--i': k }}>{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((d) => <i key={d}>{d}</i>)}</span></span>
+      : <span key={k} aria-hidden={"true"}>{ch}</span>)}
+    {post ? <span aria-hidden={"true"}>{post}</span> : null}
+  </span>);
+}
+
+// A split-flap board word: each letter flips down into place, one after another.
+function Flap({ word }) {
+  return (<span className={"ak-flap"} role={"img"} aria-label={word}>
+    {word.split('').map((ch, k) => <span key={k} className={"ak-fl"} aria-hidden={"true"} style={{ '--i': k }}>{ch === ' ' ? ' ' : ch}</span>)}
+  </span>);
+}
+
+const Ico = {
+  find: <svg viewBox={"0 0 24 24"} width={"22"} height={"22"} aria-hidden={"true"}><circle cx={"10.5"} cy={"10.5"} r={"6.5"} fill={"none"} strokeWidth={"2.4"} style={css("stroke:var(--ink)")} /><path d={"M15.5 15.5L21 21"} strokeWidth={"2.6"} strokeLinecap={"round"} style={css("stroke:var(--ink)")} /></svg>,
+  listen: <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"} className={"ak-eq"}><rect x={"3"} y={"4"} width={"3.4"} height={"16"} rx={"1.7"} /><rect x={"8.5"} y={"4"} width={"3.4"} height={"16"} rx={"1.7"} /><rect x={"14"} y={"4"} width={"3.4"} height={"16"} rx={"1.7"} /><rect x={"19.5"} y={"4"} width={"3.4"} height={"16"} rx={"1.7"} /></svg>,
+  simple: <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"}><path d={"M4 6h16M4 12h10M4 18h6"} fill={"none"} strokeWidth={"2.4"} strokeLinecap={"round"} style={css("stroke:currentColor")} /></svg>,
+  kite: <svg viewBox={"0 0 24 28"} width={"20"} height={"24"} aria-hidden={"true"} className={"ak-kite"}><path className={"ak-kite-b"} d={"M12 1l9 9-9 12-9-12z"} strokeWidth={"2.2"} strokeLinejoin={"round"} /><path className={"ak-kite-t"} d={"M12 22q-3 2-1 4t-1 2"} fill={"none"} strokeWidth={"2"} strokeLinecap={"round"} /></svg>,
+  wa: <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"}><path d={"M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z"} fill={"#25A244"} /><path d={"M8.8 8.4c.3 3.2 3.3 6 6.6 6.4l1.2-1.4-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2z"} fill={"#FFFFFF"} /></svg>,
+  ms: <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"}><path d={"M12 2.5c-5.2 0-9.5 3.9-9.5 8.9 0 2.6 1.200 4.900 3.100 6.500V21l3.200-1.800c1 .3 2 .4 3.200.4 5.200 0 9.500-3.900 9.500-8.900S17.200 2.500 12 2.500z"} fill={"#2F7BF5"} /><path d={"M6.500 13.500l3.400-3.600 2.500 2.100 3.100-2.100-3.400 3.700-2.500-2.100z"} fill={"#FFFFFF"} /></svg>,
+  copy: <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"}><rect x={"8"} y={"8"} width={"12"} height={"12"} rx={"2.5"} fill={"none"} strokeWidth={"2.2"} style={css("stroke:currentColor")} /><path d={"M16 8V6.500A2.500 2.500 0 0 0 13.500 4h-7A2.500 2.500 0 0 0 4 6.500v7A2.500 2.500 0 0 0 6.500 16H8"} fill={"none"} strokeWidth={"2.2"} style={css("stroke:currentColor")} /></svg>,
+  flag: <svg viewBox={"0 0 24 24"} width={"18"} height={"18"} aria-hidden={"true"}><path d={"M5 21V4m0 1h12l-2.500 4L17 13H5"} fill={"none"} strokeWidth={"2.2"} strokeLinecap={"round"} strokeLinejoin={"round"} style={css("stroke:currentColor")} /></svg>,
+  bell: <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"} className={"ak-bell"}><path d={"M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6z"} fill={"currentColor"} /><path d={"M9.500 19a2.500 2.500 0 0 0 5 0"} fill={"none"} strokeWidth={"2"} strokeLinecap={"round"} style={css("stroke:currentColor")} /></svg>,
+};
+
+// The top of a story page. Used twice (for even and odd stories) so the highlight and image replay when you move to the next story.
+function storyHead(v) {
+  const st = v.st, text = st.leadText || '';
+  const m = /^(.+?[.!?])(\s+|$)/.exec(text), first = m ? m[1] : text, rest = text.slice(first.length);
+  return (<div className={"pg-in"}>
+    <img className={"fz-hero"} src={v.heroImg} alt={v.heroAlt} width={"400"} height={"260"} />
+    <p style={css("margin:0 0 12px")}>
+      <span style={css(`display:inline-block;background:${v.s.color};color:#FFFFFF;font-weight:700;font-size:15px;border-radius:999px;padding:4px 12px`)}>
+        {v.s.cat}
+      </span>
+    </p>
+    <h1 className={"pg-h1 pg-disp"} style={css("font-weight:800;font-size:84px;line-height:.95;margin:0 0 14px")}>
+      {v.s.title}
+    </h1>
+    <p style={css("margin:0 0 10px;font-size:17px;color:var(--muted)")}>
+      {st.updated}
+    </p>
+    <p className={"ak-ai"}>
+      {st.isAI ? <span className={"ak-aichip"}>{"AI-written"}</span> : null}
+      <span>{st.aiNote}</span>
+    </p>
+    <p key={st.simpleOn ? 's' : 'o'} className={"fz-lead ak-lead" + (st.busy ? " ak-busy" : "") + (st.simpleOn ? " ak-focus" : "")} aria-live={"polite"}>
+      {st.simpleOn ? text : (<><span className={"ak-mark"}>{first}</span>{rest}</>)}
+    </p>
+    {st.err ? <p role={"alert"} className={"ak-err"}>{"The simpler version is not ready right now. Try again in a minute."}</p> : null}
+    <div className={"ak-acts"} role={"group"} aria-label={"Story actions"}>
+      {st.canSpeak ? (<button type={"button"} className={"ak-act" + (st.speaking ? " on" : "")} onClick={st.listen} aria-pressed={st.speaking ? "true" : "false"}>{Ico.listen}<span>{st.speaking ? "Stop" : "Listen"}</span></button>) : null}
+      {st.canSimple ? (<button type={"button"} className={"ak-act" + (st.simpleOn ? " on" : "")} onClick={st.simple} aria-busy={st.busy ? "true" : "false"} aria-pressed={st.simpleOn ? "true" : "false"}>{Ico.simple}<span>{st.simpleLabel}{st.busy ? <i className={"ak-dots"} aria-hidden={"true"}><b /><b /><b /></i> : null}</span></button>) : null}
+      <button type={"button"} className={"ak-act ak-save" + (st.saved ? " on" : "")} onClick={st.save} aria-pressed={st.saved ? "true" : "false"}>{Ico.kite}<span>{st.saved ? "Saved" : "Save for later"}</span></button>
+    </div>
+    <div className={"ak-acts ak-share"} role={"group"} aria-label={"Share this story"}>
+      <span className={"ak-sharelab"}>{"Share"}</span>
+      <button type={"button"} className={"ak-act"} onClick={st.wa}>{Ico.wa}<span>{"WhatsApp"}</span></button>
+      <button type={"button"} className={"ak-act"} onClick={st.ms}>{Ico.ms}<span>{"Messenger"}</span></button>
+      <button type={"button"} className={"ak-act"} onClick={st.copy}>{Ico.copy}<span>{"Copy link"}</span></button>
+      <button type={"button"} className={"ak-act ak-flag"} onClick={st.report}>{Ico.flag}<span>{"Report a mistake"}</span></button>
+    </div>
+  </div>);
+}
+
 export default function view(v) {
   return (<>
     <div className={v.rootClass} data-theme={v.theme} style={css("position:relative;overflow:hidden;font-family:'Anek Bangla',system-ui,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;transition:background-color 300ms ease,color 300ms ease")}>
@@ -50,6 +121,10 @@ export default function view(v) {
             </React.Fragment>))}
           </nav>
           <div style={css("display:flex;gap:12px;align-items:center;flex-wrap:wrap")}>
+            <button type={"button"} className={"np3-btn ak-findbtn"} onClick={v.togglePanel} aria-expanded={v.panel.open ? "true" : "false"} aria-label={v.panelBtnLabel} style={css("width:46px;height:46px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative")}>
+              {Ico.find}
+              {v.savedN > 0 ? <span className={"ak-pip"} aria-hidden={"true"}>{v.savedN}</span> : null}
+            </button>
             <button type={"button"} className={"np3-btn"} onClick={v.toggleTheme} aria-label={v.themeLabel} style={css("width:46px;height:46px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center")}>
               {v.isDark ? (<>
                 <svg viewBox={"0 0 24 24"} width={"22"} height={"22"} aria-hidden={"true"}>
@@ -68,6 +143,41 @@ export default function view(v) {
             </a>
           </div>
         </header>
+        {v.panel.open ? (<div className={"ak-panel"}>
+          <div className={"ak-panel-in"} role={"search"}>
+            <div className={"ak-ptabs"}>
+              <button type={"button"} className={"ak-ptab" + (v.panel.find ? " on" : "")} onClick={v.panel.findTab} aria-pressed={v.panel.find ? "true" : "false"}>{"Search"}</button>
+              <button type={"button"} className={"ak-ptab" + (v.panel.savedOn ? " on" : "")} onClick={v.panel.savedTab} aria-pressed={v.panel.savedOn ? "true" : "false"}>{"Saved (" + v.panel.savedN + ")"}</button>
+              <button type={"button"} className={"ak-pclose"} onClick={v.panel.close} aria-label={"Close"}>{"×"}</button>
+            </div>
+            {v.panel.find ? (<>
+              <input className={"ak-pin"} autoFocus type={"search"} value={v.panel.q} onChange={v.panel.onQ} placeholder={"Search today's stories: cricket, dollar, AI"} aria-label={"Search stories"} />
+              {v.panel.idle ? <p className={"ak-pmsg"}>{"Type a word. We search the stories on the site right now."}</p> : null}
+              {v.panel.noResults ? <p className={"ak-pmsg"}>{"Nothing on the site matches that right now. Try a shorter word."}</p> : null}
+              <ul className={"ak-plist"}>
+                {(v.panel.results || []).map((r, rI) => (<li key={rI} className={"ak-res"} style={{ '--i': rI }}>
+                  <a className={"ak-resa"} href={r.href} onClick={r.open}>
+                    <span className={"ak-dot"} style={{ background: r.color }} aria-hidden={"true"} />
+                    <span className={"ak-rest"}><b>{r.title}</b><small>{r.sub}</small></span>
+                  </a>
+                  <button type={"button"} className={"ak-act ak-save ak-mini" + (r.saved ? " on" : "")} onClick={r.toggle} aria-pressed={r.saved ? "true" : "false"} aria-label={r.saved ? "Remove from saved" : "Save for later"}>{Ico.kite}</button>
+                </li>))}
+              </ul>
+            </>) : null}
+            {v.panel.savedOn ? (<>
+              {v.panel.noSaved ? <p className={"ak-pmsg"}>{"Nothing saved yet. Tap Save for later on a story. Saved stories stay on this phone only."}</p> : null}
+              <ul className={"ak-plist"}>
+                {(v.panel.savedRows || []).map((r, rI) => (<li key={rI} className={"ak-res"} style={{ '--i': rI }}>
+                  <a className={"ak-resa"} href={r.href} onClick={r.open} target={r.ext ? "_blank" : undefined} rel={r.ext ? "noopener noreferrer" : undefined}>
+                    <span className={"ak-dot"} style={{ background: r.color }} aria-hidden={"true"} />
+                    <span className={"ak-rest"}><b>{r.title}</b><small>{r.sub}</small></span>
+                  </a>
+                  <button type={"button"} className={"ak-act ak-save ak-mini on"} onClick={r.toggle} aria-pressed={"true"} aria-label={"Remove from saved"}>{Ico.kite}</button>
+                </li>))}
+              </ul>
+            </>) : null}
+          </div>
+        </div>) : null}
         <main id={"top"}>
           <div className={"fz-strip"} aria-hidden={"true"}>
             <div className={"fz-flock fz-flock1"}>
@@ -311,14 +421,24 @@ export default function view(v) {
                   </>) : null}
                 </div>
               </section>
-              <section aria-labelledby={"pics-h"} style={css("max-width:1240px;margin:0 auto;padding:56px 32px 0")}>
-                <div style={css("display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:26px")}>
+              {v.hasSigns ? (<section aria-label={"Today in Dhaka"} style={css("max-width:1240px;margin:0 auto;padding:34px 32px 0")}>
+                <div className={"ak-signs"} data-io={"1"} style={{ '--n': v.signCols }}>
+                  <div className={"ak-wire"} aria-hidden={"true"} />
+                  {(v.signs || []).map((g, gI) => (<div key={g.key} className={"ak-sign"} style={{ '--i': gI, '--c': g.color }}>
+                    <span className={"ak-sl"}>{g.label}</span>
+                    <span className={"ak-sv np3-disp"}><Odo pre={g.pre} value={g.big} post={g.post} /></span>
+                    <span className={"ak-ss"}>{g.sub}</span>
+                  </div>))}
+                </div>
+              </section>) : null}
+              <section aria-labelledby={"pics-h"} style={css("max-width:1240px;margin:0 auto;padding:46px 32px 0")}>
+                <div style={css("display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:26px")}>
                   <h2 id={"pics-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>
-                    {"Today in pictures"}
+                    {"Today's five"}
                   </h2>
-                  <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
+                  {v.newN > 0 ? (<button type={"button"} className={"ak-new"} onClick={v.seeNew}>{Ico.bell}<span>{v.newLabel}</span></button>) : (<span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
                     {v.picsNote}
-                  </span>
+                  </span>)}
                 </div>
                 <div className={"fz-pics"}>
                   {(v.pics || []).map((pc, pcI) => (<React.Fragment key={pcI}>
@@ -347,7 +467,7 @@ export default function view(v) {
                       {"Live headlines"}
                     </h2>
                     <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                      {"Tap a headline for the simple version. The original report is linked at the end."}
+                      {v.checked || "Tap a headline for the simple version."}
                     </span>
                   </div>
                   <div role={"group"} aria-label={"Filter live headlines"} style={css("display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px")}>
@@ -370,11 +490,16 @@ export default function view(v) {
                           </span>
                           <span className={"np3-disp"} style={css("font-weight:800;font-size:21px;line-height:1.12")}>
                             {h.title}
+                            {h.isNew && !h.read ? <span className={"ak-newtag"}>{"New"}</span> : null}
                             {h.read ? <span className={"fz-readtag"}>{h.read}</span> : null}
                           </span>
                         </span>
                       </a>
                     </React.Fragment>))}
+                  </div>
+                  <div className={"ak-livefoot"}>
+                    {v.liveMore ? <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.showMoreLive}>{v.liveMoreLabel}</button> : null}
+                    <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.toAll}>{"See every story"}</button>
                   </div>
                 </section>
               </>) : null}
@@ -452,9 +577,6 @@ export default function view(v) {
                     </div>
                   </div>
                 </>) : null}
-                <p style={css("margin:30px 0 0;font-size:15px;color:var(--muted)")}>
-                  {"The five explainers are samples that show the format. Live headlines come straight from publishers' feeds."}
-                </p>
               </section>
               <div className={"fz-strip"} aria-hidden={"true"}>
                 <svg viewBox={"0 0 1440 110"} preserveAspectRatio={"none"} style={css("position:absolute;inset:0;width:100%;height:100%")}>
@@ -512,65 +634,29 @@ export default function view(v) {
                   </React.Fragment>))}
                 </div>
               </section>
-              {v.dyk && v.dyk.has ? (<>
-              <section aria-labelledby={"dyk-h"} style={css("max-width:1240px;margin:0 auto;padding:10px 32px 70px")}>
+              <section aria-labelledby={"play-h"} style={css("max-width:1240px;margin:0 auto;padding:10px 32px 70px")}>
                 <div style={css("display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:22px")}>
-                  <h2 id={"dyk-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>
-                    {"Did you know?"}
+                  <h2 id={"play-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>
+                    {"Play & learn"}
                   </h2>
                   <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                    {"New facts every 6 hours. Pick a topic."}
+                    {"A new quiz and new facts every 6 hours"}
                   </span>
                 </div>
-                <div role={"group"} aria-label={"Fact topics"} style={css("display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px")}>
-                  {(v.dyk.tabs || []).map((t, tI) => (<React.Fragment key={tI}>
-                    <button type={"button"} onClick={t.go} aria-pressed={t.on} style={css(t.style)}>
-                      {t.name}
-                    </button>
-                  </React.Fragment>))}
-                </div>
-                <div className={"fz-dyk"} style={css(`border-left-color:${v.dyk.color}`)}>
-                  <p className={"np3-disp fz-dykhook"} aria-live={"polite"}>
-                    {v.dyk.hook}
-                  </p>
-                  {v.dyk.open ? (<>
-                    <p className={"np3-in fz-dykmore"}>
-                      {v.dyk.more}
-                    </p>
-                  </>) : null}
-                  <div className={"fz-dykbar"}>
-                    <button type={"button"} className={"fz-dykbtn"} onClick={v.dyk.toggle} aria-expanded={v.dyk.open ? "true" : "false"}>
-                      {v.dyk.label}
-                    </button>
-                    <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.dyk.next}>
-                      {"Next fact"}
-                    </button>
-                    <span className={"fz-dykpos"}>
-                      {v.dyk.section + ", " + v.dyk.pos}
-                    </span>
-                  </div>
-                </div>
-              </section>
-              </>) : null}
-              <section aria-labelledby={"quiz-h"} style={css("max-width:1240px;margin:0 auto;padding:10px 32px 70px")}>
-                <div style={css("display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:22px")}>
-                  <h2 id={"quiz-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>
-                    {"Quick check"}
-                  </h2>
-                  <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                    {v.quizMeta}
-                  </span>
-                </div>
-                <div className={"np3-quiz"}>
-                  {(v.quiz || []).map((qz, qzI) => (<React.Fragment key={qzI}>
-                    <fieldset style={css("margin:0;background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:20px 22px;min-width:0")}>
+                <div className={"ak-play"}>
+                  <div className={"ak-pcard"}>
+                    <h3 id={"quiz-h"} className={"np3-disp ak-ph"}>{"Quick check"}</h3>
+                    <div className={"ak-qdots"} role={"group"} aria-label={"Questions"}>
+                      {(v.quizDots || []).map((d, dI) => (<button key={dI} type={"button"} onClick={d.go} aria-label={"Question " + (dI + 1)} aria-current={d.on ? "step" : undefined} className={"ak-qd" + (d.on ? " on" : "") + (d.done ? (d.right ? " ok" : " no") : "")} />))}
+                    </div>
+                    {(v.quiz || []).filter((q, qI) => qI === v.quizI).map((qz) => (<fieldset key={qz.key} className={"ak-qcard"}>
                       <legend style={css("float:left;width:100%;padding:0;margin:0 0 14px;font-weight:700;font-size:20px;line-height:1.35")}>
                         <span className={"fz-topicchip"}>{qz.topic}</span>
                         {qz.q}
                       </legend>
                       <div style={css("display:flex;flex-direction:column;gap:8px;clear:both")}>
                         {(qz.opts || []).map((op, opI) => (<React.Fragment key={opI}>
-                          <button type={"button"} className={"np3-chip"} onClick={op.pick} aria-pressed={op.picked} disabled={op.locked} style={css(op.style)}>
+                          <button type={"button"} className={op.cls} onClick={op.pick} aria-pressed={op.picked} disabled={op.locked} style={css(op.style)}>
                             {op.t}
                           </button>
                         </React.Fragment>))}
@@ -583,46 +669,53 @@ export default function view(v) {
                           {` ${qz.why}`}
                         </p>
                       </>) : null}
-                    </fieldset>
-                  </React.Fragment>))}
-                </div>
-              </section>
-              <section aria-labelledby={"how-h"} style={css("max-width:1240px;margin:0 auto;padding:30px 32px 70px")}>
-                <h2 id={"how-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0 0 30px;border-top:3px solid var(--ink);padding-top:16px")}>
-                  {"How one story plays"}
-                </h2>
-                <ol className={"np3-steps"} style={css("list-style:none;margin:0;padding:0")}>
-                  {(v.steps || []).map((st, stI) => (<React.Fragment key={stI}>
-                    <li style={css("background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:24px")}>
-                      <span aria-hidden={"true"} lang={"bn"} style={css(`width:54px;height:54px;margin-bottom:14px;border-radius:50%;background:${st.color};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;color:${st.fg};line-height:1`)}>
-                        {st.num}
-                      </span>
-                      <h3 className={"np3-disp"} style={css("font-weight:800;font-size:28px;margin:0 0 6px")}>
-                        {st.title}
-                      </h3>
-                      <p style={css("margin:0;font-size:18px;line-height:1.5;color:var(--muted)")}>
-                        {st.text}
+                    </fieldset>))}
+                    <div className={"ak-qfoot"}>
+                      <span className={"ak-qpos"}>{v.quizDone ? v.quizScore : v.quizPos}</span>
+                      {v.quizAnswered && v.quizHasNext ? <button type={"button"} className={"fz-dykbtn"} onClick={v.quizNext}>{"Next question"}</button> : null}
+                      {v.quizDone ? <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.quizAgain}>{"Play again"}</button> : null}
+                      {(v.quiz || []).filter((q, qI) => qI === v.quizI).map((qz) => (qz.done ? <button key={"r" + qz.key} type={"button"} className={"ak-link"} onClick={qz.report}>{"Wrong answer? Tell us"}</button> : null))}
+                    </div>
+                  </div>
+                  {v.dyk && v.dyk.has ? (<div className={"ak-pcard"}>
+                    <h3 id={"dyk-h"} className={"np3-disp ak-ph"}>{"Did you know?"}</h3>
+                    <div role={"group"} aria-label={"Fact topics"} style={css("display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px")}>
+                      {(v.dyk.tabs || []).map((t, tI) => (<React.Fragment key={tI}>
+                        <button type={"button"} onClick={t.go} aria-pressed={t.on} style={css(t.style)}>
+                          {t.name}
+                        </button>
+                      </React.Fragment>))}
+                    </div>
+                    <div className={"fz-dyk ak-dyk"} style={css(`border-left-color:${v.dyk.color}`)}>
+                      <p key={v.dyk.hook} className={"np3-disp fz-dykhook ak-hook"} aria-live={"polite"}>
+                        {v.dyk.hook}
                       </p>
-                    </li>
-                  </React.Fragment>))}
-                </ol>
-              </section>
-              <section aria-labelledby={"trust-h"} style={css("max-width:1240px;margin:0 auto;padding:30px 32px 70px")}>
-                <h2 id={"trust-h"} className={"np3-disp"} style={css("font-weight:800;font-size:44px;line-height:1.05;margin:0 0 20px;border-top:3px solid var(--ink);padding-top:16px")}>
-                  {"You can always see where it came from"}
-                </h2>
-                <ul style={css("list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;font-size:20px;line-height:1.45")}>
-                  {(v.trust || []).map((t, tI) => (<React.Fragment key={tI}>
-                    <li style={css("display:flex;gap:14px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:12px")}>
-                      <svg viewBox={"0 0 24 24"} width={"24"} height={"24"} aria-hidden={"true"} style={css("flex:none;margin-top:3px")}>
-                        <path d={"M4 12.5l5 5L20 6.5"} fill={"none"} strokeWidth={"3"} strokeLinecap={"round"} strokeLinejoin={"round"} style={css("stroke:var(--accent2)")} />
-                      </svg>
-                      <span>
-                        {t}
-                      </span>
-                    </li>
-                  </React.Fragment>))}
-                </ul>
+                      {v.dyk.open ? (<>
+                        <p className={"np3-in fz-dykmore"}>
+                          {v.dyk.more}
+                        </p>
+                      </>) : null}
+                      <div className={"fz-dykbar"}>
+                        <button type={"button"} className={"fz-dykbtn"} onClick={v.dyk.toggle} aria-expanded={v.dyk.open ? "true" : "false"}>
+                          {v.dyk.label}
+                        </button>
+                        <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.dyk.next}>
+                          {"Next fact"}
+                        </button>
+                        <span className={"fz-dykpos"}>
+                          {v.dyk.section + ", " + v.dyk.pos}
+                        </span>
+                      </div>
+                    </div>
+                    <div className={"ak-qfoot"}><button type={"button"} className={"ak-link"} onClick={v.dykReport}>{"Spotted a mistake in this fact?"}</button></div>
+                  </div>) : null}
+                </div>
+                {v.wotd ? (<div className={"ak-word"} data-io={"1"}>
+                  <span className={"ak-wlab"}>{"Word of the day"}</span>
+                  <p className={"ak-wterm np3-disp"}><Flap word={v.wotd.term} /></p>
+                  <p className={"ak-wmean"}>{v.wotd.meaning}</p>
+                  <a className={"ak-wfrom"} href={v.wotd.href} onClick={v.wotd.open}>{"From: " + v.wotd.from}</a>
+                </div>) : null}
               </section>
               <section id={"join"} aria-labelledby={"join-h"} style={css("padding:20px 32px 100px")}>
                 <div style={css("max-width:1000px;margin:0 auto;background:var(--panel);border:2px solid var(--line);border-radius:24px;padding:52px 40px;text-align:center")}>
@@ -653,6 +746,12 @@ export default function view(v) {
             </div>
           </>) : null}
           {v.vStory ? (<>
+            <div className={"ak-kp"} aria-hidden={"true"}>
+              <span className={"ak-kp-s"} />
+              <span className={"ak-kp-k"}>
+                <svg viewBox={"0 0 30 40"} width={"26"} height={"34"}><path d={"M15 1l12 12-12 16L3 13z"} fill={"#D21F14"} /><path d={"M15 1l12 12H15z"} fill={"#FFD400"} /><path d={"M3 13l12 16V13z"} fill={"#FFD400"} /><path d={"M15 29q-5 3-2 6t-3 5"} fill={"none"} strokeWidth={"2.2"} strokeLinecap={"round"} style={css("stroke:#D21F14")} /></svg>
+              </span>
+            </div>
             <div className={v.pageClass} style={css("max-width:900px;margin:0 auto;padding:20px 32px 90px")}>
               <div style={css("display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:26px")}>
                 <p style={css("margin:0;font-weight:600;font-size:16px;color:var(--muted)")}>
@@ -670,41 +769,43 @@ export default function view(v) {
                   </button>
                 </div>
               </div>
-              {v.even ? (<>
-                <div className={"pg-in"}>
-                  <img className={"fz-hero"} src={v.heroImg} alt={v.heroAlt} width={"400"} height={"260"} />
-                  <p style={css("margin:0 0 12px")}>
-                    <span style={css(`display:inline-block;background:${v.s.color};color:#FFFFFF;font-weight:700;font-size:15px;border-radius:999px;padding:4px 12px`)}>
-                      {v.s.cat}
+              {v.even ? storyHead(v) : null}
+              {v.odd ? storyHead(v) : null}
+              {v.isLive ? (<>
+                <section aria-labelledby={"src-h"} className={"fz-src"}>
+                  <h2 id={"src-h"} className={"pg-disp"} style={css("font-weight:800;font-size:30px;margin:0 0 6px")}>
+                    {"Read the full story"}
+                  </h2>
+                  <p style={css("margin:0 0 14px;font-size:17px;line-height:1.5;color:var(--muted)")}>
+                    {v.noAI ? "The simple version of this one arrives with the next update. Until then, here is the publisher's own report." : "The exact details and quotes are in the original report."}
+                  </p>
+                  <a className={"fz-srcbtn"} href={v.s.link} target={"_blank"} rel={"noopener noreferrer"}>
+                    <span style={css("font-weight:700;font-size:15px;color:var(--muted)")}>
+                      {`Original report from ${v.s.source}`}
                     </span>
-                  </p>
-                  <h1 className={"pg-h1 pg-disp"} style={css("font-weight:800;font-size:84px;line-height:.95;margin:0 0 16px")}>
-                    {v.s.title}
-                  </h1>
-                  <p style={css("margin:0 0 36px;font-size:17px;color:var(--muted)")}>
-                    {v.storyMeta}
-                  </p>
-                  {v.hasSummary ? <p className={"fz-lead"}>{v.s.summary}</p> : null}
-                </div>
-              </>) : null}
-              {v.odd ? (<>
-                <div className={"pg-in"}>
-                  <img className={"fz-hero"} src={v.heroImg} alt={v.heroAlt} width={"400"} height={"260"} />
-                  <p style={css("margin:0 0 12px")}>
-                    <span style={css(`display:inline-block;background:${v.s.color};color:#FFFFFF;font-weight:700;font-size:15px;border-radius:999px;padding:4px 12px`)}>
-                      {v.s.cat}
+                    <span className={"pg-disp"} style={css("font-weight:800;font-size:24px;line-height:1.15")}>
+                      {v.s.orig}
                     </span>
-                  </p>
-                  <h1 className={"pg-h1 pg-disp"} style={css("font-weight:800;font-size:84px;line-height:.95;margin:0 0 16px")}>
-                    {v.s.title}
-                  </h1>
-                  <p style={css("margin:0 0 36px;font-size:17px;color:var(--muted)")}>
-                    {v.storyMeta}
-                  </p>
-                  {v.hasSummary ? <p className={"fz-lead"}>{v.s.summary}</p> : null}
-                </div>
+                    <span className={"fz-srcgo"}>
+                      {"Open the original (new tab)"}
+                    </span>
+                  </a>
+                  {v.st.hasAlso ? (<div className={"ak-also"}>
+                    <p className={"ak-alsolab"}>{"Also reported by"}</p>
+                    <ul>
+                      {(v.st.also || []).map((a, aI) => (<li key={aI}><a href={a.link} target={"_blank"} rel={"noopener noreferrer"}><b>{a.source}</b>{": " + a.title}</a></li>))}
+                    </ul>
+                  </div>) : null}
+                </section>
               </>) : null}
-              <section aria-labelledby={"l1"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
+              {v.st.hasMore ? (<section className={"ak-moresec"} aria-label={"More about this story"}>
+                <button type={"button"} className={"ak-morebtn"} onClick={v.st.toggleMore} aria-expanded={v.st.more ? "true" : "false"} aria-controls={"ak-more"}>
+                  <span className={"ak-mtxt"}><b>{v.st.more ? "Less" : "More"}</b><small>{"Key points, why it matters, word meanings"}</small></span>
+                  <svg viewBox={"0 0 24 24"} width={"26"} height={"26"} aria-hidden={"true"} className={"ak-chev"}><path d={"M6 9l6 6 6-6"} fill={"none"} strokeWidth={"2.6"} strokeLinecap={"round"} strokeLinejoin={"round"} style={css("stroke:currentColor")} /></svg>
+                </button>
+                <div id={"ak-more"} className={"ak-more" + (v.st.more ? " on" : "")} inert={!v.st.more}>
+                  <div className={"ak-moreIn"}>
+              <section className={"ak-mi"} style={{ ...css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:34px"), '--i': 0 }} aria-labelledby={"l1"}>
                 <h2 id={"l1"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 16px")}>
                   <span aria-hidden={"true"} style={css("width:44px;height:44px;border-radius:50%;background:#FFD400;color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:Anek Bangla,sans-serif")}>
                     {"1"}
@@ -720,7 +821,7 @@ export default function view(v) {
                 </ul>
               </section>
               {v.hasWhy ? (<>
-              <section aria-labelledby={"l2"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
+              <section className={"ak-mi"} style={{ ...css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:34px"), '--i': 1 }} aria-labelledby={"l2"}>
                 <h2 id={"l2"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 16px")}>
                   <span aria-hidden={"true"} style={css("width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:Anek Bangla,sans-serif")}>
                     {"2"}
@@ -736,7 +837,7 @@ export default function view(v) {
               </section>
               </>) : null}
               {v.hasTerms ? (<>
-                <section aria-labelledby={"l4"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
+                <section className={"ak-mi"} style={{ ...css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:34px"), '--i': 2 }} aria-labelledby={"l4"}>
                   <h2 id={"l4"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 16px")}>
                     <span aria-hidden={"true"} style={css("width:44px;height:44px;border-radius:50%;background:#D21F14;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:Anek Bangla,sans-serif")}>
                       {"3"}
@@ -752,7 +853,7 @@ export default function view(v) {
                 </section>
               </>) : null}
               {v.isSample ? (<>
-              <section aria-labelledby={"l3"} style={css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:40px")}>
+              <section className={"ak-mi"} style={{ ...css("border-top:3px solid var(--ink);padding-top:18px;margin-bottom:34px"), '--i': 3 }} aria-labelledby={"l3"}>
                 <h2 id={"l3"} className={"pg-disp"} style={css("display:flex;align-items:center;gap:12px;font-weight:800;font-size:34px;margin:0 0 20px")}>
                   <span aria-hidden={"true"} style={css("width:44px;height:44px;border-radius:50%;background:#D21F14;color:#FFF;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;font-family:Anek Bangla,sans-serif")}>
                     {"3"}
@@ -813,27 +914,9 @@ export default function view(v) {
                 </p>
               </section>
               </>) : null}
-              {v.isLive ? (<>
-                <section aria-labelledby={"src-h"} className={"fz-src"}>
-                  <h2 id={"src-h"} className={"pg-disp"} style={css("font-weight:800;font-size:30px;margin:0 0 8px")}>
-                    {"Read the full story"}
-                  </h2>
-                  <p style={css("margin:0 0 16px;font-size:17px;line-height:1.5;color:var(--muted)")}>
-                    {v.noAI ? "The simple version of this one arrives with the next update. Until then, here is the publisher's own report." : (v.s.deep ? "This overview was written by AI in its own words after reading the report. It can leave things out or contain mistakes, so for the full details and exact quotes, read the original report." : "This overview was written by AI from the publisher's headline and short description only, so it covers just the basics and can contain mistakes. The full details are in the original report.")}
-                  </p>
-                  <a className={"fz-srcbtn"} href={v.s.link} target={"_blank"} rel={"noopener noreferrer"}>
-                    <span style={css("font-weight:700;font-size:15px;color:var(--muted)")}>
-                      {`Original report from ${v.s.source}`}
-                    </span>
-                    <span className={"pg-disp"} style={css("font-weight:800;font-size:24px;line-height:1.15")}>
-                      {v.s.orig}
-                    </span>
-                    <span className={"fz-srcgo"}>
-                      {"Open the original (new tab)"}
-                    </span>
-                  </a>
-                </section>
-              </>) : null}
+                  </div>
+                </div>
+              </section>) : null}
               <section aria-labelledby={"rel-h"} style={css("margin-bottom:34px")}>
                 <h2 id={"rel-h"} className={"pg-disp"} style={css("font-weight:800;font-size:32px;margin:0 0 14px")}>
                   {"Keep exploring"}
@@ -1007,13 +1090,10 @@ export default function view(v) {
                 <h2 id={"fix-h"} className={"pg-disp"} style={css("font-weight:800;font-size:34px;margin:0 0 8px")}>
                   {"Spotted a mistake?"}
                 </h2>
-                <p style={css("margin:0 0 6px;font-size:19px;line-height:1.5")}>
-                  {"Tell us at "}
-                  <a href={"#fix-h"}>
-                    {"[your contact email]"}
-                  </a>
-                  {". When we correct a story, the correction is written on the story itself, with the date, so you can see what changed."}
+                <p style={css("margin:0 0 14px;font-size:19px;line-height:1.5")}>
+                  {"Tap the button and tell us what looks wrong. When we correct a story, the correction is written on the story itself, with the date, so you can see what changed."}
                 </p>
+                <button type={"button"} className={"fz-dykbtn"} onClick={v.reportSite}>{"Report a mistake"}</button>
               </section>
               <section aria-labelledby={"faq-h"} style={css("border-top:3px solid var(--ink);padding-top:16px")}>
                 <h2 id={"faq-h"} className={"pg-disp"} style={css("font-weight:800;font-size:40px;margin:0 0 10px")}>
@@ -1082,12 +1162,37 @@ export default function view(v) {
               </span>
               {" KI? News explained for people who skip the newspaper."}
             </span>
-            <span>
-              {"Picked up and dropped off in Dhaka"}
+            <span className={"ak-foot"}>
+              <a href={"/about"} onClick={v.goFaq}>{"FAQ"}</a>
+              <button type={"button"} className={"ak-link"} onClick={v.reportSite}>{"Report a mistake"}</button>
+              <span>{"Picked up and dropped off in Dhaka"}</span>
             </span>
           </div>
         </footer>
       </div>
+      {v.rep.open ? (<div className={"ak-sheet-wrap"}>
+        <div className={"ak-scrim"} onClick={v.rep.close} aria-hidden={"true"} />
+        <form className={"ak-sheet"} role={"dialog"} aria-modal={"true"} aria-labelledby={"rep-h"} onSubmit={v.rep.send}>
+          {v.rep.done ? (<div className={"ak-sent"} role={"status"}>
+            <svg viewBox={"0 0 48 48"} width={"64"} height={"64"} aria-hidden={"true"}><circle cx={"24"} cy={"24"} r={"21"} fill={"none"} strokeWidth={"3"} style={css("stroke:#00924A")} className={"ak-ring"} /><path d={"M14 25l7 7 13-15"} fill={"none"} strokeWidth={"4"} strokeLinecap={"round"} strokeLinejoin={"round"} style={css("stroke:#00924A")} className={"ak-tick"} /></svg>
+            <p className={"np3-disp"}>{"Thanks. We will check it."}</p>
+          </div>) : (<>
+            <h2 id={"rep-h"} className={"np3-disp"}>{"Report a mistake"}</h2>
+            {v.rep.title ? <p className={"ak-rt"}>{v.rep.title}</p> : null}
+            <div role={"group"} aria-label={"What is wrong"} className={"ak-kinds"}>
+              {(v.rep.kinds || []).map((k, kI) => (<button key={kI} type={"button"} className={"pg-btn ak-kind"} aria-pressed={k.on} onClick={k.go}>{k.label}</button>))}
+            </div>
+            <label htmlFor={"rep-note"}>{"What looks wrong? (optional)"}</label>
+            <textarea id={"rep-note"} autoFocus rows={3} maxLength={600} value={v.rep.note} onChange={v.rep.onNote} placeholder={"For example: the number is different in the original report."} />
+            {v.rep.error ? <p role={"alert"} className={"ak-err"}>{"Could not send. Check your connection and try again."}</p> : null}
+            <div className={"ak-sheet-btns"}>
+              <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.rep.close}>{"Cancel"}</button>
+              <button type={"submit"} className={"fz-dykbtn"} disabled={v.rep.sending || !v.rep.canSend}>{v.rep.sending ? "Sending" : "Send report"}</button>
+            </div>
+          </>)}
+        </form>
+      </div>) : null}
+      <div className={"ak-toast" + (v.toastOn ? " on" : "")} role={"status"} aria-live={"polite"}>{v.toast}</div>
     </div>
   </>);
 }

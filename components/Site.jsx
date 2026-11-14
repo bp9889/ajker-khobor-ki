@@ -14,7 +14,7 @@ class DCLogic extends React.Component {
 export default class Site extends DCLogic {
   constructor(props){
     super(props);
-    this.state = { view: 'home', si: 0, f: 'all', q: '', liveF: 'all', gone: false, now: 0, faqOpen: 0, trN: 0, tr: 'none', dir: 1, read: [], dark: false, trDone: true, word: 0, phase: 'ambient', invite: true, answers: {}, ansSlot: null, dykTab: 0, dykIdx: {}, dykOpen: false, onboard: -1, picked: [], flash: 0, best: 0, crashMsg: '', all: false, score: 0, rushBest: 0, overMsg: '', joined: false };
+    this.state = { view: 'home', si: 0, f: 'all', q: '', liveF: 'all', gone: false, now: 0, faqOpen: 0, trN: 0, tr: 'none', dir: 1, read: [], dark: false, trDone: true, word: 0, phase: 'ambient', invite: true, answers: {}, ansSlot: null, dykTab: 0, dykIdx: {}, dykOpen: false, onboard: -1, picked: [], flash: 0, best: 0, crashMsg: '', all: false, score: 0, rushBest: 0, overMsg: '', joined: false, saved: [], newN: 0, panel: false, pq: '', ptab: 'find', more: false, canSpeak: false, speaking: false, simple: {}, simpleOn: {}, simpleBusy: '', simpleErr: '', report: null, rNote: '', rState: '', quizI: 0, toast: '', toastOn: false, liveAll: false };
     // Open the story named in the address. If it is no longer on the live list, show all stories instead.
     const at = props.view === 'story' ? this.list().findIndex((s) => s.id === props.sid) : -1;
     this.state.view = props.view === 'story' && at < 0 ? 'all' : (props.view || 'home');
@@ -32,7 +32,7 @@ export default class Site extends DCLogic {
     if (D && D.items && D.items.length >= 5) {
       L = D.items.map((x, i) => ({ id: x.id, live: true, hasAI: !!x.summary, cat: x.section, color: SC[x.section] || '#1A1714', title: x.headline || x.title, orig: x.title, time: '60 sec',
         summary: x.summary || '', quick: x.points && x.points.length ? x.points : (x.desc ? [x.desc] : []), quickTitle: x.summary ? 'The quick read' : "From the publisher's feed", why: x.why || '', terms: x.terms || [],
-        link: x.link, source: x.source, date: x.date, art: x.tag, alt: 'Illustration for this story', brief: x.brief || (x.summary ? x.summary.split(/(?<=[.!?])\s/)[0] : '') || x.desc || '', deep: !!x.deep, ask: x.ask || '', day: i < 5 ? "Today's five" : 'More live headlines' }));
+        link: x.link, source: x.source, date: x.date, art: x.tag, alt: 'Illustration for this story', brief: x.brief || (x.summary ? x.summary.split(/(?<=[.!?])\s/)[0] : '') || x.desc || '', deep: !!x.deep, ask: x.ask || '', also: x.also || [], desc: x.desc || '', day: i < 5 ? "Today's five" : 'More live headlines' }));
       const pin = STORIES.find((s) => s.slug === this.props.sid);
       if (pin) L.push(Object.assign({ id: pin.slug, quickTitle: 'The quick read' }, pin, { day: 'Sample explainers' }));
     } else L = STORIES.map((s) => Object.assign({ id: s.slug, quickTitle: 'The quick read' }, s));
@@ -63,11 +63,27 @@ export default class Site extends DCLogic {
     window.addEventListener('popstate', this.onPop);
     this.setState({ now: Date.now() }); this.nowT = setInterval(() => this.setState({ now: Date.now() }), 60000);
     if (this.state.view === 'story') this.markRead(this.list()[this.state.si].id);
+    // Saved stories and the "new since your last visit" count live on this phone only.
+    let newN = 0;
+    try {
+      const ls = window.localStorage, ss = window.sessionStorage;
+      let prev = ss.getItem('akk-prev');
+      if (prev === null) { prev = ls.getItem('akk-visit') || ''; ss.setItem('akk-prev', prev); }
+      ls.setItem('akk-visit', String(Date.now()));
+      const t = Number(prev);
+      if (t) newN = this.list().filter((x) => x.live && x.date && new Date(x.date).getTime() > t).length;
+      this.prevVisit = t || 0;
+    } catch (e) {}
+    this.setState({ saved: this.initSaved(), newN: newN, canSpeak: 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined' });
+    this.onKey = (e) => { if (e.key !== 'Escape') return; if (this.state.report) this.setState({ report: null }); else if (this.state.panel) this.setState({ panel: false }); };
+    window.addEventListener('keydown', this.onKey);
     this.reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!this.reduce) this.iv = setInterval(() => this.setState({ word: (this.state.word + 1) % 4 }), 2300);
     if (!this.cv && typeof document !== 'undefined') { const el = document.getElementById('np3-canvas'); if (el) { this.cv = el; this.loop(); } }
+    this.arm();
   }
-  componentWillUnmount(){ this.unsyncTheme(); try { window.removeEventListener('popstate', this.onPop); } catch (e) {} this.dead = true; clearInterval(this.iv); clearInterval(this.nowT); clearTimeout(this.wt); if (this.raf) cancelAnimationFrame(this.raf); }
+  componentDidUpdate(pp, ps){ if (ps.view !== this.state.view || ps.trDone !== this.state.trDone) this.arm(); }
+  componentWillUnmount(){ this.unsyncTheme(); try { window.removeEventListener('keydown', this.onKey); window.speechSynthesis.cancel(); if (this.io) this.io.disconnect(); } catch (e) {} clearTimeout(this.toastT); try { window.removeEventListener('popstate', this.onPop); } catch (e) {} this.dead = true; clearInterval(this.iv); clearInterval(this.nowT); clearTimeout(this.wt); if (this.raf) cancelAnimationFrame(this.raf); }
   rnd(a, b){ const s = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return s - Math.floor(s); }
   stopWx(k){ return 900 + k * 1300; }
   obstacles(x0, x1){
@@ -253,6 +269,68 @@ export default class Site extends DCLogic {
     ctx.font = "600 15px 'Anek Bangla', sans-serif"; ctx.fillStyle = near ? '#D21F14' : P.muted;
     ctx.fillText(near ? 'Bus stand ahead: stop pedalling to pick up' : (g.pedal ? 'Pedalling' : (g.speed > 0.2 ? 'Coasting' : 'Stopped')), 24, 64);
   }
+  // One-shot animations that should play when a block scrolls into view (the Dhaka signs, the word of the day).
+  arm(){
+    if (typeof document === 'undefined') return;
+    const els = document.querySelectorAll('[data-io]:not([data-armed])');
+    if (!els.length) return;
+    if (this.reduce || !('IntersectionObserver' in window)) { els.forEach((el) => { el.setAttribute('data-armed', '1'); el.classList.add('io-in'); }); return; }
+    this.io = this.io || new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('io-in'); this.io.unobserve(en.target); } }), { threshold: 0.3 });
+    els.forEach((el) => { el.setAttribute('data-armed', '1'); el.classList.add('ak-armed'); this.io.observe(el); });
+  }
+  initSaved(){ try { const v = JSON.parse(window.localStorage.getItem('akk-saved') || '[]'); if (Array.isArray(v)) return v.filter((x) => x && typeof x.id === 'string' && typeof x.t === 'string').slice(0, 50); } catch (e) {} return []; }
+  toggleSave(st){
+    const has = this.state.saved.some((x) => x.id === st.id);
+    const saved = has ? this.state.saved.filter((x) => x.id !== st.id) : [{ id: st.id, t: st.title, c: st.cat, co: st.color, s: st.source || '', l: st.link || '', live: !!st.live }].concat(this.state.saved).slice(0, 50);
+    this.setState({ saved: saved }); try { window.localStorage.setItem('akk-saved', JSON.stringify(saved)); } catch (e) {}
+    this.say(has ? 'Removed from saved' : 'Saved on this phone');
+  }
+  say(msg){ clearTimeout(this.toastT); this.setState({ toast: msg, toastOn: true }); this.toastT = setTimeout(() => this.setState({ toastOn: false }), 2200); }
+  speak(text){
+    try {
+      const ss = window.speechSynthesis;
+      if (this.state.speaking) { ss.cancel(); this.setState({ speaking: false }); return; }
+      const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.95;
+      u.onend = () => this.setState({ speaking: false }); u.onerror = () => this.setState({ speaking: false });
+      this.setState({ speaking: true }); ss.speak(u);
+    } catch (e) { this.setState({ speaking: false }); }
+  }
+  stopSpeak(){ try { if (this.state.speaking) { window.speechSynthesis.cancel(); this.setState({ speaking: false }); } } catch (e) {} }
+  async simpler(id){
+    if (this.state.simple[id]) { this.setState({ simpleOn: Object.assign({}, this.state.simpleOn, { [id]: !this.state.simpleOn[id] }) }); return; }
+    if (this.state.simpleBusy) return;
+    this.setState({ simpleBusy: id, simpleErr: '' });
+    try {
+      const r = await fetch('/api/simpler?id=' + encodeURIComponent(id)), j = await r.json();
+      if (!r.ok || !j.text) throw new Error('no text');
+      this.setState((st) => ({ simple: Object.assign({}, st.simple, { [id]: j.text }), simpleOn: Object.assign({}, st.simpleOn, { [id]: true }), simpleBusy: '' }));
+    } catch (e) { this.setState({ simpleBusy: '', simpleErr: id }); }
+  }
+  openReport(r){ this.setState({ report: r, rNote: '', rState: '' }); }
+  async sendReport(){
+    const r = this.state.report; if (!r || this.state.rState === 'sending' || this.state.rState === 'done') return;
+    this.setState({ rState: 'sending' });
+    try {
+      const res = await fetch('/api/report', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ kind: r.kind, id: r.id, title: r.title, where: window.location.pathname, note: this.state.rNote }) });
+      if (!res.ok) throw new Error('bad');
+      this.setState({ rState: 'done' });
+      setTimeout(() => this.setState({ report: null, rNote: '', rState: '' }), 1900);
+    } catch (e) { this.setState({ rState: 'error' }); }
+  }
+  link(st){ return window.location.origin + pathFor('story', st); }
+  shareWA(st){ try { window.open('https://wa.me/?text=' + encodeURIComponent(st.title + ' ' + this.link(st)), '_blank', 'noopener'); } catch (e) {} }
+  shareMS(st){
+    try {
+      if (/Android|iPhone|iPad/i.test(navigator.userAgent)) window.location.href = 'fb-messenger://share/?link=' + encodeURIComponent(this.link(st));
+      else this.copy(st, 'Link copied. Paste it into Messenger.');
+    } catch (e) {}
+  }
+  copy(st, msg){
+    const url = this.link(st);
+    const done = () => this.say(msg || 'Link copied');
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(done, () => this.say(url)); return; } } catch (e) {}
+    this.say(url);
+  }
   initTr(){ try { const v = window.localStorage.getItem('akk-tr'); if (['shutter','rickshaw','halftone','unfold','ticket'].indexOf(v) >= 0) return v; } catch (e) {} return 'shutter'; }
   initRead(){ try { const v = JSON.parse(window.localStorage.getItem('akk-read') || '[]'); if (Array.isArray(v)) return v.filter((n) => typeof n === 'string'); } catch (e) {} return []; }
   initDark(){
@@ -273,7 +351,8 @@ export default class Site extends DCLogic {
     const E = this.list(), O = { home: 0, story: 1, all: 2, about: 3 }, cur = this.state.si;
     let fwd = (O[v] || 0) >= (O[this.state.view] || 0);
     if (v === 'story' && this.state.view === 'story' && extra && extra.si !== undefined) fwd = extra.si > cur || (extra.si === 0 && cur > 1);
-    const upd = Object.assign({ view: v, trN: this.state.trN + 1, trDone: false, dir: fwd ? 1 : -1, gone: false }, extra || {});
+    this.stopSpeak();
+    const upd = Object.assign({ view: v, trN: this.state.trN + 1, trDone: false, dir: fwd ? 1 : -1, gone: false, more: false, panel: false, report: null }, extra || {});
     const si = upd.si !== undefined ? upd.si : cur;
     this.setState(upd);
     if (v === 'story') this.markRead(E[si].id);
@@ -308,7 +387,8 @@ export default class Site extends DCLogic {
     const ago = (d) => { if (!now || !d) return ''; const m = Math.max(1, Math.round((now - new Date(d).getTime()) / 60000)); return m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' hr ago' : Math.round(m / 1440) + ' d ago'; };
     const from = (s) => s.source + (ago(s.date) ? ', ' + ago(s.date) : '');
     const liveAll = E.map((x, i) => ({ x: x, i: i })).filter((o) => o.x.live);
-    const liveShown = liveAll.filter((o) => lf === 'all' || o.x.cat === lf).slice(0, 18).map((o) => ({ title: o.x.title, section: o.x.cat, color: SC[o.x.cat] || 'var(--ink)', from: from(o.x), img: pic(o.i), href: pathFor('story', o.x), open: nav(() => this.go('story', { si: o.i })), read: this.state.read.indexOf(o.x.id) >= 0 ? 'Read' : '' }));
+    const liveFiltered = liveAll.filter((o) => lf === 'all' || o.x.cat === lf);
+    const liveShown = liveFiltered.slice(0, this.state.liveAll ? 30 : 12).map((o) => ({ isNew: !!(this.prevVisit && o.x.date && new Date(o.x.date).getTime() > this.prevVisit), title: o.x.title, section: o.x.cat, color: SC[o.x.cat] || 'var(--ink)', from: from(o.x), img: pic(o.i), href: pathFor('story', o.x), open: nav(() => this.go('story', { si: o.i })), read: this.state.read.indexOf(o.x.id) >= 0 ? 'Read' : '' }));
     const liveChips = ['all', 'Bangladesh', 'World', 'Tech', 'Sport'].filter((c) => c === 'all' || liveAll.some((o) => o.x.cat === c)).map((c) => { const on = lf === c; return { name: c === 'all' ? 'All' : c, on: on ? 'true' : 'false', go: () => this.setState({ liveF: c }), style: 'font-family:inherit;font-weight:700;font-size:16px;padding:9px 14px;border-radius:999px;cursor:pointer;border:2px solid ' + (on ? 'var(--ink)' : 'var(--line)') + ';background:' + (on ? 'var(--ink)' : 'transparent') + ';color:' + (on ? 'var(--bg)' : 'var(--ink)') }; });
     const until = (t) => { if (!now || !t) return ''; const m = Math.max(1, Math.round((t - now) / 60000)); return m >= 60 ? Math.floor(m / 60) + ' hr ' + (m % 60) + ' min' : m + ' min'; };
     const QUIZ = D.quiz && D.quiz.length >= 3 ? D.quiz : [
@@ -332,6 +412,42 @@ export default class Site extends DCLogic {
         label: open ? 'Hide the explanation' : 'Tell me more'
       };
     })();
+
+    // ---- reader features -------------------------------------------------------------------------------------------
+    const saved = this.state.saved, isSaved = (id) => saved.some((x) => x.id === id);
+    const T = this.props.today || null;
+    const signs = [];
+    if (T && Number.isFinite(T.temp)) signs.push({ key: 'wx', label: 'Dhaka now', pre: '', big: String(T.temp), post: '°C', sub: 'Feels like ' + T.feels + '°, ' + T.sky.toLowerCase(), color: 'var(--accent)' });
+    if (T && Number.isFinite(T.aqi)) signs.push({ key: 'aq', label: 'Air today', pre: '', big: String(T.aqi), post: '', sub: 'AQI: ' + T.aqiName, color: T.aqiColor });
+    if (T && Number.isFinite(T.usd)) signs.push({ key: 'fx', label: 'US dollar', pre: '৳', big: T.usd.toFixed(1), post: '', sub: 'for 1 USD', color: '#00924A' });
+    const terms = []; E.forEach((x, i) => { if (x.live && x.terms) x.terms.forEach((t) => { if (t.term.length <= 18 && t.term.indexOf('  ') < 0) terms.push({ term: t.term, meaning: t.meaning, i: i }); }); });
+    const wt = terms.length ? terms[Math.floor((D.slot || 0) / 4) % terms.length] : null;
+    const checked = D.checkedAt && now ? (() => { const m = Math.max(1, Math.round((now - D.checkedAt) / 60000)); return m < 60 ? 'News checked ' + m + ' min ago' : 'News checked ' + Math.round(m / 60) + ' hr ago'; })() : '';
+    // Search covers the stories on the site right now.
+    const needle = this.state.pq.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const hay = (x) => (x.title + ' ' + x.orig + ' ' + x.summary + ' ' + x.source + ' ' + x.cat + ' ' + (x.terms || []).map((t) => t.term).join(' ')).toLowerCase();
+    const found = needle.length ? E.map((x, i) => ({ x: x, i: i })).filter((o) => o.x.live && needle.every((w) => hay(o.x).indexOf(w) >= 0)).map((o) => ({ o: o, sc: needle.reduce((n, w) => n + (o.x.title.toLowerCase().indexOf(w) >= 0 ? 2 : 0), 0) })).sort((a, b) => b.sc - a.sc).slice(0, 8).map((r) => r.o) : [];
+    const row = (o) => ({ title: o.x.title, color: o.x.color, sub: o.x.source + (ago(o.x.date) ? ', ' + ago(o.x.date) : ''), href: pathFor('story', o.x), open: nav(() => this.go('story', { si: o.i })), saved: isSaved(o.x.id), toggle: () => this.toggleSave(o.x) });
+    const savedRows = saved.map((x) => { const ix = E.findIndex((e) => e.id === x.id); return { title: x.t, color: x.co || 'var(--ink)', sub: x.s + (ix < 0 ? ', no longer on the site' : ''), href: ix >= 0 ? pathFor('story', E[ix]) : (x.l || '#'), ext: ix < 0, open: ix >= 0 ? nav(() => this.go('story', { si: ix })) : undefined, saved: true, toggle: () => this.toggleSave({ id: x.id }) }; });
+    const sumOf = (x) => x.summary || x.brief || '';
+    const sid = es.id, simpleOn = !!(this.state.simpleOn[sid] && this.state.simple[sid]);
+    const leadText = simpleOn ? this.state.simple[sid] : sumOf(es);
+    const st = {
+      aiNote: isLive ? (es.hasAI ? "Retold by AI from " + es.source + "'s " + (es.deep ? 'article' : 'headline and short description') + '. It can leave things out or be wrong.' : "This is the publisher's own short description. The simple version arrives with the next update.") : 'A sample explainer that shows the format.',
+      isAI: isLive && es.hasAI, leadText: leadText, simpleOn: simpleOn, busy: this.state.simpleBusy === sid, err: this.state.simpleErr === sid,
+      canSimple: isLive && es.hasAI,
+      simpleLabel: this.state.simpleBusy === sid ? 'Making it simpler' : (simpleOn ? 'Show the first version' : (this.state.simple[sid] ? 'Explain it simpler' : 'Explain it simpler')),
+      simple: () => this.simpler(sid),
+      canSpeak: this.state.canSpeak && !!leadText, speaking: this.state.speaking, listen: () => this.speak(es.title + '. ' + leadText),
+      saved: isSaved(sid), save: () => this.toggleSave(es), wa: () => this.shareWA(es), ms: () => this.shareMS(es), copy: () => this.copy(es),
+      report: () => this.openReport({ kind: 'overview', id: sid, title: es.title }),
+      more: this.state.more, toggleMore: () => this.setState({ more: !this.state.more }), hasMore: isLive ? !!(es.hasAI && (es.quick.length || es.why || (es.terms && es.terms.length))) : true,
+      also: (es.also || []).map((a) => ({ source: a.source, title: a.title, link: a.link })), hasAlso: !!(es.also && es.also.length),
+      updated: isLive && ago(es.date) ? 'Published ' + ago(es.date) + ' by ' + es.source : (isLive ? 'From ' + es.source : 'Sample explainer'),
+    };
+    const kindsAll = [['overview', 'The summary'], ['quiz', 'A quiz answer'], ['fact', 'A fact'], ['other', 'Something else']];
+    const rp = this.state.report;
+    const rep = rp ? { open: true, title: rp.title || 'The site in general', kinds: kindsAll.map((k) => ({ label: k[1], on: rp.kind === k[0] ? 'true' : 'false', go: () => this.setState({ report: Object.assign({}, rp, { kind: k[0] }) }) })), note: this.state.rNote, onNote: (e) => this.setState({ rNote: e.target.value }), canSend: !!(rp.title || this.state.rNote.trim()), send: (e) => { if (e && e.preventDefault) e.preventDefault(); this.sendReport(); }, close: () => this.setState({ report: null }), state: this.state.rState, sending: this.state.rState === 'sending', done: this.state.rState === 'done', error: this.state.rState === 'error' } : { open: false };
     const faq = [
       ['Is it free?', 'Yes. Every story and quiz is free to read.'],
       ['Who writes the summaries?', 'An AI model reads the public text of each article and retells what happened in one short paragraph of simple words, adding nothing of its own. It can still leave things out or make mistakes, so every story links to the original report. Overviews, the quiz and the Did you know facts refresh every 6 hours.'],
@@ -340,6 +456,22 @@ export default class Site extends DCLogic {
     ];
     return {
       vHome: V === 'home',
+      st: st, rep: rep, signs: signs, hasSigns: signs.length > 0, signCols: Math.max(1, signs.length),
+      wotd: wt ? { term: wt.term, letters: wt.term.split(''), meaning: wt.meaning, from: E[wt.i].title, open: nav(() => this.go('story', { si: wt.i })), href: pathFor('story', E[wt.i]) } : null,
+      checked: checked, newN: this.state.newN, newLabel: this.state.newN + (this.state.newN === 1 ? ' new story' : ' new stories') + ' since your last visit',
+      seeNew: () => { this.setState({ liveF: 'all' }); try { const el = document.getElementById('live-h'); if (el) el.scrollIntoView({ behavior: this.reduce ? 'auto' : 'smooth' }); } catch (x) {} },
+      liveMore: liveFiltered.length > liveShown.length && !this.state.liveAll, liveMoreLabel: 'Show ' + Math.min(18, liveFiltered.length - liveShown.length) + ' more', showMoreLive: () => this.setState({ liveAll: true }), toAll: () => this.go('all'),
+      panel: { open: this.state.panel, q: this.state.pq, onQ: (e) => this.setState({ pq: e.target.value, ptab: 'find' }), tab: this.state.ptab, findTab: () => this.setState({ ptab: 'find' }), savedTab: () => this.setState({ ptab: 'saved' }), find: this.state.ptab === 'find', savedOn: this.state.ptab === 'saved', results: found.map(row), noResults: needle.length > 0 && !found.length, idle: !needle.length, savedRows: savedRows, noSaved: !saved.length, savedN: saved.length, close: () => this.setState({ panel: false }) },
+      togglePanel: () => this.setState({ panel: !this.state.panel, ptab: 'find' }), panelBtnLabel: this.state.panel ? 'Close search' : 'Search stories and see saved', savedN: saved.length,
+      toast: this.state.toast, toastOn: this.state.toastOn,
+      quizI: Math.min(this.state.quizI, QUIZ.length - 1), quizTotal: QUIZ.length, quizPos: 'Question ' + (Math.min(this.state.quizI, QUIZ.length - 1) + 1) + ' of ' + QUIZ.length,
+      quizDone: Object.keys(ANS).length === QUIZ.length, quizHasNext: Math.min(this.state.quizI, QUIZ.length - 1) < QUIZ.length - 1, quizAnswered: ANS[Math.min(this.state.quizI, QUIZ.length - 1)] !== undefined,
+      quizDots: QUIZ.map((x, i) => ({ on: i === Math.min(this.state.quizI, QUIZ.length - 1), done: ANS[i] !== undefined, right: ANS[i] === x.a, go: () => this.setState({ quizI: i }) })),
+      quizNext: () => this.setState({ quizI: Math.min(QUIZ.length - 1, this.state.quizI + 1) }), quizAgain: () => this.setState({ answers: {}, quizI: 0, ansSlot: D.slot || null }),
+      quizScore: 'You got ' + QUIZ.filter((x, i) => ANS[i] === x.a).length + ' of ' + QUIZ.length + '.',
+      dykReport: () => this.openReport({ kind: 'fact', id: 'fact-' + (D.slot || 0), title: DYK.hook }),
+      goFaq: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go('about'); setTimeout(() => { try { const el = document.getElementById('faq-h'); if (el) el.scrollIntoView({ behavior: this.reduce ? 'auto' : 'smooth' }); } catch (x) {} }, 750); },
+      reportSite: () => this.openReport({ kind: 'other', id: '', title: '' }),
       related: [1, 2, 3].map((k) => { const j = step(k), e = E[j]; return { title: e.title, cat: e.cat, color: e.color, time: e.time, img: pic(j), href: pathFor('story', e), open: nav(() => this.go('story', { si: j })) }; }),
       pics: E.slice(0, 5).map((e, j) => ({ title: e.title, brief: e.brief, cat: e.cat, color: e.color, time: e.time, from: e.live ? from(e) : 'Sample', img: pic(j), href: pathFor('story', e), open: nav(() => this.go('story', { si: j })) })),
       heroImg: pic(si), heroAlt: es.alt, rideImg: pic(on >= 0 ? on : 0), rideHref: pathFor('story', E[on >= 0 ? on : 0]),
@@ -402,13 +534,13 @@ export default class Site extends DCLogic {
         const Q = QUIZ;
         return Q.map((x, i) => {
           const ans = ANS[i], done = ans !== undefined;
-          return { q: x.q, topic: x.topic || 'News', done: done, why: x.why, verdict: done && ans === x.a ? 'Right.' : 'Not quite. The answer is ' + x.opts[x.a] + '.', verdictColor: done && ans === x.a ? '#00924A' : 'var(--accent2)',
+          return { key: i + '-' + (D.slot || 0), idx: i, q: x.q, topic: x.topic || 'News', done: done, report: () => this.openReport({ kind: 'quiz', id: 'quiz-' + (D.slot || 0) + '-' + i, title: x.q }), why: x.why, verdict: done && ans === x.a ? 'Right.' : 'Not quite. The answer is ' + x.opts[x.a] + '.', verdictColor: done && ans === x.a ? '#00924A' : 'var(--accent2)',
             opts: x.opts.map((t, j) => {
               const picked = ans === j, right = j === x.a;
               let st = 'width:100%;text-align:left;font-family:inherit;font-weight:600;font-size:17px;padding:11px 14px;border-radius:12px;color:var(--ink);cursor:' + (done ? 'default' : 'pointer') + ';border:2px solid var(--line);background:transparent';
-              if (done && right) st += ';border-color:#00924A;background:rgba(0,146,74,.12)';
+              if (done && right) st += ';border-color:#00924A';
               if (done && picked && !right) st += ';border-color:var(--accent2);background:rgba(210,31,20,.10)';
-              return { t: t, picked: picked ? 'true' : 'false', locked: done, style: st, pick: () => { if (ANS[i] !== undefined) return; this.setState({ ansSlot: D.slot || null, answers: Object.assign({}, ANS, { [i]: j }) }); } };
+              return { t: t, picked: picked ? 'true' : 'false', locked: done, style: st, cls: 'np3-chip' + (done && right ? ' ak-ok' : '') + (done && picked && !right ? ' ak-no' : ''), pick: () => { if (ANS[i] !== undefined) return; this.setState({ ansSlot: D.slot || null, answers: Object.assign({}, ANS, { [i]: j }) }); } };
             }) };
         });
       })(),
