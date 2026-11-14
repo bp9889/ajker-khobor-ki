@@ -31,6 +31,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - Motion: shared curves are `--ak-out`, `--ak-io`, `--ak-drawer` in `app/globals.css` (section "Reader features and motion"). One-shot scroll-into-view moments use `data-io` on an element (`Site.arm()` adds `ak-armed` then `io-in`). Every animation has a gentler `prefers-reduced-motion` version.
 - Summaries must be in our own words. Always name and link the original publisher. Never copy article text or publishers' photos. The overview must retell in new words, with no quotation marks.
 - Never draw real, recognisable people, not even as cartoons. Stories about people get an invented character picked by role or situation: `batter`, `striker`, `minister`, `leader`, `founder`, `scientist`, `performer` (made by `scripts/make-cast.py`; keywords in `data/art-tags.json`), or `speech` as the general one.
+- `government`, `diplomacy` and `speech` show the Bangladesh flag, so `tagFor()` in lib/news.js switches stories from World, Tech and Sport to the `-w` copies (plain blue banner). Edit both copies if you change one.
 - The four "Explore by topic" cards carry a flag / world map / chip / sports picture (`TopicArt` in components/SiteView.jsx).
 - Respect `prefers-reduced-motion`. Must work on a 360px-wide phone.
 
