@@ -16,8 +16,15 @@ function Kite({ a, b, w, f, top, delay, small }) {
     <i className="sk-string" />
   </div>);
 }
+// A flat-bottomed cloud made of one rounded base and three puffs. Drawn twice (outline layer, then fill layer) so no lines show inside it.
+const PUFFS = [['rect', 14, 36, 92, 16, 8], ['circle', 34, 38, 13], ['circle', 58, 27, 18], ['circle', 84, 32, 14]];
+function Shapes({ cls }) {
+  return (<g className={cls}>{PUFFS.map((p, i) => p[0] === 'rect'
+    ? <rect key={i} x={p[1]} y={p[2]} width={p[3]} height={p[4]} rx={p[5]} />
+    : <circle key={i} cx={p[1]} cy={p[2]} r={p[3]} />)}</g>);
+}
 function Cloud({ w, f, top, delay }) {
-  return (<svg className="sk-cloud" style={{ width: w, top: top, left: 'calc((var(--rw) - ' + w + 'px) * ' + f + ')', animationDelay: delay + 's' }} viewBox="0 0 120 48" aria-hidden="true"><path d="M22 42 a16 16 0 0 1 2-31 a22 22 0 0 1 42-4 a18 18 0 0 1 30 12 a15 15 0 0 1 2 23 z" strokeWidth="2.4" strokeLinejoin="round" /></svg>);
+  return (<svg className="sk-cloud" style={{ width: w, top: top, left: 'calc((var(--rw) - ' + w + 'px) * ' + f + ')', animationDelay: delay + 's' }} viewBox="0 0 120 60" aria-hidden="true"><Shapes cls="sk-co" /><Shapes cls="sk-ci" /></svg>);
 }
 function Bird({ top, delay }) {
   return (<svg className="sk-bird" style={{ top: top, animationDelay: delay + 's' }} viewBox="0 0 26 12" width="26" height="11" aria-hidden="true"><path d="M1 9 Q7 1 13 8 Q19 1 25 9" fill="none" strokeWidth="2.2" strokeLinecap="round" style={{ stroke: 'var(--ink)' }} /></svg>);
@@ -79,7 +86,7 @@ export default function Extras({ d }) {
     {sky ? (<>
       <aside className="ak-rail ak-rail-l" aria-hidden="true">
         <Star x="20%" y="8%" delay={0} /><Star x="70%" y="20%" delay={-1.4} /><Star x="40%" y="46%" delay={-0.7} />
-        <div className="sk-l" style={{ '--k': 0.03 }}><Cloud w={100} f={0.2} top="12%" delay={-3} /><Cloud w={84} f={0.6} top="58%" delay={0} /></div>
+        <div className="sk-l" style={{ '--k': 0.03 }}><Cloud w={100} f={0.6} top="25%" delay={-3} /><Cloud w={84} f={0.1} top="64%" delay={0} /></div>
         <div className="sk-l" style={{ '--k': 0.07 }}>
           <Kite a={KITES[0][0]} b={KITES[0][1]} w={74} f={0.25} top="9%" delay={-1} />
           <Kite a={KITES[1][0]} b={KITES[1][1]} w={54} f={0.6} top="44%" delay={-4} small />
