@@ -6,6 +6,7 @@ import view from './SiteView';
 import { STORIES } from '../data/stories';
 import { pathFor, parsePath, titleFor, artFor } from '../lib/route';
 import { factsForSlot, FACT_SECTIONS } from '../data/facts';
+import { CURRENCIES } from '../lib/currencies';
 
 class DCLogic extends React.Component {
   render() { return view(this.renderVals()); }
@@ -14,7 +15,7 @@ class DCLogic extends React.Component {
 export default class Site extends DCLogic {
   constructor(props){
     super(props);
-    this.state = { view: 'home', si: 0, f: 'all', q: '', liveF: 'all', gone: false, now: 0, faqOpen: 0, trN: 0, tr: 'none', dir: 1, read: [], dark: false, trDone: true, word: 0, phase: 'ambient', invite: true, answers: {}, ansSlot: null, dykTab: 0, dykIdx: {}, dykOpen: false, onboard: -1, picked: [], flash: 0, best: 0, crashMsg: '', all: false, score: 0, rushBest: 0, overMsg: '', joined: false, saved: [], newN: 0, panel: false, pq: '', ptab: 'find', more: false, canSpeak: false, speaking: false, simple: {}, simpleOn: {}, simpleBusy: '', simpleErr: '', report: null, rNote: '', rState: '', quizI: 0, toast: '', toastOn: false, liveAll: false };
+    this.state = { view: 'home', si: 0, f: 'all', q: '', liveF: 'all', gone: false, now: 0, faqOpen: 0, trN: 0, tr: 'none', dir: 1, read: [], dark: false, trDone: true, word: 0, phase: 'ambient', invite: true, answers: {}, ansSlot: null, dykTab: 0, dykIdx: {}, dykOpen: false, onboard: -1, picked: [], flash: 0, best: 0, crashMsg: '', all: false, score: 0, rushBest: 0, overMsg: '', joined: false, saved: [], newN: 0, panel: false, pq: '', ptab: 'find', more: false, canSpeak: false, speaking: false, simple: {}, simpleOn: {}, simpleBusy: '', simpleErr: '', report: null, rNote: '', rState: '', quizI: 0, toast: '', toastOn: false, liveAll: false, fxAmt: '100', fxFrom: 'USD', fxTo: 'BDT' };
     // Open the story named in the address. If it is no longer on the live list, show all stories instead.
     const at = props.view === 'story' ? this.list().findIndex((s) => s.id === props.sid) : -1;
     this.state.view = props.view === 'story' && at < 0 ? 'all' : (props.view || 'home');
@@ -63,7 +64,7 @@ export default class Site extends DCLogic {
     window.addEventListener('popstate', this.onPop);
     this.setState({ now: Date.now() }); this.nowT = setInterval(() => this.setState({ now: Date.now() }), 60000);
     if (this.state.view === 'story') this.markRead(this.list()[this.state.si].id);
-    // Saved stories and the "new since your last visit" count live on this phone only.
+    // Saved stories and the "new since your last visit" count live on this device only.
     let newN = 0;
     try {
       const ls = window.localStorage, ss = window.sessionStorage;
@@ -74,7 +75,9 @@ export default class Site extends DCLogic {
       if (t) newN = this.list().filter((x) => x.live && x.date && new Date(x.date).getTime() > t).length;
       this.prevVisit = t || 0;
     } catch (e) {}
-    this.setState({ saved: this.initSaved(), newN: newN, canSpeak: 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined' });
+    let fx = {}; try { fx = JSON.parse(window.localStorage.getItem('akk-fx') || '{}') || {}; } catch (e) {}
+    const okc = (c) => typeof c === 'string' && CURRENCIES.some((x) => x[0] === c);
+    this.setState({ fxFrom: okc(fx.from) ? fx.from : 'USD', fxTo: okc(fx.to) ? fx.to : 'BDT', saved: this.initSaved(), newN: newN, canSpeak: 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined' });
     this.onKey = (e) => { if (e.key !== 'Escape') return; if (this.state.report) this.setState({ report: null }); else if (this.state.panel) this.setState({ panel: false }); };
     window.addEventListener('keydown', this.onKey);
     this.reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -283,7 +286,7 @@ export default class Site extends DCLogic {
     const has = this.state.saved.some((x) => x.id === st.id);
     const saved = has ? this.state.saved.filter((x) => x.id !== st.id) : [{ id: st.id, t: st.title, c: st.cat, co: st.color, s: st.source || '', l: st.link || '', live: !!st.live }].concat(this.state.saved).slice(0, 50);
     this.setState({ saved: saved }); try { window.localStorage.setItem('akk-saved', JSON.stringify(saved)); } catch (e) {}
-    this.say(has ? 'Removed from saved' : 'Saved on this phone');
+    this.say(has ? 'Removed from saved' : 'Saved on this device');
   }
   say(msg){ clearTimeout(this.toastT); this.setState({ toast: msg, toastOn: true }); this.toastT = setTimeout(() => this.setState({ toastOn: false }), 2200); }
   speak(text){
@@ -417,9 +420,30 @@ export default class Site extends DCLogic {
     const saved = this.state.saved, isSaved = (id) => saved.some((x) => x.id === id);
     const T = this.props.today || null;
     const signs = [];
-    if (T && Number.isFinite(T.temp)) signs.push({ key: 'wx', label: 'Dhaka now', pre: '', big: String(T.temp), post: '°C', sub: 'Feels like ' + T.feels + '°, ' + T.sky.toLowerCase(), color: 'var(--accent)' });
-    if (T && Number.isFinite(T.aqi)) signs.push({ key: 'aq', label: 'Air today', pre: '', big: String(T.aqi), post: '', sub: 'AQI: ' + T.aqiName, color: T.aqiColor });
-    if (T && Number.isFinite(T.usd)) signs.push({ key: 'fx', label: 'US dollar', pre: '৳', big: T.usd.toFixed(1), post: '', sub: 'for 1 USD', color: '#00924A' });
+    if (T && Number.isFinite(T.temp)) signs.push({ key: 'wx', label: 'Dhaka weather now', pre: '', big: String(T.temp), post: '°C', sub: 'Feels like ' + T.feels + '°, ' + T.sky.toLowerCase(), color: 'var(--accent)' });
+    if (T && Number.isFinite(T.aqi)) signs.push({ key: 'aq', label: 'Dhaka air today', pre: '', big: String(T.aqi), post: '', sub: 'AQI: ' + T.aqiName, color: T.aqiColor });
+    // Money converter: any currency to any other, using one day's rates (how much of each one US dollar buys).
+    let fx = null;
+    if (T && T.rates && T.rates.BDT) {
+      const R = T.rates, from = R[this.state.fxFrom] ? this.state.fxFrom : 'USD', to = R[this.state.fxTo] ? this.state.fxTo : 'BDT';
+      const amt = Number(String(this.state.fxAmt).replace(/,/g, ''));
+      const good = Number.isFinite(amt) && amt >= 0 && amt < 1e12;
+      const val = good ? amt / R[from] * R[to] : 0;
+      const nf = new Intl.NumberFormat(to === 'BDT' ? 'en-IN' : 'en-US', { maximumFractionDigits: val >= 1000 ? 0 : val >= 10 ? 1 : 2 });
+      const sym = { BDT: '৳', USD: '$', EUR: '€', GBP: '£', INR: '₹', JPY: '¥', CNY: '¥', KRW: '₩' }[to] || '';
+      const one = R[to] / R[from];
+      const save = (o) => { const n = Object.assign({ from: from, to: to }, o); try { window.localStorage.setItem('akk-fx', JSON.stringify({ from: n.from, to: n.to })); } catch (e) {} };
+      fx = {
+        amt: this.state.fxAmt, from: from, to: to, ok: good, sym: sym, big: good ? nf.format(val) : '0', asOf: T.asOf || '',
+        rateLine: (one < 0.0005 ? '1,000 ' : one < 0.05 ? '100 ' : '1 ') + from + ' = ' + new Intl.NumberFormat('en-US', { maximumFractionDigits: one >= 100 ? 1 : one >= 1 ? 2 : 3 }).format(one * (one < 0.0005 ? 1000 : one < 0.05 ? 100 : 1)) + ' ' + to,
+        list: CURRENCIES.filter((c) => R[c[0]]).map((c) => ({ code: c[0], label: c[0] + ' · ' + c[1] })),
+        onAmt: (e) => { const v = e.target.value.replace(/[^0-9.,]/g, '').slice(0, 14); this.setState({ fxAmt: v }); },
+        onFrom: (e) => { this.setState({ fxFrom: e.target.value }); save({ from: e.target.value }); },
+        onTo: (e) => { this.setState({ fxTo: e.target.value }); save({ to: e.target.value }); },
+        swap: () => { this.setState({ fxFrom: to, fxTo: from }); save({ from: to, to: from }); },
+      };
+    }
+    const todayNote = 'Weather and air quality are for Dhaka only and refresh through the day.' + (fx && fx.asOf ? ' Exchange rates change once a day (latest: ' + fx.asOf + ').' : '');
     const terms = []; E.forEach((x, i) => { if (x.live && x.terms) x.terms.forEach((t) => { if (t.term.length <= 18 && t.term.indexOf('  ') < 0) terms.push({ term: t.term, meaning: t.meaning, i: i }); }); });
     const wt = terms.length ? terms[Math.floor((D.slot || 0) / 4) % terms.length] : null;
     const checked = D.checkedAt && now ? (() => { const m = Math.max(1, Math.round((now - D.checkedAt) / 60000)); return m < 60 ? 'News checked ' + m + ' min ago' : 'News checked ' + Math.round(m / 60) + ' hr ago'; })() : '';
@@ -456,7 +480,7 @@ export default class Site extends DCLogic {
     ];
     return {
       vHome: V === 'home',
-      st: st, rep: rep, signs: signs, hasSigns: signs.length > 0, signCols: Math.max(1, signs.length),
+      st: st, rep: rep, signs: signs, fx: fx, todayNote: todayNote, hasSigns: signs.length > 0 || !!fx, signCols: signs.length + (fx ? 1 : 0), signCols2: signs.length >= 2 && fx ? '1fr 1fr 1.8fr' : 'repeat(' + Math.max(1, signs.length + (fx ? 1 : 0)) + ',minmax(0,1fr))',
       wotd: wt ? { term: wt.term, letters: wt.term.split(''), meaning: wt.meaning, from: E[wt.i].title, open: nav(() => this.go('story', { si: wt.i })), href: pathFor('story', E[wt.i]) } : null,
       checked: checked, newN: this.state.newN, newLabel: this.state.newN + (this.state.newN === 1 ? ' new story' : ' new stories') + ' since your last visit',
       seeNew: () => { this.setState({ liveF: 'all' }); try { const el = document.getElementById('live-h'); if (el) el.scrollIntoView({ behavior: this.reduce ? 'auto' : 'smooth' }); } catch (x) {} },

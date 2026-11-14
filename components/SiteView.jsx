@@ -165,7 +165,7 @@ export default function view(v) {
               </ul>
             </>) : null}
             {v.panel.savedOn ? (<>
-              {v.panel.noSaved ? <p className={"ak-pmsg"}>{"Nothing saved yet. Tap Save for later on a story. Saved stories stay on this phone only."}</p> : null}
+              {v.panel.noSaved ? <p className={"ak-pmsg"}>{"Nothing saved yet. Tap Save for later on a story. Saved stories stay on this device only."}</p> : null}
               <ul className={"ak-plist"}>
                 {(v.panel.savedRows || []).map((r, rI) => (<li key={rI} className={"ak-res"} style={{ '--i': rI }}>
                   <a className={"ak-resa"} href={r.href} onClick={r.open} target={r.ext ? "_blank" : undefined} rel={r.ext ? "noopener noreferrer" : undefined}>
@@ -271,7 +271,7 @@ export default function view(v) {
                   <span style={css("display:block;height:1.05em;overflow:hidden;color:var(--hl)")}>
                     <span className={"np3-words"} style={css(`display:block;transform:translateY(-${v.wordOffset}em)`)}>
                       <span style={css("display:block;height:1.05em")}>
-                        {"from Dhaka."}
+                        {"from "}<span lang={"bn"}>{"ঢাকা"}</span>{"."}
                       </span>
                       <span style={css("display:block;height:1.05em")}>
                         {"from the world."}
@@ -422,14 +422,32 @@ export default function view(v) {
                 </div>
               </section>
               {v.hasSigns ? (<section aria-label={"Today in Dhaka"} style={css("max-width:1240px;margin:0 auto;padding:34px 32px 0")}>
-                <div className={"ak-signs"} data-io={"1"} style={{ '--n': v.signCols }}>
+                <div className={"ak-signs"} data-io={"1"} style={{ '--cols': v.signCols2 }}>
                   <div className={"ak-wire"} aria-hidden={"true"} />
                   {(v.signs || []).map((g, gI) => (<div key={g.key} className={"ak-sign"} style={{ '--i': gI, '--c': g.color }}>
                     <span className={"ak-sl"}>{g.label}</span>
                     <span className={"ak-sv np3-disp"}><Odo pre={g.pre} value={g.big} post={g.post} /></span>
                     <span className={"ak-ss"}>{g.sub}</span>
                   </div>))}
+                  {v.fx ? (<div className={"ak-sign ak-fx"} style={{ '--i': 2, '--c': '#00924A' }}>
+                    <span className={"ak-sl"} id={"fx-l"}>{"Money converter"}</span>
+                    <div className={"ak-fxrow"} role={"group"} aria-labelledby={"fx-l"}>
+                      <input className={"ak-fxin"} inputMode={"decimal"} aria-label={"Amount"} value={v.fx.amt} onChange={v.fx.onAmt} />
+                      <select className={"ak-fxsel"} aria-label={"Convert from"} value={v.fx.from} onChange={v.fx.onFrom}>
+                        {v.fx.list.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
+                      </select>
+                      <button type={"button"} className={"ak-swap"} onClick={v.fx.swap} aria-label={"Swap the two currencies"}>
+                        <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"}><path d={"M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"} fill={"none"} strokeWidth={"2.2"} strokeLinecap={"round"} strokeLinejoin={"round"} style={css("stroke:currentColor")} /></svg>
+                      </button>
+                      <select className={"ak-fxsel"} aria-label={"Convert to"} value={v.fx.to} onChange={v.fx.onTo}>
+                        {v.fx.list.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
+                      </select>
+                    </div>
+                    <span className={"ak-sv ak-fxv np3-disp" + (v.fx.big.length > 10 ? " long" : "")}><Odo pre={v.fx.sym} value={v.fx.big} post={"\u00a0" + v.fx.to} /></span>
+                    <span className={"ak-ss"}>{v.fx.rateLine + (v.fx.asOf ? ", rate of " + v.fx.asOf : "")}</span>
+                  </div>) : null}
                 </div>
+                <p className={"ak-todaynote"}>{v.todayNote}</p>
               </section>) : null}
               <section aria-labelledby={"pics-h"} style={css("max-width:1240px;margin:0 auto;padding:46px 32px 0")}>
                 <div style={css("display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:26px")}>
@@ -746,12 +764,6 @@ export default function view(v) {
             </div>
           </>) : null}
           {v.vStory ? (<>
-            <div className={"ak-kp"} aria-hidden={"true"}>
-              <span className={"ak-kp-s"} />
-              <span className={"ak-kp-k"}>
-                <svg viewBox={"0 0 30 40"} width={"26"} height={"34"}><path d={"M15 1l12 12-12 16L3 13z"} fill={"#D21F14"} /><path d={"M15 1l12 12H15z"} fill={"#FFD400"} /><path d={"M3 13l12 16V13z"} fill={"#FFD400"} /><path d={"M15 29q-5 3-2 6t-3 5"} fill={"none"} strokeWidth={"2.2"} strokeLinecap={"round"} style={css("stroke:#D21F14")} /></svg>
-              </span>
-            </div>
             <div className={v.pageClass} style={css("max-width:900px;margin:0 auto;padding:20px 32px 90px")}>
               <div style={css("display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:26px")}>
                 <p style={css("margin:0;font-weight:600;font-size:16px;color:var(--muted)")}>
