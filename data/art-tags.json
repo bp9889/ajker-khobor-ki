@@ -251,43 +251,6 @@
       ]
     },
     {
-      "tag": "founder",
-      "label": "Founder launches",
-      "group": "Tech, science and culture",
-      "day": "/art/founder.svg",
-      "night": "/art/founder-n.svg",
-      "keywords": [
-        "CEO",
-        "founder",
-        "startup",
-        "start-up",
-        "billionaire",
-        "Musk",
-        "Zuckerberg",
-        "Bezos",
-        "Altman"
-      ]
-    },
-    {
-      "tag": "scientist",
-      "label": "Scientist discovers",
-      "group": "Tech, science and culture",
-      "day": "/art/scientist.svg",
-      "night": "/art/scientist-n.svg",
-      "keywords": [
-        "scientist",
-        "scientists",
-        "researchers",
-        "discovery",
-        "discovers",
-        "vaccine",
-        "Nobel",
-        "breakthrough",
-        "study finds",
-        "lab"
-      ]
-    },
-    {
       "tag": "ai",
       "label": "AI",
       "group": "Tech, science and culture",
@@ -320,7 +283,26 @@
         "Nvidia",
         "app",
         "cyber",
-        "hack"
+        "hack",
+        "CEO",
+        "founder",
+        "startup",
+        "start-up",
+        "billionaire",
+        "Musk",
+        "Zuckerberg",
+        "Bezos",
+        "Altman",
+        "scientist",
+        "scientists",
+        "researchers",
+        "discovery",
+        "discovers",
+        "vaccine",
+        "Nobel",
+        "breakthrough",
+        "study finds",
+        "lab"
       ]
     },
     {
@@ -338,24 +320,6 @@
       ]
     },
     {
-      "tag": "batter",
-      "label": "Batter hits a six",
-      "group": "Sport",
-      "day": "/art/batter.svg",
-      "night": "/art/batter-n.svg",
-      "keywords": [
-        "century",
-        "half-century",
-        "sixes",
-        "batter",
-        "batsman",
-        "batters",
-        "wicket",
-        "wickets",
-        "innings"
-      ]
-    },
-    {
       "tag": "cricket",
       "label": "Cricket",
       "group": "Sport",
@@ -369,24 +333,16 @@
         "ODI",
         "T20",
         "Shakib",
-        "BCB"
-      ]
-    },
-    {
-      "tag": "striker",
-      "label": "Striker celebrates",
-      "group": "Sport",
-      "day": "/art/striker.svg",
-      "night": "/art/striker-n.svg",
-      "keywords": [
-        "striker",
-        "hat-trick",
-        "brace",
-        "scored",
-        "Messi",
-        "Ronaldo",
-        "Mbappe",
-        "Haaland"
+        "BCB",
+        "century",
+        "half-century",
+        "sixes",
+        "batter",
+        "batsman",
+        "batters",
+        "wicket",
+        "wickets",
+        "innings"
       ]
     },
     {
@@ -406,7 +362,15 @@
         "Arsenal",
         "Chelsea",
         "Real Madrid",
-        "Barcelona"
+        "Barcelona",
+        "striker",
+        "hat-trick",
+        "brace",
+        "scored",
+        "Messi",
+        "Ronaldo",
+        "Mbappe",
+        "Haaland"
       ]
     },
     {
@@ -562,21 +526,6 @@
       ]
     },
     {
-      "tag": "leader",
-      "label": "Leader balances the world",
-      "group": "Politics and government",
-      "day": "/art/leader.svg",
-      "night": "/art/leader-n.svg",
-      "keywords": [
-        "president",
-        "prime minister",
-        "PM",
-        "leader",
-        "leaders",
-        "chancellor"
-      ]
-    },
-    {
       "tag": "diplomacy",
       "label": "Diplomacy and deals",
       "group": "Politics and government",
@@ -593,26 +542,10 @@
         "UN",
         "sanction",
         "visa",
-        "treaty"
-      ]
-    },
-    {
-      "tag": "minister",
-      "label": "Minister at the podium",
-      "group": "Politics and government",
-      "day": "/art/minister.svg",
-      "night": "/art/minister-n.svg",
-      "keywords": [
-        "minister",
-        "ministers",
-        "adviser",
-        "advisor",
-        "spokesperson",
-        "chief adviser",
-        "lawmaker",
-        "MP",
-        "mayor",
-        "governor"
+        "treaty",
+        "president",
+        "prime minister",
+        "chancellor"
       ]
     },
     {
@@ -627,7 +560,17 @@
         "parliament",
         "government",
         "law passed",
-        "ordinance"
+        "ordinance",
+        "minister",
+        "ministers",
+        "adviser",
+        "advisor",
+        "spokesperson",
+        "chief adviser",
+        "lawmaker",
+        "MP",
+        "mayor",
+        "governor"
       ]
     },
     {
@@ -656,23 +599,6 @@
       ]
     },
     {
-      "tag": "performer",
-      "label": "Performer on stage",
-      "group": "Tech, science and culture",
-      "day": "/art/performer.svg",
-      "night": "/art/performer-n.svg",
-      "keywords": [
-        "singer",
-        "actor",
-        "actress",
-        "rapper",
-        "pop star",
-        "band",
-        "Coke Studio",
-        "superstar"
-      ]
-    },
-    {
       "tag": "culture",
       "label": "Film and music",
       "group": "Tech, science and culture",
@@ -689,7 +615,15 @@
         "album",
         "Grammy",
         "Bollywood",
-        "Oscar"
+        "Oscar",
+        "singer",
+        "actor",
+        "actress",
+        "rapper",
+        "pop star",
+        "band",
+        "Coke Studio",
+        "superstar"
       ]
     }
   ]
