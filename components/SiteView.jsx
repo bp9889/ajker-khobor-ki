@@ -285,7 +285,7 @@ export default function view(v) {
                   </span>
                 </h1>
                 <p style={css("font-size:21px;line-height:1.5;max-width:600px;margin:0 0 30px;color:var(--muted)")}>
-                  {"People are waiting at the bus stands with questions about the news. Stop and pick them up, and each passenger brings a story explained. Not in the mood to ride? Close the game and just read."}
+                  {"People are waiting at the bus stands with questions about the news. Stop and pick them up, and each passenger brings a story explained. Not in the mood to ride? Skip the game and open all five."}
                 </p>
               </section>
               <section id={"game"} aria-label={"Passenger stops"} style={css("position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:0 32px")}>
@@ -448,91 +448,23 @@ export default function view(v) {
                 </div>
                 <p className={"ak-todaynote"}>{v.todayNote}</p>
               </section>) : null}
-              <section aria-labelledby={"pics-h"} style={css("max-width:1240px;margin:0 auto;padding:46px 32px 0")}>
-                <div style={css("display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:26px")}>
-                  <h2 id={"pics-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>
-                    {"Today's five"}
-                  </h2>
-                  {v.newN > 0 ? (<button type={"button"} className={"ak-new"} onClick={v.seeNew}>{Ico.bell}<span>{v.newLabel}</span></button>) : (<span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                    {v.picsNote}
-                  </span>)}
-                </div>
-                <div className={"fz-pics"}>
-                  {(v.pics || []).map((pc, pcI) => (<React.Fragment key={pcI}>
-                    <a className={"fz-pic"} href={pc.href} onClick={pc.open}>
-                      <img src={pc.img} alt={""} width={"400"} height={"260"} />
-                      <span style={css(`display:flex;flex-direction:column;gap:6px;padding:16px 18px 20px;border-top:6px solid ${pc.color}`)}>
-                        <span style={css("font-weight:600;font-size:15px;color:var(--muted)")}>
-                          {`${pc.cat}, ${pc.from}`}
-                        </span>
-                        <span className={"np3-disp"} style={css("font-weight:800;font-size:26px;line-height:1.06")}>
-                          {pc.title}
-                        </span>
-                        <span style={css("font-size:17px;line-height:1.45;color:var(--muted)")}>
-                          {pc.brief}
-                        </span>
-                      </span>
-                    </a>
-                  </React.Fragment>))}
-                </div>
-              </section>
-              {v.hasLive ? (<>
-                <section aria-labelledby={"live-h"} style={css("max-width:1240px;margin:0 auto;padding:56px 32px 0")}>
-                  <div style={css("display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:14px")}>
-                    <h2 id={"live-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>
-                      <span className={"fz-livedot"} aria-hidden={"true"} />
-                      {"Live headlines"}
-                    </h2>
-                    <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                      {v.checked || "Tap a headline for the simple version."}
-                    </span>
-                  </div>
-                  <div role={"group"} aria-label={"Filter live headlines"} style={css("display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px")}>
-                    {(v.liveChips || []).map((c, cI) => (<React.Fragment key={cI}>
-                      <button type={"button"} className={"pg-btn"} onClick={c.go} aria-pressed={c.on} style={css(c.style)}>
-                        {c.name}
-                      </button>
-                    </React.Fragment>))}
-                  </div>
-                  <div className={"fz-live"}>
-                    {(v.live || []).map((h, hI) => (<React.Fragment key={hI}>
-                      <a className={"fz-livec"} href={h.href} onClick={h.open}>
-                        <img src={h.img} alt={""} width={"400"} height={"260"} loading={"lazy"} />
-                        <span style={css("display:flex;flex-direction:column;gap:4px;min-width:0")}>
-                          <span style={css("font-weight:600;font-size:14px;color:var(--muted)")}>
-                            <span style={css(`color:${h.color};font-weight:700`)}>
-                              {h.section}
-                            </span>
-                            {`, ${h.from}`}
-                          </span>
-                          <span className={"np3-disp"} style={css("font-weight:800;font-size:21px;line-height:1.12")}>
-                            {h.title}
-                            {h.isNew && !h.read ? <span className={"ak-newtag"}>{"New"}</span> : null}
-                            {h.read ? <span className={"fz-readtag"}>{h.read}</span> : null}
-                          </span>
-                        </span>
-                      </a>
-                    </React.Fragment>))}
-                  </div>
-                  <div className={"ak-livefoot"}>
-                    {v.liveMore ? <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.showMoreLive}>{v.liveMoreLabel}</button> : null}
-                    <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.toAll}>{"See every story"}</button>
-                  </div>
-                </section>
-              </>) : null}
               <section aria-labelledby={"ride-h"} aria-live={"polite"} style={css("max-width:1240px;margin:0 auto;padding:56px 32px 70px")}>
                 <div style={css("display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:26px")}>
                   <h2 id={"ride-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>
-                    {"On board"}
+                    {"Today's five"}
                   </h2>
                   <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                    {`${v.pickedCount} passengers picked up today`}
+                    {`${v.pickedCount} of ${v.fiveN} picked up`}
                   </span>
                 </div>
                 {v.empty ? (<>
-                  <p style={css("margin:0;padding:36px;border:2px dashed var(--line);border-radius:20px;font-size:22px;text-align:center;color:var(--muted)")}>
-                    {"No one on board yet. Stop at the first bus stand and someone with a question will hop on."}
-                  </p>
+                  <div className={"ak-lock"}>
+                    <p>{"Today's five stories are waiting at the bus stands. Play the game to pick them up, or open them now."}</p>
+                    <div className={"ak-lockbtns"}>
+                      <button type={"button"} className={"fz-dykbtn"} onClick={v.playNow}>{"Play to pick them up"}</button>
+                      <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.showAll}>{"Open all five now"}</button>
+                    </div>
+                  </div>
                 </>) : null}
                 {v.evenFlash ? (<>
                   <article className={"np3-in"} style={css(`background:var(--panel);border:2px solid var(--line);border-left:10px solid ${v.ride.color};border-radius:20px;padding:30px;display:grid;gap:14px`)}>
@@ -583,7 +515,7 @@ export default function view(v) {
                 {v.hasPicked ? (<>
                   <div style={css("margin-top:24px")}>
                     <p style={css("margin:0 0 10px;font-weight:700;font-size:17px")}>
-                      {"Earlier passengers"}
+                      {"Pick another"}
                     </p>
                     <div style={css("display:flex;gap:10px;flex-wrap:wrap")}>
                       {(v.picked || []).map((p, pI) => (<React.Fragment key={pI}>
@@ -595,6 +527,50 @@ export default function view(v) {
                   </div>
                 </>) : null}
               </section>
+              {v.hasLive ? (<>
+                <section aria-labelledby={"live-h"} style={css("max-width:1240px;margin:0 auto;padding:56px 32px 0")}>
+                  <div style={css("display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:14px")}>
+                    <h2 id={"live-h"} className={"np3-disp"} style={css("font-weight:800;font-size:56px;line-height:1;margin:0")}>
+                      <span className={"fz-livedot"} aria-hidden={"true"} />
+                      {"Live headlines"}
+                    </h2>
+                    {v.newN > 0 ? (<button type={"button"} className={"ak-new"} onClick={v.seeNew}>{Ico.bell}<span>{v.newLabel}</span></button>) : (<span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
+                      {v.checked || "Tap a headline for the simple version."}
+                    </span>)}
+                  </div>
+                  <div role={"group"} aria-label={"Filter live headlines"} style={css("display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px")}>
+                    {(v.liveChips || []).map((c, cI) => (<React.Fragment key={cI}>
+                      <button type={"button"} className={"pg-btn"} onClick={c.go} aria-pressed={c.on} style={css(c.style)}>
+                        {c.name}
+                      </button>
+                    </React.Fragment>))}
+                  </div>
+                  <div className={"fz-live"}>
+                    {(v.live || []).map((h, hI) => (<React.Fragment key={hI}>
+                      <a className={"fz-livec"} href={h.href} onClick={h.open}>
+                        <img src={h.img} alt={""} width={"400"} height={"260"} loading={"lazy"} />
+                        <span style={css("display:flex;flex-direction:column;gap:4px;min-width:0")}>
+                          <span style={css("font-weight:600;font-size:14px;color:var(--muted)")}>
+                            <span style={css(`color:${h.color};font-weight:700`)}>
+                              {h.section}
+                            </span>
+                            {`, ${h.from}`}
+                          </span>
+                          <span className={"np3-disp"} style={css("font-weight:800;font-size:21px;line-height:1.12")}>
+                            {h.title}
+                            {h.isNew && !h.read ? <span className={"ak-newtag"}>{"New"}</span> : null}
+                            {h.read ? <span className={"fz-readtag"}>{h.read}</span> : null}
+                          </span>
+                        </span>
+                      </a>
+                    </React.Fragment>))}
+                  </div>
+                  <div className={"ak-livefoot"}>
+                    {v.liveMore ? <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.showMoreLive}>{v.liveMoreLabel}</button> : null}
+                    <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.toAll}>{"See every story"}</button>
+                  </div>
+                </section>
+              </>) : null}
               <div className={"fz-strip"} aria-hidden={"true"}>
                 <svg viewBox={"0 0 1440 110"} preserveAspectRatio={"none"} style={css("position:absolute;inset:0;width:100%;height:100%")}>
                   <path d={"M0 32 Q720 84 1440 43"} fill={"none"} strokeWidth={"2"} style={css("stroke:var(--ink)")} opacity={".35"} />

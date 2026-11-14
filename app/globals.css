@@ -382,3 +382,8 @@ html[data-akk="dark"] .np3-light{--bg:#1A1714;--ink:#F3EFE7;--muted:#B4AA9C;--pa
 .ak-fx{min-width:0}
 .ak-todaynote{margin:12px 2px 0;font-size:14px;line-height:1.4;color:var(--muted)}
 @media (max-width:520px){.ak-fxv.long{font-size:24px}.ak-fxin{width:80px}}
+
+/* Today's five: locked until the game picks them up, or the reader opens them */
+.ak-lock{border:2px dashed var(--line);border-radius:20px;padding:34px 28px;text-align:center;display:grid;gap:18px;justify-items:center}
+.ak-lock p{margin:0;font-size:21px;line-height:1.45;max-width:560px;color:var(--muted)}
+.ak-lockbtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}

@@ -20,6 +20,10 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - Pictures are in `public/art/<tag>.svg` (day) and `<tag>-n.svg` (night). Share images are in `public/og`.
 - To work offline: `AKK_FIXTURE=path/to/digest.json npm run dev` serves a saved copy of `/api/news`.
 
+## Today's five
+
+`pickFive()` in `lib/digest.js` chooses them with a fixed recipe from the live feeds (not by editors): the first 2 Bangladesh stories, the first World story, the first Sport story (else Tech), the first Tech story (else a second World story), then anything to reach five. Feeds are read in turns so no publisher fills the list, stories older than 3 days are dropped, and repeats of the same event are merged. On the home page the five are shown only in the "Today's five" section, which the game unlocks one passenger at a time, or "Open all five now" opens at once (remembered for the day in `akk-open`). "Live headlines" lists the stories after the five. "All stories" and search still list everything.
+
 ## Rules
 
 - Keep the look: Anek Bangla font, the colour variables in `app/globals.css`, kite swoop transition, pictures switch with dark mode.

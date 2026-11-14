@@ -83,9 +83,15 @@ export default class Site extends DCLogic {
     this.reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!this.reduce) this.iv = setInterval(() => this.setState({ word: (this.state.word + 1) % 4 }), 2300);
     if (!this.cv && typeof document !== 'undefined') { const el = document.getElementById('np3-canvas'); if (el) { this.cv = el; this.loop(); } }
+    // Once today's five are open (by playing or skipping), they stay open for the rest of the day on this device.
+    try { if (window.localStorage.getItem('akk-open') === this.dayKey()) this.setState({ picked: [0, 1, 2, 3, 4], onboard: 0, invite: false }); } catch (e) {}
     this.arm();
   }
-  componentDidUpdate(pp, ps){ if (ps.view !== this.state.view || ps.trDone !== this.state.trDone) this.arm(); }
+  dayKey(){ return new Date(Date.now() + 6 * 3600000).toISOString().slice(0, 10); }
+  componentDidUpdate(pp, ps){
+    if (ps.view !== this.state.view || ps.trDone !== this.state.trDone) this.arm();
+    if (ps.picked.length < 5 && this.state.picked.length >= 5) { try { window.localStorage.setItem('akk-open', this.dayKey()); } catch (e) {} }
+  }
   componentWillUnmount(){ this.unsyncTheme(); try { window.removeEventListener('keydown', this.onKey); window.speechSynthesis.cancel(); if (this.io) this.io.disconnect(); } catch (e) {} clearTimeout(this.toastT); try { window.removeEventListener('popstate', this.onPop); } catch (e) {} this.dead = true; clearInterval(this.iv); clearInterval(this.nowT); clearTimeout(this.wt); if (this.raf) cancelAnimationFrame(this.raf); }
   rnd(a, b){ const s = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return s - Math.floor(s); }
   stopWx(k){ return 900 + k * 1300; }
@@ -389,7 +395,7 @@ export default class Site extends DCLogic {
     const lf = this.state.liveF;
     const ago = (d) => { if (!now || !d) return ''; const m = Math.max(1, Math.round((now - new Date(d).getTime()) / 60000)); return m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' hr ago' : Math.round(m / 1440) + ' d ago'; };
     const from = (s) => s.source + (ago(s.date) ? ', ' + ago(s.date) : '');
-    const liveAll = E.map((x, i) => ({ x: x, i: i })).filter((o) => o.x.live);
+    const liveAll = E.map((x, i) => ({ x: x, i: i })).filter((o) => o.x.live && o.i >= 5);
     const liveFiltered = liveAll.filter((o) => lf === 'all' || o.x.cat === lf);
     const liveShown = liveFiltered.slice(0, this.state.liveAll ? 30 : 12).map((o) => ({ isNew: !!(this.prevVisit && o.x.date && new Date(o.x.date).getTime() > this.prevVisit), title: o.x.title, section: o.x.cat, color: SC[o.x.cat] || 'var(--ink)', from: from(o.x), img: pic(o.i), href: pathFor('story', o.x), open: nav(() => this.go('story', { si: o.i })), read: this.state.read.indexOf(o.x.id) >= 0 ? 'Read' : '' }));
     const liveChips = ['all', 'Bangladesh', 'World', 'Tech', 'Sport'].filter((c) => c === 'all' || liveAll.some((o) => o.x.cat === c)).map((c) => { const on = lf === c; return { name: c === 'all' ? 'All' : c, on: on ? 'true' : 'false', go: () => this.setState({ liveF: c }), style: 'font-family:inherit;font-weight:700;font-size:16px;padding:9px 14px;border-radius:999px;cursor:pointer;border:2px solid ' + (on ? 'var(--ink)' : 'var(--line)') + ';background:' + (on ? 'var(--ink)' : 'transparent') + ';color:' + (on ? 'var(--bg)' : 'var(--ink)') }; });
@@ -497,12 +503,10 @@ export default class Site extends DCLogic {
       goFaq: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go('about'); setTimeout(() => { try { const el = document.getElementById('faq-h'); if (el) el.scrollIntoView({ behavior: this.reduce ? 'auto' : 'smooth' }); } catch (x) {} }, 750); },
       reportSite: () => this.openReport({ kind: 'other', id: '', title: '' }),
       related: [1, 2, 3].map((k) => { const j = step(k), e = E[j]; return { title: e.title, cat: e.cat, color: e.color, time: e.time, img: pic(j), href: pathFor('story', e), open: nav(() => this.go('story', { si: j })) }; }),
-      pics: E.slice(0, 5).map((e, j) => ({ title: e.title, brief: e.brief, cat: e.cat, color: e.color, time: e.time, from: e.live ? from(e) : 'Sample', img: pic(j), href: pathFor('story', e), open: nav(() => this.go('story', { si: j })) })),
       heroImg: pic(si), heroAlt: es.alt, rideImg: pic(on >= 0 ? on : 0), rideHref: pathFor('story', E[on >= 0 ? on : 0]),
       crumb: es.cat, posText: si < 5 ? 'Story ' + (si + 1) + ' of ' + Math.min(5, N) : (isLive ? 'Headline ' : 'Story ') + (si - 4) + ' of ' + (N - 5),
       nextLabel: si < 5 ? "Next in today's five" : 'Next headline',
       hasLive: liveAll.length > 0, live: liveShown, liveChips: liveChips, isLive: isLive, isSample: !isLive, gone: this.state.gone,
-      picsNote: E[0].live ? 'The five to know right now. Tap one to read it in simple words.' : 'Tap a picture to read the story',
       allIntro: E[0].live ? 'Every story on the site right now, each explained in simple words. New ones arrive through the day.' : 'Sample explainers that show how a story reads here.',
       storyMeta: isLive ? (es.hasAI ? es.time + ' read, from ' : 'From ') + from(es) : es.time + ' quick read, sample explainer',
       hasWhy: !!es.why, hasTerms: !!(es.terms && es.terms.length), hasSummary: !!es.summary, noAI: isLive && !es.hasAI,
@@ -554,6 +558,8 @@ export default class Site extends DCLogic {
         if (k === 'Enter' && this.state.phase === 'over') this.startRush();
       },
       keyUp: (e) => { if (e.key === 'ArrowRight') this.g.pedal = false; if (e.key === 'ArrowLeft') this.g.brake = false; },
+      fiveN: R.length,
+      playNow: () => { try { const el = document.getElementById('game'); if (el) el.scrollIntoView({ behavior: this.reduce ? 'auto' : 'smooth', block: 'center' }); } catch (e) {} this.start(); },
       showAll: () => { const on0 = this.state.onboard >= 0 ? this.state.onboard : 0; this.setState({ picked: [0,1,2,3,4], onboard: on0, flash: this.state.flash + 1, invite: false }); if (typeof document !== 'undefined') { const el = document.getElementById('ride-h'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: this.reduce ? 'auto' : 'smooth', block: 'start' }); } },
       quiz: (() => {
         const Q = QUIZ;
