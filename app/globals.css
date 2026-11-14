@@ -208,15 +208,18 @@ html[data-akk="dark"] .np3-light{--bg:#1A1714;--ink:#F3EFE7;--muted:#B4AA9C;--pa
 @media (max-width:900px){.ak-signs{grid-template-columns:repeat(2,minmax(0,1fr))}.ak-fx{grid-column:1/-1}}
 @media (max-width:520px){.ak-act{font-size:15px;padding:8px 12px;gap:6px}.ak-signs{gap:8px}.ak-sign{--k:.55;padding:10px 9px 12px}.ak-sv{font-size:28px}.ak-sl{font-size:12px}.ak-ss{font-size:12.5px}}
 
-/* Word of the day: a split-flap board that flips each letter into place */
+/* Word of the day: brushed in like a signboard painter's lettering, with a soft edge that moves left to right, then a hand-painted underline */
 .ak-word{margin-top:20px;background:var(--panel);border:2px solid var(--line);border-left:10px solid #2F5BEA;border-radius:20px;padding:20px 24px;display:grid;gap:8px}
 .ak-wlab{font-weight:700;font-size:15px;color:var(--muted)}
 .ak-wterm{margin:0;font-weight:800;font-size:40px;line-height:1.1}
-.ak-flap{display:inline-flex;flex-wrap:wrap;gap:3px}
-.ak-fl{position:relative;display:inline-block;min-width:.6em;text-align:center;background:var(--ink);color:var(--bg);border-radius:6px;padding:0 6px;backface-visibility:hidden}
-.ak-fl::after{content:"";position:absolute;left:0;right:0;top:50%;height:1.5px;margin-top:-.75px;background:var(--bg);opacity:.22}
-.ak-armed .ak-fl{transform:perspective(420px) rotateX(-90deg)}
-.io-in.ak-armed .ak-fl{transform:none;transition:transform 460ms var(--ak-out) calc(var(--i)*55ms + 200ms)}
+.ak-flap{position:relative;display:inline-block;padding-bottom:.08em}
+.ak-flap::after{content:"";position:absolute;left:0;right:0;bottom:-.04em;height:.09em;border-radius:99px;background:var(--accent2);transform-origin:left center;transform:scaleX(1) rotate(-.5deg)}
+.ak-armed .ak-flap{-webkit-mask:linear-gradient(90deg,#000 44%,transparent 56%) 100% 0/300% 100% no-repeat;mask:linear-gradient(90deg,#000 44%,transparent 56%) 100% 0/300% 100% no-repeat}
+.ak-armed .ak-flap::after{transform:scaleX(0) rotate(-.5deg)}
+.io-in.ak-armed .ak-flap{animation:akBrush 1150ms cubic-bezier(.45,0,.2,1) 250ms both}
+.io-in.ak-armed .ak-flap::after{animation:akUnder 620ms var(--ak-out) 1050ms both}
+@keyframes akBrush{from{-webkit-mask-position:100% 0;mask-position:100% 0;transform:translateY(5px)}to{-webkit-mask-position:0 0;mask-position:0 0;transform:none}}
+@keyframes akUnder{from{transform:scaleX(0) rotate(-.5deg)}to{transform:scaleX(1) rotate(-.5deg)}}
 .ak-wmean{margin:0;font-size:19px;line-height:1.5;max-width:720px}
 .ak-wfrom{font-size:15px;font-weight:600}
 @media (max-width:520px){.ak-wterm{font-size:29px}.ak-word{padding:16px 16px 18px}}
@@ -360,7 +363,7 @@ html[data-akk="dark"] .np3-light{--bg:#1A1714;--ink:#F3EFE7;--muted:#B4AA9C;--pa
 /* Reduced motion: no swinging, rolling, flipping or scroll-linked motion. Fades and instant states stay. */
 @media (prefers-reduced-motion:reduce){
   .io-in .ak-sign,.ak-bell,.ak-new::after,.ak-busy,.ak-qcard,.ak-res,.ak-ok::before,.ak-no,.ak-hook,.ak-more.on .ak-mi,.ak-act.on .ak-eq rect,.ak-dots b,.ak-mark{animation:none!important}
-  .ak-dr,.ak-fl,.ak-more,.ak-chev,.ak-kite,.ak-kite-t{transition:none!important}
+  .ak-dr,.ak-more,.ak-chev,.ak-kite,.ak-kite-t{transition:none!important}
   .ak-ok::before{clip-path:none}
   .ak-panel,.ak-sheet,.ak-scrim{animation:akFade 200ms ease both!important}
   .ak-focus{animation:akFade 240ms ease both!important}

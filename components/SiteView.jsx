@@ -1,7 +1,7 @@
 // The whole page layout. `v` holds the values and handlers from Site.jsx (renderVals).
 import React from 'react';
 import { css } from '../lib/css';
-import Lab from './Lab';
+import Extras from './Extras';
 
 
 // A taxi-meter style number: each digit is a column of 0-9 that rolls to its value when the block scrolls into view.
@@ -15,11 +15,9 @@ function Odo({ pre, value, post }) {
   </span>);
 }
 
-// A split-flap board word: each letter flips down into place, one after another.
+// The word of the day: a signboard painter brushes it in from left to right.
 function Flap({ word }) {
-  return (<span className={"ak-flap"} role={"img"} aria-label={word}>
-    {word.split('').map((ch, k) => <span key={k} className={"ak-fl"} aria-hidden={"true"} style={{ '--i': k }}>{ch === ' ' ? ' ' : ch}</span>)}
-  </span>);
+  return (<span className={"ak-flap"}>{word}</span>);
 }
 
 const Ico = {
@@ -1205,7 +1203,7 @@ export default function view(v) {
           </>)}
         </form>
       </div>) : null}
-      <Lab d={v.lab} />
+      <Extras d={v.extras} />
       <div className={"ak-toast" + (v.toastOn ? " on" : "")} role={"status"} aria-live={"polite"}>{v.toast}</div>
     </div>
   </>);
