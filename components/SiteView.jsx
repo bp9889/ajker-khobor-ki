@@ -16,6 +16,62 @@ function Odo({ pre, value, post }) {
 }
 
 // The word of the day: a signboard painter brushes it in from left to right.
+// Pictures blended into the four "Explore by topic" cards. Each is a flat, low-contrast layer behind the text.
+function TopicArt({ name }) {
+  const W = 'rgba(255,255,255,'; const K = 'rgba(26,23,20,';
+  let g = null;
+  if (name === 'Bangladesh') {
+    g = (<g>
+      <path d="M146 4 V200" stroke={W + '.55)'} strokeWidth="4" strokeLinecap="round" />
+      <circle cx="146" cy="6" r="5" fill={W + '.7)'} />
+      <g transform="rotate(-5 150 60)">
+        <path d="M150 18 C184 6 214 32 250 18 S292 10 306 16 V108 C292 102 276 114 250 108 C214 94 184 118 150 110 Z" fill="#006A4E" stroke={W + '.55)'} strokeWidth="2.5" strokeLinejoin="round" />
+        <ellipse cx="226" cy="63" rx="29" ry="30" fill="#E8261A" />
+        <path d="M150 18 C184 6 214 32 250 18 S292 10 306 16 V40 C284 34 270 42 250 40 C214 30 184 44 150 40 Z" fill={W + '.1)'} />
+      </g>
+      <circle cx="40" cy="40" r="46" fill={W + '.07)'} />
+    </g>);
+  } else if (name === 'World') {
+    g = (<g>
+      <g fill="none" stroke={W + '.2)'} strokeWidth="1.5">
+        <ellipse cx="170" cy="90" rx="146" ry="70" /><ellipse cx="170" cy="90" rx="90" ry="70" /><ellipse cx="170" cy="90" rx="36" ry="70" />
+        <path d="M24 90 H316 M40 56 H300 M40 124 H300" />
+      </g>
+      <g fill={W + '.34)'}>
+        <path d="M30 50 L70 38 L105 44 L112 62 L98 80 L84 92 L72 84 L52 76 L36 62 Z" /><path d="M118 28 L142 26 L138 44 L122 46 Z" />
+        <path d="M88 100 L112 98 L124 116 L112 150 L100 166 L92 140 Z" /><path d="M150 48 L176 40 L188 54 L172 68 L152 64 Z" />
+        <path d="M152 72 L186 70 L202 96 L188 130 L170 144 L158 112 Z" /><path d="M190 44 L262 34 L300 56 L284 84 L252 92 L232 106 L214 86 L196 70 Z" />
+        <path d="M262 120 L292 118 L298 138 L270 146 Z" />
+      </g>
+      <path d="M100 66 Q160 8 232 62" fill="none" stroke={W + '.8)'} strokeWidth="2.5" strokeDasharray="1 7" strokeLinecap="round" />
+      <circle cx="100" cy="66" r="5" fill="#FFD400" /><circle cx="232" cy="62" r="5" fill="#FFD400" />
+    </g>);
+  } else if (name === 'Tech') {
+    g = (<g fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <g stroke={W + '.4)'} strokeWidth="2.5">
+        <path d="M210 76 H150 L130 56 H86 M210 94 H168 L150 112 H70 M236 112 V150 H190 L176 164 H120 M262 112 V176 M290 94 H316" />
+      </g>
+      <g fill={W + '.5)'}><circle cx="86" cy="56" r="4" /><circle cx="70" cy="112" r="4" /><circle cx="120" cy="164" r="4" /><circle cx="262" cy="176" r="4" /></g>
+      <rect x="208" y="40" width="82" height="76" rx="12" fill={W + '.16)'} stroke={W + '.55)'} strokeWidth="3" />
+      <rect x="226" y="58" width="46" height="40" rx="6" fill={W + '.18)'} stroke={W + '.5)'} strokeWidth="2.5" />
+      <path d="M222 36 V24 M238 36 V24 M254 36 V24 M270 36 V24 M286 36 V28 M222 120 V132 M238 120 V132 M254 120 V132 M270 120 V132" stroke={W + '.5)'} strokeWidth="3" />
+      <path d="M241 74 L233 78 L241 82 M257 74 L265 78 L257 82" stroke={W + '.85)'} strokeWidth="3" />
+      <path d="M40 30 q22 -18 44 0 M50 40 q12 -10 24 0" stroke={W + '.5)'} strokeWidth="3" /><circle cx="62" cy="50" r="3.5" fill={W + '.6)'} stroke="none" />
+    </g>);
+  } else {
+    g = (<g strokeLinecap="round" strokeLinejoin="round">
+      <g transform="rotate(32 120 90)"><rect x="106" y="8" width="26" height="86" rx="10" fill={K + '.14)'} stroke={K + '.5)'} strokeWidth="3" /><rect x="114" y="92" width="10" height="64" rx="4" fill={K + '.14)'} stroke={K + '.5)'} strokeWidth="3" /><path d="M110 30 h18 M110 44 h18 M110 58 h18" stroke={K + '.3)'} strokeWidth="2" /></g>
+      <circle cx="248" cy="62" r="38" fill={W + '.3)'} stroke={K + '.5)'} strokeWidth="3" />
+      <path d="M222 36 Q248 62 222 88 M274 36 Q248 62 274 88" fill="none" stroke={K + '.55)'} strokeWidth="3" strokeDasharray="1 6" />
+      <circle cx="196" cy="140" r="28" fill={W + '.32)'} stroke={K + '.5)'} strokeWidth="3" />
+      <path d="M196 128 l11 8 -4 13 h-14 l-4 -13 z" fill={K + '.45)'} />
+      <g fill="none" stroke={K + '.45)'} strokeWidth="3"><path d="M278 140 V186 M292 140 V186 M306 140 V186" /><path d="M274 140 H298 M288 140 H312" /></g>
+      <path d="M40 120 l6 12 13 2 -10 9 3 13 -12 -7 -12 7 3 -13 -10 -9 13 -2 z" fill={W + '.45)'} />
+    </g>);
+  }
+  return (<svg className="fz-art" viewBox="0 0 320 200" preserveAspectRatio="xMaxYMid meet" aria-hidden="true" focusable="false">{g}</svg>);
+}
+
 function Flap({ word }) {
   return (<span className={"ak-flap"}>{word}</span>);
 }
@@ -613,7 +669,8 @@ export default function view(v) {
                 </div>
                 <div className={"fz-topics"}>
                   {(v.topics || []).map((t, tI) => (<React.Fragment key={tI}>
-                    <button type={"button"} className={"fz-topic"} onClick={t.go} style={css(`background:${t.color};color:${t.fg}`)}>
+                    <button type={"button"} className={"fz-topic"} data-t={t.name} onClick={t.go} style={css(`background:${t.color};color:${t.fg}`)}>
+                      <TopicArt name={t.name} />
                       <span style={css("position:relative;font-weight:600;font-size:15px;opacity:.85")}>
                         {t.count}
                       </span>
