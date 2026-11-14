@@ -530,6 +530,13 @@ export default class Site extends DCLogic {
       toggleTheme: () => { const d = !this.state.dark; this.setState({ dark: d }); try { document.documentElement.dataset.akk = d ? 'dark' : 'light'; } catch (e) {} try { window.localStorage.setItem('akk-theme', d ? 'dark' : 'light'); } catch (e) {} },
       wires: bands.map((w, i) => ({ y: w.y, d1: 'M0 ' + w.a + ' Q720 ' + w.b + ' 1440 ' + w.c, d2: 'M0 ' + (w.a + 14) + ' Q620 ' + (w.b + 22) + ' 1440 ' + (w.c - 6), d3: 'M0 ' + (w.c + 4) + ' Q820 ' + (w.b - 8) + ' 1440 ' + (w.a + 20), crows: crows.filter((c) => c.band === i) })),
       kites: [ { x: 94.4, y: 3, s: .75 }, { x: .6, y: 17, s: .7 }, { x: 94.6, y: 36, s: .7 }, { x: .5, y: 55, s: .65 }, { x: 94.5, y: 73, s: .75 }, { x: .6, y: 89, s: .6 } ].map((k, i) => { const kc = [['#D21F14','#FFD400'],['#00924A','#F3EFE7'],['#2F5BEA','#FFD400'],['#F28C00','#1A1714'],['#D21F14','#F3EFE7'],['#FFD400','#00924A']][i]; return { x: k.x, y: k.y, w: Math.round(90 * k.s), h: Math.round(195 * k.s), c1: kc[0], c2: kc[1], o: isDark ? .45 : .6, d: 5 + i, dl: i * 1.3 }; }),
+      lab: {
+        view: V, cw: V === 'story' ? 900 : (V === 'all' || V === 'about' ? 1000 : 1240),
+        items: E.slice(0, 14).map((s, i) => ({ id: s.id, title: s.title, cat: s.cat, color: s.color, href: pathFor('story', s), open: nav(() => this.go('story', { si: i })) })),
+        dhaka: T && Number.isFinite(T.temp) ? { temp: T.temp, sky: T.sky, aqi: Number.isFinite(T.aqi) ? T.aqi : null, aqiName: T.aqiName, aqiColor: T.aqiColor } : null,
+        wotd: wt ? { term: wt.term, meaning: wt.meaning } : null,
+        nav: [['home', "Today's five"], ['all', 'All stories'], ['about', 'How we work']].map((n) => ({ label: n[1], cur: V === n[0] || (n[0] === 'home' && V === 'story'), go: () => this.go(n[0]) }))
+      },
       wordOffset: (this.state.word * 1.05).toFixed(2),
       setCanvas: this.setCanvas,
       won: this.state.phase === 'won', over: this.state.phase === 'over', score: this.state.score, rushBest: this.state.rushBest, overMsg: this.state.overMsg,
