@@ -169,6 +169,14 @@ def performer(cc=None, f=False):
     b += f + hair + shades + f'<rect x="{pr[0]-6}" y="{pr[1]-30}" width="12" height="24" rx="6" fill="#5B6470" {S2}/>'
     return b
 
+
+def solemn():
+    """For stories about a death or a tragedy: no character, no celebration. A black ribbon and a candle."""
+    b = f'<path d="M158 70 C120 70 120 128 170 150 L150 214 L186 190 L200 150 C190 120 200 70 158 70 Z" fill="{INK}" {S}/>'
+    b = f'<g transform="translate(-30 0)"><path d="M178 214 L214 128 L238 142 L212 214 L196 196 Z" fill="{INK}" {S}/><path d="M222 214 L186 128 L162 142 L188 214 L204 196 Z" fill="{INK}" {S}/><path d="M200 118 C168 78 190 54 200 54 C210 54 232 78 200 118 Z" fill="none" stroke="{INK}" stroke-width="18" stroke-linejoin="round"/><path d="M200 118 C168 78 190 54 200 54 C210 54 232 78 200 118 Z" fill="none" stroke="#5B6470" stroke-width="5" stroke-linejoin="round"/></g>'
+    b += f'<rect x="262" y="140" width="26" height="86" rx="5" fill="#F3EFE7" {S}/><path d="M275 140 V128" stroke="{INK}" stroke-width="3" stroke-linecap="round"/><path d="M275 94 C264 108 262 124 275 128 C288 124 286 108 275 94 Z" fill="{Y}" {S2}/><path d="M270 150 q-4 14 2 26" fill="none" stroke="#fff" stroke-width="3" opacity=".7" stroke-linecap="round"/>'
+    return b
+
 SCENES = [('batter', batter, '#5CC086', '#7FD3A0', 'Batter hits a six illustration'), ('striker', striker, '#7AA7FF', '#9DC0FF', 'Striker celebrates a goal illustration'),
           ('minister', minister, '#FFB000', '#FFD400', 'Minister gives a speech illustration'), ('leader', leader, '#6C8CFF', '#8FA8FF', 'Leader balancing the world illustration'),
           ('founder', founder, '#B39DFF', '#CDBFFF', 'Founder launches a startup illustration'), ('scientist', scientist, '#3FB8AF', '#6FD0C8', 'Scientist makes a discovery illustration'),
@@ -188,4 +196,7 @@ if __name__ == '__main__':
                 body = fn(cc, f)
                 open(os.path.join(out, f'{tag}{mid}{sfx}.svg'), 'w').write(frame(label, bg, alt, body, shadow=(200, 230, 130)))
                 open(os.path.join(out, f'{tag}{mid}{sfx}-n.svg'), 'w').write(frame(label, '', '', body, True, (200, 230, 130)))
+    body = solemn()
+    open(os.path.join(out, 'solemn.svg'), 'w').write(frame('A black ribbon and a candle', '#9AA3B5', '#A9B1C2', body, shadow=(240, 230, 120)))
+    open(os.path.join(out, 'solemn-n.svg'), 'w').write(frame('A black ribbon and a candle', '', '', body, True, (240, 230, 120)))
     print('done')
