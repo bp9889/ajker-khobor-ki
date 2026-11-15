@@ -2,3 +2,7 @@ node_modules
 .next
 .vercel
 .env*
+
+# Android signing key, never commit
+*.keystore
+signing-key-info.txt
