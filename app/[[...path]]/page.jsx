@@ -6,10 +6,16 @@ import { getToday } from '../../lib/today';
 import { parsePath, titleFor } from '../../lib/route';
 import { factsForDay } from '../../lib/dyk';
 
-export const revalidate = 600; // pages pick up new headlines every 10 minutes
-export const dynamicParams = true;
-export const maxDuration = 300;
-export function generateStaticParams() { return []; }
+// Every page is built as a plain file (the site is rebuilt every 20 minutes, see .github/workflows/deploy.yml).
+export const dynamicParams = false;
+export async function generateStaticParams() {
+  let items = [];
+  try { items = (await getDigest()).items || []; } catch (e) { items = []; }
+  const ids = items.map((x) => x.id).filter((id) => /^[A-Za-z0-9-]{1,80}$/.test(id));
+  return [{ path: [] }, { path: ['stories'] }, { path: ['about'] }, { path: ['did-you-know'] }]
+    .concat(ids.map((id) => ({ path: ['news', id] })))
+    .concat(STORIES.map((s) => ({ path: ['story', s.slug] })));
+}
 
 const routeOf = (params) => parsePath('/' + ((params && params.path) || []).join('/'));
 
@@ -32,7 +38,7 @@ export async function generateMetadata({ params }) {
   if (!d) return {};
   const title = titleFor(d.r.view, d.story);
   const description = d.story ? d.story.text : d.r.view === 'facts' ? 'Ten surprising facts every day, two each from Bangladesh, World, Science, Tech and Sport.' : 'The news from Bangladesh and the world in simple words, with a fresh quiz every 6 hours.';
-  return { title: title, description: description, openGraph: { title: title, description: description, images: ['/og/' + (d.story ? d.story.art : d.r.view === 'facts' ? 'education' : 'speech') + '.png'] } };
+  return { title: title, description: description, openGraph: { title: title, description: description, images: ['/og/' + (d.story ? String(d.story.art || 'speech').split('|')[0] : d.r.view === 'facts' ? 'education' : 'speech') + '.png'] } };
 }
 
 export default async function Page({ params }) {

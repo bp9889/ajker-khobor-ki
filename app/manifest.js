@@ -1,5 +1,7 @@
 import app from '../data/app.json';
 
+export const dynamic = 'force-static';
+
 // The web app manifest. Phones use it to install the site like an app (full screen, own icon).
 export default function manifest() {
   return {

@@ -1,0 +1,16 @@
+{
+  // Cloudflare settings. The site is built into "out" (plain files, free and unlimited to serve);
+  // only /api/* runs the small worker in worker/index.js.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ajker-khobor-ki",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "out",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true }
+}
