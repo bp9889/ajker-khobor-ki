@@ -35,6 +35,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - Stories about a death or tragedy (words like dies, killed, fatal, mourn) never get a cheerful picture (cricket, football, trophy, culture): they get `solemn`, a black ribbon and a candle. Extend the `SOMBER` list in lib/news.js if one slips through.
 - `government`, `diplomacy` and `speech` show the Bangladesh flag, so `tagFor()` switches stories from World, Tech and Sport to the `-w` copies (plain blue banner). Edit both copies if you change one.
 - The four "Explore by topic" cards carry a flag / world map / chip / sports picture (`TopicArt` in components/SiteView.jsx).
+- **Phone app.** The site is an installable web app: `app/manifest.js` (name, icons in `public/icons`, standalone), `public/sw.js` (shows `public/offline.html` with no signal). `components/InstallBanner.jsx` shows a "Tap to install the app" bar only on Android and iPhone browsers (not inside the installed app, snoozed 14 days by `akk-app-no`). If `data/app.json` has an `apk` address (for example `/ajker-khobor-ki.apk` with the file placed in `public/`), Android phones get a download button for that file instead. The workspace cannot reach the Android SDK hosts, so the .apk has to be built elsewhere (for example pwabuilder.com with the site address) and its fingerprint added to `/.well-known/assetlinks.json` if it should open without a browser bar.
 - Respect `prefers-reduced-motion`. Must work on a 360px-wide phone.
 
 ## Not done yet

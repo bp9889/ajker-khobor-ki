@@ -2,6 +2,7 @@
 import React from 'react';
 import { css } from '../lib/css';
 import Extras from './Extras';
+import InstallBanner from './InstallBanner';
 
 
 // A taxi-meter style number: each digit is a column of 0-9 that rolls to its value when the block scrolls into view.
@@ -1237,6 +1238,7 @@ export default function view(v) {
         </form>
       </div>) : null}
       <Extras d={v.extras} />
+      <InstallBanner />
       <div className={"ak-toast" + (v.toastOn ? " on" : "")} role={"status"} aria-live={"polite"}>{v.toast}</div>
     </div>
   </>);

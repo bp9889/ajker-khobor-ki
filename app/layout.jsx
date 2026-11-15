@@ -1,6 +1,11 @@
 import './globals.css';
 
-export const metadata = { metadataBase: new URL(process.env.VERCEL_PROJECT_PRODUCTION_URL ? 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL : 'http://localhost:3000') };
+export const metadata = {
+  metadataBase: new URL(process.env.VERCEL_PROJECT_PRODUCTION_URL ? 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL : 'http://localhost:3000'),
+  applicationName: 'AJKER খবর KI?',
+  icons: { apple: '/icons/apple-touch-icon.png' },
+  appleWebApp: { capable: true, title: 'Ajker Khobor', statusBarStyle: 'default' },
+};
 export const viewport = { width: 'device-width', initialScale: 1, themeColor: '#D21F14' };
 
 // Runs before the page paints, so dark-mode users never see a white flash.
