@@ -55,4 +55,4 @@
 .ak-app-no{min-height:44px;font-family:inherit;font-size:15px;font-weight:600;padding:8px 14px;border-radius:999px;border:0;background:transparent;color:var(--muted);cursor:pointer;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
 .ak-app a:focus-visible,.ak-app button:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.ak-app,.ak-app.on{transform:none;transition:opacity 200ms ease,visibility 0s linear 200ms}.ak-app.on{transition:opacity 200ms ease,visibility 0s}}
-@media (min-width:700px){.ak-app{display:none}}
+@media (min-width:700px){.ak-app:not(.inapp){display:none}}

@@ -1,3 +1,5 @@
+import app from '../data/app.json';
+
 // The web app manifest. Phones use it to install the site like an app (full screen, own icon).
 export default function manifest() {
   return {
@@ -5,7 +7,8 @@ export default function manifest() {
     short_name: 'Ajker Khobor',
     description: "Today's news in simple words. Bangladesh and the world, explained in about 60 seconds.",
     id: '/',
-    start_url: '/?source=app',
+    // The APK is built from this manifest, so each APK opens the site with its own version number (av).
+    start_url: '/?source=app&av=' + app.apkVersion,
     scope: '/',
     display: 'standalone',
     orientation: 'portrait',

@@ -4,6 +4,7 @@ import { STORIES } from '../../data/stories';
 import { getDigest } from '../../lib/digest';
 import { getToday } from '../../lib/today';
 import { parsePath, titleFor } from '../../lib/route';
+import { factsForDay } from '../../lib/dyk';
 
 export const revalidate = 600; // pages pick up new headlines every 10 minutes
 export const dynamicParams = true;
@@ -30,12 +31,12 @@ export async function generateMetadata({ params }) {
   const d = await load(params);
   if (!d) return {};
   const title = titleFor(d.r.view, d.story);
-  const description = d.story ? d.story.text : 'The news from Bangladesh and the world in simple words, with a fresh quiz every 6 hours.';
-  return { title: title, description: description, openGraph: { title: title, description: description, images: ['/og/' + (d.story ? d.story.art : 'speech') + '.png'] } };
+  const description = d.story ? d.story.text : d.r.view === 'facts' ? 'Ten surprising facts every day, two each from Bangladesh, World, Science, Tech and Sport.' : 'The news from Bangladesh and the world in simple words, with a fresh quiz every 6 hours.';
+  return { title: title, description: description, openGraph: { title: title, description: description, images: ['/og/' + (d.story ? d.story.art : d.r.view === 'facts' ? 'education' : 'speech') + '.png'] } };
 }
 
 export default async function Page({ params }) {
   const [d, today] = await Promise.all([load(params), getToday().catch(() => null)]);
   if (!d) notFound();
-  return <Site view={d.r.view} sid={d.r.sid || ''} digest={d.digest} today={today} />;
+  return <Site view={d.r.view} sid={d.r.sid || ''} digest={d.digest} today={today} dyk={factsForDay()} />;
 }

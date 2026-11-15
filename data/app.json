@@ -1,1 +1,11 @@
-{ "apk": "/ajker-khobor-ki.apk" }
+{
+  "apk": "/ajker-khobor-ki.apk",
+  "apkVersion": 1,
+  "release": {
+    "n": 2,
+    "title": "New: a Did you know page",
+    "note": "Ten surprising facts every day, two from each section. Find it in the menu at the top.",
+    "href": "/did-you-know",
+    "go": "Show me"
+  }
+}

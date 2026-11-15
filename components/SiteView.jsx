@@ -345,7 +345,7 @@ export default function view(v) {
                   {"People are waiting at the bus stands with questions about the news. Stop and pick them up, and each passenger brings a story explained. Not in the mood to ride? Skip the game and open all five."}
                 </p>
               </section>
-              <section id={"game"} aria-label={"Passenger stops"} style={css("position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:0 32px")}>
+              <section id={"game"} aria-label={"Passenger stops"} onContextMenu={(e) => e.preventDefault()} style={css("position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:0 32px")}>
                 <div style={css("background:var(--bg);border-radius:30px;padding:16px;margin:-16px;box-shadow:0 0 0 1px var(--line)")}>
                   <div className={"np3-game"} tabIndex={"0"} role={"application"} aria-label={"Passenger stops. Hold Right arrow to pedal, Left arrow to brake, Space to jump, B to ring the bell. Stop at a bus stand to pick up a passenger."} onKeyDown={v.keyDown} onKeyUp={v.keyUp} style={css("position:relative;border:2px solid var(--line);border-radius:22px;overflow:hidden;background:var(--canvas);touch-action:manipulation")}>
                     <canvas id={"np3-canvas"} ref={v.setCanvas} onPointerDown={v.tapJump} style={css("display:block;width:100%;aspect-ratio:1000/380;cursor:pointer")} />
@@ -691,10 +691,10 @@ export default function view(v) {
                     {"Play & learn"}
                   </h2>
                   <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                    {"A new quiz and new facts every 6 hours"}
+                    {"A new quiz every 6 hours"}
                   </span>
                 </div>
-                <div className={"ak-play"}>
+                <div className={"ak-play ak-play1"}>
                   <div className={"ak-pcard"}>
                     <h3 id={"quiz-h"} className={"np3-disp ak-ph"}>{"Quick check"}</h3>
                     <div className={"ak-qdots"} role={"group"} aria-label={"Questions"}>
@@ -728,38 +728,6 @@ export default function view(v) {
                       {(v.quiz || []).filter((q, qI) => qI === v.quizI).map((qz) => (qz.done ? <button key={"r" + qz.key} type={"button"} className={"ak-link"} onClick={qz.report}>{"Wrong answer? Tell us"}</button> : null))}
                     </div>
                   </div>
-                  {v.dyk && v.dyk.has ? (<div className={"ak-pcard"}>
-                    <h3 id={"dyk-h"} className={"np3-disp ak-ph"}>{"Did you know?"}</h3>
-                    <div role={"group"} aria-label={"Fact topics"} style={css("display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px")}>
-                      {(v.dyk.tabs || []).map((t, tI) => (<React.Fragment key={tI}>
-                        <button type={"button"} onClick={t.go} aria-pressed={t.on} style={css(t.style)}>
-                          {t.name}
-                        </button>
-                      </React.Fragment>))}
-                    </div>
-                    <div className={"fz-dyk ak-dyk"} style={css(`border-left-color:${v.dyk.color}`)}>
-                      <p key={v.dyk.hook} className={"np3-disp fz-dykhook ak-hook"} aria-live={"polite"}>
-                        {v.dyk.hook}
-                      </p>
-                      {v.dyk.open ? (<>
-                        <p className={"np3-in fz-dykmore"}>
-                          {v.dyk.more}
-                        </p>
-                      </>) : null}
-                      <div className={"fz-dykbar"}>
-                        <button type={"button"} className={"fz-dykbtn"} onClick={v.dyk.toggle} aria-expanded={v.dyk.open ? "true" : "false"}>
-                          {v.dyk.label}
-                        </button>
-                        <button type={"button"} className={"fz-dykbtn fz-dykbtn2"} onClick={v.dyk.next}>
-                          {"Next fact"}
-                        </button>
-                        <span className={"fz-dykpos"}>
-                          {v.dyk.section + ", " + v.dyk.pos}
-                        </span>
-                      </div>
-                    </div>
-                    <div className={"ak-qfoot"}><button type={"button"} className={"ak-link"} onClick={v.dykReport}>{"Spotted a mistake in this fact?"}</button></div>
-                  </div>) : null}
                 </div>
                 {v.wotd ? (<div className={"ak-word"} data-io={"1"}>
                   <span className={"ak-wlab"}>{"Word of the day"}</span>
@@ -1052,6 +1020,35 @@ export default function view(v) {
               <p style={css("margin:10px 0 0;font-size:15px;color:var(--muted)")}>
                 {"Sample stories for this design preview."}
               </p>
+            </div>
+          </>) : null}
+          {v.vFacts && v.facts ? (<>
+            <div className={v.pageClass} style={css("max-width:1000px;margin:0 auto;padding:20px 32px 90px")}>
+              <h1 className={"pg-h1 pg-disp"} style={css("font-weight:800;font-size:96px;line-height:.95;margin:0 0 14px")}>
+                {"Did you know?"}
+              </h1>
+              <p style={css("margin:0 0 10px;font-size:22px;line-height:1.5;max-width:680px")}>
+                {"Ten facts most people have never heard, two from each section. A fresh ten arrives every day at midnight, Dhaka time."}
+              </p>
+              <p className={"dk-meta"}>
+                <strong>{"Today's ten, " + v.facts.date}</strong>
+                <span>{v.facts.learnedLabel}</span>
+              </p>
+              {(v.facts.sections || []).map((sec) => (<section key={sec.id} aria-labelledby={sec.id} className={"dk-sec"} style={{ '--dk': sec.color }}>
+                <h2 id={sec.id} className={"pg-disp dk-h"}>{sec.name}</h2>
+                <div className={"dk-grid"}>
+                  {sec.facts.map((f) => (<article key={f.id} className={"dk-card" + (f.got ? " got" : "")}>
+                    <p className={"np3-disp dk-hook"}>{f.hook}</p>
+                    {f.open ? <p className={"dk-more"}>{f.more}</p> : null}
+                    <div className={"dk-bar"}>
+                      <button type={"button"} className={"fz-dykbtn fz-dykbtn2 dk-btn"} onClick={f.toggle} aria-expanded={f.open ? "true" : "false"}>{f.label}</button>
+                      <button type={"button"} className={"fz-dykbtn dk-btn dk-new"} onClick={f.learn} aria-pressed={f.got ? "true" : "false"}>{f.got ? "New to me ✓" : "New to me"}</button>
+                      <button type={"button"} className={"ak-link dk-rep"} onClick={f.report}>{"Wrong? Tell us"}</button>
+                    </div>
+                  </article>))}
+                </div>
+              </section>))}
+              <p className={"dk-end"}>{"That's today's ten. Come back tomorrow for ten more."}</p>
             </div>
           </>) : null}
           {v.vAbout ? (<>
