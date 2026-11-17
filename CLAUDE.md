@@ -17,7 +17,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - `data/stories.js`: built-in sample explainers, used only when no live news can be loaded.
 - `lib/route.js`: web addresses (`/`, `/news/<id>`, `/story/<slug>`, `/stories`, `/did-you-know`, `/about`).
 - `app/[[...path]]/page.jsx`: one page component serves every address, so page changes animate without a reload. Pages refresh every 10 minutes.
-- Pictures are in `public/art/<tag>.svg` (day) and `<tag>-n.svg` (night). Share images are in `public/og`.
+- Pictures are in `public/art/<tag>.svg` (day) and `<tag>-n.svg` (night). Share images are in `public/og` (`share.png`, a screenshot of the home page, is the preview for every page that is not a story).
 - To work offline: `AKK_FIXTURE=path/to/digest.json npm run dev` serves a saved copy of `/api/news`.
 
 ## English and Bangla

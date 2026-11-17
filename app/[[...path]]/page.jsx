@@ -32,7 +32,7 @@ export async function generateMetadata({ params }) {
   if (!d) return {};
   const title = titleFor(d.r.view, d.story);
   const description = d.story ? d.story.text : d.r.view === 'facts' ? 'Ten surprising facts every day, two each from Bangladesh, World, Science, Tech and Sport.' : 'The news from Bangladesh and the world in simple words, with a fresh quiz every 6 hours.';
-  return { title: title, description: description, openGraph: { title: title, description: description, images: ['/og/' + (d.story ? d.story.art : d.r.view === 'facts' ? 'education' : 'speech') + '.png'] } };
+  return { title: title, description: description, openGraph: { title: title, description: description, images: [d.story ? '/og/' + String(d.story.art || 'speech').split('|')[0] + '.png' : '/og/share.png'] } };
 }
 
 export default async function Page({ params }) {
