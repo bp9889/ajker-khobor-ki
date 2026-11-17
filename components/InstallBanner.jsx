@@ -84,7 +84,7 @@ export default function InstallBanner({ lang }) {
   let title, line, main, no;
   if (mode === 'update') {
     title = t('A new version of the app is ready');
-    line = t('Download it and open the file to update. Your saved stories stay.');
+    line = t('Download it and open the file to update. It opens faster and looks like a real app.');
     main = <a className="ak-app-go" href={apk} download tabIndex={tab} onClick={() => setTimeout(hide, 400)}>{t('Download the update')}</a>;
     no = t('Later');
   } else if (mode === 'news') {
