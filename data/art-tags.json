@@ -493,7 +493,18 @@
         "health",
         "doctor",
         "medicine",
-        "DGHS"
+        "DGHS",
+        "measles",
+        "outbreak",
+        "cholera",
+        "polio",
+        "mpox",
+        "tuberculosis",
+        "epidemic",
+        "pandemic",
+        "disease",
+        "infection",
+        "vaccination"
       ]
     },
     {

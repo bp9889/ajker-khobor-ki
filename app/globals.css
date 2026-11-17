@@ -35,6 +35,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,.np3-game:focus-visible
 .np3-stories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
 .np3-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
 @media (max-width:920px){.np3-stories,.np3-steps{grid-template-columns:minmax(0,1fr)}.np3-h1{font-size:58px!important}}
+/* Small phones: shrink the hero so the longest rotating line ("without the noise.") fits on one line at 360px. */
+@media (max-width:440px){.np3-h1{font-size:clamp(40px,13.5vw,58px)!important}}
 @media (prefers-reduced-motion:reduce){.np3-kite,.np3-tail,.np3-crow,.np3-halftone,.np3-reg,.np3-in,.np3-pop{animation:none}.np3-words,.np3-card{transition:none}}
 @property --trr{syntax:'<length>';inherits:false;initial-value:0px}
 .tr-layer{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
