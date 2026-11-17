@@ -58,7 +58,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - A live story's page disappears once the headline leaves the feeds (old links then show the all-stories page). Saving stories to a database would fix that.
 - "Join the waitlist" only shows a thank-you. It does not save the email anywhere yet.
 - Bangla versions of the Did you know facts (data/dyk is English only).
-- The free Cloudflare version (plain files built by GitHub every 20 minutes) is on the `cf` branch, paused at the user's request. It predates the Bangla work: merge main into it before going live (the worker's /api/simpler also needs the `lang=bn` option).
+- ON HOLD, do not work on it unless Bishan asks: moving to free Cloudflare hosting (the `cf` branch). It predates the Bangla work.
 - "Report a mistake" reports only appear in the Vercel runtime logs (search for `[report]`). Email or a database would make them easier to act on.
 - "Published N min ago" is the publisher's time. "News checked N min ago" is when the page was last built.
 - `SiteView.jsx` is one big file. Splitting it into smaller components is a good first clean-up.
