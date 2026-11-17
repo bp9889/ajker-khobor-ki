@@ -78,3 +78,25 @@
 .th-handle{color:var(--muted);font-weight:600}
 @media (max-width:520px){.th-card{padding:40px 18px!important}}
 @media (prefers-reduced-motion:reduce){.th-cup.pour .th-stream{animation:none}.th-cup.pour .th-liq{animation:thSteamIn 300ms ease both;transform:none}.th-cup.pour .th-steam{animation:none;opacity:.85}.th-cup .th-steam path{animation:none!important}}
+
+/* Too much cha: every 5th cup the page shakes and tears for 2 seconds (clicks blocked), then the Ammu note covers it. */
+.cg-on > :not(.cg-tear):not(.cg-note){animation:cgShake 90ms steps(2) infinite}
+@keyframes cgShake{0%{transform:translate(4px,-3px) skewX(2deg);filter:hue-rotate(0)}50%{transform:translate(-5px,3px) skewX(-3deg);filter:hue-rotate(90deg) saturate(1.6)}100%{transform:translate(2px,1px);filter:none}}
+.cg-tear{position:fixed;inset:0;z-index:200;cursor:wait}
+.cg-tear i{position:absolute;left:0;right:0;height:12px;mix-blend-mode:multiply;opacity:.75;animation:cgTear 420ms steps(1) infinite}
+.cg-tear i:nth-child(odd){background:#00D0FF}
+.cg-tear i:nth-child(even){background:#FF2A6D}
+.cg-tear i:nth-child(1){animation-duration:310ms}.cg-tear i:nth-child(2){animation-duration:470ms;animation-delay:-120ms}
+.cg-tear i:nth-child(3){animation-duration:390ms;animation-delay:-200ms}.cg-tear i:nth-child(4){animation-duration:530ms;animation-delay:-60ms}
+.cg-tear i:nth-child(5){animation-duration:350ms;animation-delay:-260ms}.cg-tear i:nth-child(6){animation-duration:440ms;animation-delay:-330ms}
+@keyframes cgTear{0%{top:8%;height:6px}20%{top:63%;height:18px}40%{top:31%;height:4px}60%{top:84%;height:14px}80%{top:47%;height:22px}}
+.cg-note{position:fixed;inset:0;z-index:210;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(243,239,231,.97);animation:cgIn 220ms ease both}
+html[data-akk="dark"] .cg-note,.np3-dark .cg-note{background:rgba(26,23,20,.96)}
+.cg-box{max-width:520px;text-align:center}
+.cg-h{margin:0 0 12px;font-weight:800;font-size:48px;line-height:1.05;color:#D21F14}
+html[data-akk="dark"] .cg-h,.np3-dark .cg-h{color:#FF4A3D}
+.cg-b{margin:0 0 22px;font-size:20px;line-height:1.5;color:var(--ink)}
+.cg-ok{font-family:inherit;font-weight:700;font-size:18px;padding:13px 24px;min-height:48px;border-radius:14px;border:2px solid var(--ink);background:#FFD400;color:#1A1714;cursor:pointer}
+@keyframes cgIn{from{opacity:0}to{opacity:1}}
+@media (max-width:520px){.cg-h{font-size:36px}.cg-b{font-size:18px}}
+@media (prefers-reduced-motion:reduce){.cg-on > *{animation:none!important}.cg-tear i{animation:none;display:none}.cg-note{animation:none}}

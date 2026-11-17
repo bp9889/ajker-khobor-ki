@@ -554,7 +554,7 @@ export default class Site extends DCLogic {
       tryTr: () => this.go(this.state.view),
       trLiveA: !this.state.trDone && this.state.trN % 2 === 0, trLiveB: !this.state.trDone && this.state.trN % 2 === 1,
       trShutter: TR === 'shutter', trRickshaw: TR === 'rickshaw', trHalftone: TR === 'halftone', trUnfold: TR === 'unfold', trTicket: TR === 'ticket', trRoot: TR === 'unfold' && !this.state.trDone ? 'tr-unfold' : '', trLive: !this.state.trDone, trName: V === 'story' ? 'the explainer' : (V === 'all' ? 'All stories' : (V === 'about' ? 'How we work' : (V === 'facts' ? 'Did you know?' : "Today's five"))),
-      theme: isDark ? 'np3-dark' : 'np3-light', rootClass: (isDark ? 'np3-dark' : 'np3-light') + (!this.state.trDone ? ' fz-go' : '') + ' fz-t-kite', isDark: isDark, isLight: !isDark,
+      theme: isDark ? 'np3-dark' : 'np3-light', rootClass: (isDark ? 'np3-dark' : 'np3-light') + (!this.state.trDone ? ' fz-go' : '') + ' fz-t-kite' + (this.state.chaFx === 'glitch' ? ' cg-on' : ''), isDark: isDark, isLight: !isDark,
       themeLabel: isDark ? 'Switch to light mode' : 'Switch to dark mode',
       lang: LG, t: (x) => tr(LG, x), langBtn: LG === 'bn' ? 'English' : 'বাংলা', langAria: LG === 'bn' ? 'Read in English' : 'বাংলায় পড়ুন', langOther: LG === 'bn' ? 'en' : 'bn', toggleLang: () => this.setLang(LG === 'bn' ? 'en' : 'bn'),
       readLabel: (cat, time) => LG === 'bn' ? tr('bn', cat) + ', ' + String(time).replace('60 sec', '৬০ সেকেন্ডে') + ' পড়া' : cat + ', ' + time + ' read',
@@ -625,12 +625,30 @@ export default class Site extends DCLogic {
       ],
       // "Pour the maker a cha": a just-for-fun thank-you. Cups are counted on the reader's phone only (akk-cha).
       thanks: (() => {
-        const n = this.state.cha || 0, k = this.state.pourK || 0;
+        const n = this.state.cha || 0, k = this.state.pourK || 0, step = n % 5;
+        // Every 5th cup the page glitches (too much cha), then "Ammu has been informed" covers the page.
+        const LN = [['Nice.', 'বাহ্‌।'], ['His eye twitches, happily.', 'চোখ পিটপিট করছে, তবে খুশিতে।'], ['He reorganised his desktop twice.', 'ডেস্কটপ দুইবার গুছিয়ে ফেলেছে।'], ['W-why is the t-text shaking?', 'ল-লেখাগুলো ক-কাঁপছে কেন?']];
         return {
           cups: n, k: k, cupClass: 'th-cup' + (k ? ' pour' : n ? ' full' : ''),
-          status: n ? B('Cha poured! That makes ' + n + (n === 1 ? ' cup' : ' cups') + ' from you.', 'চা ঢালা হলো! আপনার পক্ষ থেকে মোট ' + n + ' কাপ।') : '',
+          status: n && step ? B('Cup ' + n + '. ' + LN[step - 1][0], n + ' নম্বর কাপ। ' + LN[step - 1][1]) : (n ? B('Cup ' + n + '. Please, no more.', n + ' নম্বর কাপ। দয়া করে আর না।') : ''),
           pourLabel: n ? B('Pour another', 'আরেক কাপ ঢালুন') : B('Pour a cha', 'এক কাপ চা ঢালুন'),
-          pour: () => { const next = n + 1; this.setState({ cha: next, pourK: k + 1 }); try { window.localStorage.setItem('akk-cha', String(next)); } catch (e) {} },
+          igLabel: n >= 5 ? B('Tell the maker you are sorry', 'যে বানিয়েছে, তার কাছে সরি বলুন') : B('Tell the maker the cha worked', 'যে বানিয়েছে, তাকে বলুন চা কাজ করেছে'),
+          glitch: this.state.chaFx === 'glitch', note: this.state.chaFx === 'note',
+          close: () => this.setState({ chaFx: '' }),
+          pour: () => {
+            if (this.state.chaFx) return;
+            const next = n + 1; this.setState({ cha: next, pourK: k + 1 });
+            try { window.localStorage.setItem('akk-cha', String(next)); } catch (e) {}
+            if (next % 5 === 0) {
+              clearTimeout(this.chaT); clearTimeout(this.chaT2);
+              // Let the cup finish pouring first. Readers who prefer less motion skip the shaking.
+              this.chaT = setTimeout(() => {
+                if (this.reduce) { this.setState({ chaFx: 'note' }); return; }
+                this.setState({ chaFx: 'glitch' });
+                this.chaT2 = setTimeout(() => this.setState({ chaFx: 'note' }), 2200);
+              }, 1300);
+            }
+          },
         };
       })(),
     };

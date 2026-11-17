@@ -752,7 +752,7 @@ function page(v) {
                   <p style={css("font-size:20px;margin:0 auto 22px;max-width:520px;line-height:1.5;color:var(--muted)")}>
                     {"If the news felt a little easier today, pour the maker a cup of cha. It costs nothing, just tap."}
                   </p>
-                  <svg key={v.thanks.k} className={v.thanks.cupClass} viewBox={"0 0 64 92"} width={"112"} height={"161"} aria-hidden={"true"}>
+                  <svg key={v.thanks.k} className={v.thanks.cupClass} viewBox={"0 -16 64 108"} width={"112"} height={"189"} aria-hidden={"true"}>
                     <defs><clipPath id={"th-in"}><path d={"M12 22 H48 L44 74 Q44 78 40 78 H20 Q16 78 16 74 Z"} /></clipPath></defs>
                     <rect className={"th-stream"} x={"28.5"} y={"-14"} width={"5"} height={"88"} rx={"2.5"} fill={"#B5651D"} />
                     <g className={"th-steam"}><path d={"M22 16 q-5 -6 0 -11 t0 -11"} /><path d={"M30 16 q-5 -6 0 -11 t0 -11"} /><path d={"M38 16 q-5 -6 0 -11 t0 -11"} /></g>
@@ -771,7 +771,7 @@ function page(v) {
                   </p>
                   <a className={"th-ig"} href={"https://www.instagram.com/bp._.09/"} target={"_blank"} rel={"noopener noreferrer"}>
                     <svg viewBox={"0 0 24 24"} width={"22"} height={"22"} aria-hidden={"true"}><rect x={"3"} y={"3"} width={"18"} height={"18"} rx={"5"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} /><circle cx={"12"} cy={"12"} r={"4"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} /><circle cx={"17.3"} cy={"6.7"} r={"1.2"} fill={"currentColor"} /></svg>
-                    <span>{"Say thanks on Instagram"}</span>
+                    <span>{v.thanks.igLabel}</span>
                     <span className={"th-handle"}>{"@bp._.09"}</span>
                   </a>
                 </div>
@@ -1250,6 +1250,14 @@ function page(v) {
         </form>
       </div>) : null}
       <Extras d={v.extras} />
+      {v.thanks.glitch ? (<div className={"cg-tear"} aria-hidden={"true"}><i /><i /><i /><i /><i /><i /></div>) : null}
+      {v.thanks.note ? (<div className={"cg-note"} role={"alertdialog"} aria-modal={"true"} aria-labelledby={"cg-h"} aria-describedby={"cg-b"} onKeyDown={(e) => { if (e.key === 'Escape') v.thanks.close(); }}>
+        <div className={"cg-box"}>
+          <p id={"cg-h"} className={"np3-disp cg-h"}>{"Ammu has been informed."}</p>
+          <p id={"cg-b"} className={"cg-b"}>{"Heart rate: 320. Prescription: zero cha for 24 hours. Do you want to see me dying? Go read the news instead."}</p>
+          <button type={"button"} className={"np3-btn cg-ok"} autoFocus onClick={v.thanks.close}>{"Okay, water from now on"}</button>
+        </div>
+      </div>) : null}
       <InstallBanner lang={v.lang} />
       <div className={"ak-toast" + (v.toastOn ? " on" : "")} role={"status"} aria-live={"polite"}>{v.toast}</div>
     </div>
