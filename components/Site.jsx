@@ -63,7 +63,7 @@ export default class Site extends DCLogic {
     const dark = this.initDark(), read = this.initRead();
     if (dark !== this.state.dark || read.length) this.setState({ dark: dark, read: read });
     try { const lg = window.localStorage.getItem('akk-lang') || (new URLSearchParams(window.location.search).get('lang')); if (lg === 'bn') this.setLang('bn'); } catch (e) {}
-    try { const c = parseInt(window.localStorage.getItem('akk-cha') || '0', 10); if (c > 0 && c < 5) this.setState({ cha: c }); if (window.localStorage.getItem('akk-cha-od')) this.setState({ chaOD: true }); } catch (e) {}
+    try { const c = parseInt(window.localStorage.getItem('akk-cha') || '0', 10); if (c > 0 && c < 5) { this.chaN = c; this.setState({ cha: c }); } if (window.localStorage.getItem('akk-cha-od')) this.setState({ chaOD: true }); } catch (e) {}
     try { const l = JSON.parse(window.localStorage.getItem('akk-learned') || '[]'); if (Array.isArray(l) && l.length) this.setState({ learned: l.filter((x) => typeof x === 'string').slice(-2000) }); } catch (e) {}
     this.onPop = () => { const r = parsePath(window.location.pathname); if (!r) return; const at = r.view === 'story' ? this.list().findIndex((s) => s.id === r.sid) : 0; if (at < 0) this.go('all', { gone: true }, true); else this.go(r.view, r.view === 'story' ? { si: at } : {}, true); };
     window.addEventListener('popstate', this.onPop);
@@ -628,17 +628,20 @@ export default class Site extends DCLogic {
         const n = this.state.cha || 0, k = this.state.pourK || 0, step = n % 5;
         // After the 5th cup and Ammu's note, the cup empties and the count starts again from 0.
         // Every 5th cup the page glitches (too much cha), then "Ammu has been informed" covers the page.
-        const LN = [['Nice.', 'বাহ্‌।'], ['His eye twitches, happily.', 'চোখ পিটপিট করছে, তবে খুশিতে।'], ['He reorganised his desktop twice.', 'ডেস্কটপ দুইবার গুছিয়ে ফেলেছে।'], ['W-why is the t-text shaking?', 'ল-লেখাগুলো ক-কাঁপছে কেন?']];
+        const LN = [['Nice.', 'বাহ্‌।'], ['His eye twitches, happily.', 'চোখ পিটপিট করছে, তবে খুশিতে।'], ['He reorganised his desktop twice.', 'ডেস্কটপ দুইবার গুছিয়ে ফেলেছে।'], ['W-why is the t-text shaking? Please don\'t let him drink a 5th.', 'ল-লেখাগুলো ক-কাঁপছে কেন? দয়া করে ৫ম কাপটা খেতে দেবেন না।']];
         return {
           cups: n, k: k, cupClass: 'th-cup' + (k ? ' pour' : n ? ' full' : ''),
-          status: n && step ? B('Cup ' + n + '. ' + LN[step - 1][0], n + ' নম্বর কাপ। ' + LN[step - 1][1]) : (n ? B('Cup ' + n + '. Please, no more.', n + ' নম্বর কাপ। দয়া করে আর না।') : ''),
-          pourLabel: n ? B('Pour another', 'আরেক কাপ ঢালুন') : B('Pour a cha', 'এক কাপ চা ঢালুন'),
+          status: n >= 5 && this.state.chaNag ? B('Hands off the kettle. He has had five.', 'কেটলি থেকে হাত সরান। পাঁচ কাপ হয়ে গেছে।') : n && step ? B('Cup ' + n + '. ' + LN[step - 1][0], n + ' নম্বর কাপ। ' + LN[step - 1][1]) : (n ? B('Cup ' + n + '. Please, no more.', n + ' নম্বর কাপ। দয়া করে আর না।') : ''),
+          pourLabel: n >= 5 ? B('No more cha', 'আর চা নয়') : n === 4 ? B('Pour the 5th anyway', 'তবু ৫ম কাপ ঢালুন') : n ? B('Pour another', 'আরেক কাপ ঢালুন') : B('Pour a cha', 'এক কাপ চা ঢালুন'),
           igLabel: this.state.chaOD ? B('Tell the maker you are sorry', 'যে বানিয়েছে, তার কাছে সরি বলুন') : B('Tell the maker the cha worked', 'যে বানিয়েছে, তাকে বলুন চা কাজ করেছে'),
           glitch: this.state.chaFx === 'glitch', note: this.state.chaFx === 'note',
-          close: () => { this.setState({ chaFx: '', cha: 0, pourK: 0, chaOD: true }); try { window.localStorage.setItem('akk-cha', '0'); window.localStorage.setItem('akk-cha-od', '1'); } catch (e) {} },
+          close: () => { this.chaN = 0; this.chaLock = false; this.setState({ chaFx: '', cha: 0, pourK: 0, chaOD: true, chaNag: 0 }); try { window.localStorage.setItem('akk-cha', '0'); window.localStorage.setItem('akk-cha-od', '1'); } catch (e) {} },
           pour: () => {
-            if (this.state.chaFx) return;
-            const next = n + 1; this.setState({ cha: next, pourK: k + 1 });
+            // Count from an instance value, so fast tapping can never go past 5 before the page re-renders.
+            if (this.chaLock || this.state.chaFx) { this.setState((st) => ({ chaNag: (st.chaNag || 0) + 1 })); return; }
+            const next = Math.min(5, (this.chaN || 0) + 1); this.chaN = next;
+            if (next >= 5) this.chaLock = true;
+            this.setState((st) => ({ cha: next, pourK: (st.pourK || 0) + 1 }));
             try { window.localStorage.setItem('akk-cha', String(next)); } catch (e) {}
             if (next >= 5) {
               clearTimeout(this.chaT); clearTimeout(this.chaT2);

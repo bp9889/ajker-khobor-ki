@@ -1253,8 +1253,8 @@ function page(v) {
       {v.thanks.glitch ? (<div className={"cg-tear"} aria-hidden={"true"}><i /><i /><i /><i /><i /><i /></div>) : null}
       {v.thanks.note ? (<div className={"cg-note"} role={"alertdialog"} aria-modal={"true"} aria-labelledby={"cg-h"} aria-describedby={"cg-b"} onKeyDown={(e) => { if (e.key === 'Escape') v.thanks.close(); }}>
         <div className={"cg-box"}>
-          <p id={"cg-h"} className={"np3-disp cg-h"}>{"Ammu has been informed."}</p>
-          <p id={"cg-b"} className={"cg-b"}>{"Heart rate: 320. Prescription: zero cha for 24 hours. Do you want to see me dying? Go read the news instead."}</p>
+          <p id={"cg-h"} className={"np3-disp cg-h"}>{"Error 418: I'm a teapot, and I'm full."}</p>
+          <p id={"cg-b"} className={"cg-b"}>{"Five cups. My heart is ringing like a rickshaw bell on Eid morning. Do you want to see me dying? Go read the news. I'll be lying down."}</p>
           <button type={"button"} className={"np3-btn cg-ok"} autoFocus onClick={v.thanks.close}>{"Okay, water from now on"}</button>
         </div>
       </div>) : null}
