@@ -63,6 +63,7 @@ export default class Site extends DCLogic {
     const dark = this.initDark(), read = this.initRead();
     if (dark !== this.state.dark || read.length) this.setState({ dark: dark, read: read });
     try { const lg = window.localStorage.getItem('akk-lang') || (new URLSearchParams(window.location.search).get('lang')); if (lg === 'bn') this.setLang('bn'); } catch (e) {}
+    try { const c = parseInt(window.localStorage.getItem('akk-cha') || '0', 10); if (c > 0 && c < 1e6) this.setState({ cha: c }); } catch (e) {}
     try { const l = JSON.parse(window.localStorage.getItem('akk-learned') || '[]'); if (Array.isArray(l) && l.length) this.setState({ learned: l.filter((x) => typeof x === 'string').slice(-2000) }); } catch (e) {}
     this.onPop = () => { const r = parsePath(window.location.pathname); if (!r) return; const at = r.view === 'story' ? this.list().findIndex((s) => s.id === r.sid) : 0; if (at < 0) this.go('all', { gone: true }, true); else this.go(r.view, r.view === 'story' ? { si: at } : {}, true); };
     window.addEventListener('popstate', this.onPop);
@@ -511,11 +512,13 @@ export default class Site extends DCLogic {
         const n = learned.length;
         return {
           date: T.date,
+          dateLabel: B("Today's ten, " + T.date, 'আজকের দশটি, ' + (T.dateBn || T.date)),
           learnedLabel: n ? B('You have learned ' + n + (n === 1 ? ' new fact' : ' new facts') + ' here so far.', 'এ পর্যন্ত এখানে ' + n + 'টি নতুন তথ্য জেনেছেন।') : 'Tap "New to me" on any fact you did not know, and we will keep count.',
-          note: LG === 'bn' ? 'Facts are in English for now. Bangla versions are on the way.' : '',
           sections: T.sections.map((sec) => ({ name: sec.name, color: sec.color, id: 'dyk-' + sec.name.toLowerCase(), facts: sec.facts.map((f) => {
             const open = !!opened[f.id], got = learned.indexOf(f.id) >= 0;
-            return { id: f.id, hook: f.hook, more: f.more, open: open, got: got,
+            // Bangla when the site is in Bangla and this fact has it; otherwise the English.
+            const bn = LG === 'bn' && f.hookBn && f.moreBn;
+            return { id: f.id, hook: bn ? f.hookBn : f.hook, more: bn ? f.moreBn : f.more, open: open, got: got,
               toggle: () => this.setState({ dykOpen: Object.assign({}, opened, { [f.id]: !open }) }),
               label: open ? 'Hide' : 'Why?',
               learn: () => { const next = got ? learned.filter((x) => x !== f.id) : learned.concat(f.id); this.setState({ learned: next }); try { window.localStorage.setItem('akk-learned', JSON.stringify(next.slice(-2000))); } catch (e) {} },
@@ -536,7 +539,7 @@ export default class Site extends DCLogic {
       topics: [['Bangladesh', '#00924A', '#FFFFFF', 'Prices, power, air and everyday life at home.'], ['World', '#D21F14', '#FFFFFF', 'Big stories abroad, and why they reach us.'], ['Tech', '#2F5BEA', '#FFFFFF', 'Phones, chips, apps and AI, explained.'], ['Sport', '#F28C00', '#1A1714', 'Cricket, football and the money behind them.']].map((t) => { const n = AS.filter((x) => x.cat === t[0]).length; return { name: t[0], color: t[1], fg: t[2], blurb: t[3], count: B(n + (n === 1 ? ' story' : ' stories'), n + 'টি খবর'), go: () => this.go('all', { f: t[0] }) }; }), pageClass: 'tr-page p' + (this.state.trN % 2), vStory: V === 'story', vAll: V === 'all', vAbout: V === 'about', vFacts: V === 'facts',
       navItems: [['home', "Today's five"], ['all', 'All stories'], ['facts', 'Did you know?'], ['about', 'How we work']].map((n) => { const cur = V === n[0] || (n[0] === 'home' && V === 'story'); return { label: n[1], cur: cur ? 'page' : 'false', line: cur ? 'underline' : 'none', go: () => this.go(n[0]) }; }),
       goHome: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go('home'); },
-      goJoin: (e) => { if (e && e.preventDefault) e.preventDefault(); if (this.state.view !== 'home') this.go('home'); setTimeout(() => { try { const el = document.getElementById('join'); if (el) el.scrollIntoView({ behavior: 'smooth' }); } catch (x) {} }, this.state.view !== 'home' ? 700 : 0); },
+      goThanks: (e) => { if (e && e.preventDefault) e.preventDefault(); if (this.state.view !== 'home') this.go('home'); setTimeout(() => { try { const el = document.getElementById('thanks'); if (el) el.scrollIntoView({ behavior: this.reduce ? 'auto' : 'smooth' }); } catch (x) {} }, this.state.view !== 'home' ? 700 : 0); },
       openRide: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go('story', { si: this.state.onboard >= 0 ? this.state.onboard : 0 }); },
       s: es, even: si % 2 === 0, odd: si % 2 === 1, nextTitle: E[step(1)].title,
       next: () => this.go('story', { si: step(1) }), prev: () => this.go('story', { si: step(-1) }),
@@ -620,8 +623,16 @@ export default class Site extends DCLogic {
         'Summaries that stick to what the publisher reported, with nothing added',
         'A clear label wherever a summary was written by AI'
       ],
-      notJoined: !this.state.joined, joined: this.state.joined,
-      join: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ joined: true }); }
+      // "Pour the maker a cha": a just-for-fun thank-you. Cups are counted on the reader's phone only (akk-cha).
+      thanks: (() => {
+        const n = this.state.cha || 0, k = this.state.pourK || 0;
+        return {
+          cups: n, k: k, cupClass: 'th-cup' + (k ? ' pour' : n ? ' full' : ''),
+          status: n ? B('Cha poured! That makes ' + n + (n === 1 ? ' cup' : ' cups') + ' from you.', 'চা ঢালা হলো! আপনার পক্ষ থেকে মোট ' + n + ' কাপ।') : '',
+          pourLabel: n ? B('Pour another', 'আরেক কাপ ঢালুন') : B('Pour a cha', 'এক কাপ চা ঢালুন'),
+          pour: () => { const next = n + 1; this.setState({ cha: next, pourK: k + 1 }); try { window.localStorage.setItem('akk-cha', String(next)); } catch (e) {} },
+        };
+      })(),
     };
   }
 }

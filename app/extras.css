@@ -56,3 +56,25 @@
 .ak-app a:focus-visible,.ak-app button:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.ak-app,.ak-app.on{transform:none;transition:opacity 200ms ease,visibility 0s linear 200ms}.ak-app.on{transition:opacity 200ms ease,visibility 0s}}
 @media (min-width:700px){.ak-app:not(.inapp){display:none}}
+
+/* "Enjoying the ride?" card on the home page: tap to pour the maker a cha. Counted on the reader's phone only (akk-cha). */
+.th-cup{display:block;margin:0 auto;overflow:visible}
+.th-liq{transform:translateY(56px)}
+.th-cup.full .th-liq{transform:none}
+.th-stream{opacity:0;transform-box:fill-box;transform-origin:50% 0}
+.th-steam{opacity:0;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round}
+.th-cup.full .th-steam{opacity:.85}
+.th-cup.full .th-steam path,.th-cup.pour .th-steam path{animation:chSteam 2.4s ease-in-out infinite}
+.th-cup .th-steam path:nth-child(2){animation-delay:-.8s}
+.th-cup .th-steam path:nth-child(3){animation-delay:-1.6s}
+.th-cup.pour .th-stream{animation:thStream 1300ms var(--ak-out) both}
+.th-cup.pour .th-liq{animation:thFill 1100ms var(--ak-out) 200ms both}
+.th-cup.pour .th-steam{animation:thSteamIn 600ms ease 1200ms both}
+@keyframes thStream{0%{opacity:1;transform:scaleY(0)}30%{opacity:1;transform:scaleY(1)}75%{opacity:1;transform:scaleY(1)}100%{opacity:0;transform:scaleY(1)}}
+@keyframes thFill{from{transform:translateY(56px)}to{transform:none}}
+@keyframes thSteamIn{from{opacity:0}to{opacity:.85}}
+.th-ig{display:inline-flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 10px;max-width:100%;font-weight:700;font-size:18px;color:var(--ink);text-decoration:none;padding:10px 16px;border:2px solid var(--line);border-radius:14px;transition:border-color 160ms ease}
+.th-ig:hover{border-color:var(--ink)}
+.th-handle{color:var(--muted);font-weight:600}
+@media (max-width:520px){.th-card{padding:40px 18px!important}}
+@media (prefers-reduced-motion:reduce){.th-cup.pour .th-stream{animation:none}.th-cup.pour .th-liq{animation:thSteamIn 300ms ease both;transform:none}.th-cup.pour .th-steam{animation:none;opacity:.85}.th-cup .th-steam path{animation:none!important}}
