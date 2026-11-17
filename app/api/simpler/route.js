@@ -3,10 +3,10 @@ import { getSimpler } from '../../../lib/digest';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
 export async function GET(req) {
-  const id = new URL(req.url).searchParams.get('id') || '';
+  const q = new URL(req.url).searchParams, id = q.get('id') || '', lang = q.get('lang') === 'bn' ? 'bn' : 'en';
   if (!/^[A-Za-z0-9-]{1,80}$/.test(id)) return Response.json({ error: 'bad id' }, { status: 400 });
   try {
-    const text = await getSimpler(id);
+    const text = await getSimpler(id, lang);
     if (!text) return Response.json({ error: 'not found' }, { status: 404 });
     return Response.json({ text: text });
   } catch (e) {

@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.ajker_khobor_ki.twa",
+        "sha256_cert_fingerprints": ["B5:51:B9:4B:F1:86:BA:F3:23:54:DE:55:06:2A:4C:E6:39:E9:CE:1C:31:01:A1:BC:05:3E:3A:8B:EE:34:BF:58"]
+      }
+    }]

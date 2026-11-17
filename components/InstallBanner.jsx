@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import app from '../data/app.json';
+import { tr } from '../lib/i18n';
 
 // One bar at the bottom of the screen, for three jobs (all set in data/app.json):
 // 1. In a phone browser: "Tap to download the app" (Android gets the APK, iPhone gets Add to Home Screen steps).
@@ -33,7 +34,8 @@ function inApp() {
 
 function snoozed(key, ms) { const t = Number(get(key)); return t > 0 && Date.now() - t < ms; }
 
-export default function InstallBanner() {
+export default function InstallBanner({ lang }) {
+  const t = (x) => tr(lang, x);
   const [mode, setMode] = React.useState('');
   const [os, setOs] = React.useState('');
   const [on, setOn] = React.useState(false);
@@ -81,25 +83,25 @@ export default function InstallBanner() {
   const tab = on ? 0 : -1;
   let title, line, main, no;
   if (mode === 'update') {
-    title = 'A new version of the app is ready';
-    line = 'Download it and open the file to update. Your saved stories stay.';
-    main = <a className="ak-app-go" href={apk} download tabIndex={tab} onClick={() => setTimeout(hide, 400)}>Download the update</a>;
-    no = 'Later';
+    title = t('A new version of the app is ready');
+    line = t('Download it and open the file to update. Your saved stories stay.');
+    main = <a className="ak-app-go" href={apk} download tabIndex={tab} onClick={() => setTimeout(hide, 400)}>{t('Download the update')}</a>;
+    no = t('Later');
   } else if (mode === 'news') {
-    title = rel.title;
-    line = rel.note;
-    main = rel.href ? <a className="ak-app-go" href={rel.href} tabIndex={tab} onClick={() => set('akk-rel', rel.n)}>{rel.go || 'Show me'}</a> : null;
-    no = 'Got it';
+    title = (lang === 'bn' && rel.title_bn) || rel.title;
+    line = (lang === 'bn' && rel.note_bn) || rel.note;
+    main = rel.href ? <a className="ak-app-go" href={rel.href} tabIndex={tab} onClick={() => set('akk-rel', rel.n)}>{t(rel.go || 'Show me')}</a> : null;
+    no = t('Got it');
   } else {
     const how = os === 'ios'
       ? 'Tap the Share button in Safari, then choose "Add to Home Screen".'
       : 'Open the browser menu (the three dots), then tap "Install app" or "Add to Home screen".';
-    title = 'Keep the news on your phone';
-    line = hint ? how : 'Opens full screen, like an app. Free.';
+    title = t('Keep the news on your phone');
+    line = t(hint ? how : 'Opens full screen, like an app. Free.');
     main = apk && os === 'android'
-      ? <a className="ak-app-go" href={apk} download tabIndex={tab} onClick={() => setTimeout(close, 400)}>Tap to download the app</a>
-      : <button type="button" className="ak-app-go" tabIndex={tab} onClick={tap}>{os === 'ios' ? 'Show me how' : 'Tap to install the app'}</button>;
-    no = 'Not now';
+      ? <a className="ak-app-go" href={apk} download tabIndex={tab} onClick={() => setTimeout(close, 400)}>{t('Tap to download the app')}</a>
+      : <button type="button" className="ak-app-go" tabIndex={tab} onClick={tap}>{t(os === 'ios' ? 'Show me how' : 'Tap to install the app')}</button>;
+    no = t('Not now');
   }
 
   return (

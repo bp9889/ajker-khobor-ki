@@ -420,3 +420,18 @@ html[data-akk="dark"] .np3-light{--bg:#1A1714;--ink:#F3EFE7;--muted:#B4AA9C;--pa
 @media (max-width:760px){.dk-grid{grid-template-columns:minmax(0,1fr)}.dk-h{font-size:32px}.dk-hook{font-size:22px}.dk-rep{margin-left:0}}
 @media (prefers-reduced-motion:reduce){.dk-more{animation:none}}
 .fz-shell section.dk-sec{padding-left:0!important;padding-right:0!important}
+
+/* Game screen: wide on computers, taller (bigger drawing) on phones. Messages sit under the road on phones so nothing is cut off. */
+.np3-cv{aspect-ratio:1000/380}
+@media (max-width:700px){
+  .np3-cv{aspect-ratio:560/380}
+  .np3-game .np3-pop{position:static!important;background:none!important;padding:12px}
+  .np3-game .np3-pop>div{max-width:none!important;width:100%;padding:16px 16px!important}
+  .np3-game .np3-pop .np3-disp{font-size:28px!important}
+}
+
+/* Language button (English / বাংলা) */
+.ak-lang{min-width:46px;height:46px;padding:0 14px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-family:inherit;font-weight:700;font-size:16px}
+.ak-lang:hover{border-color:var(--ink)}
+.dk-note{margin:-28px 0 34px;font-size:16px;color:var(--muted)}
+html[lang="bn"] .pg-h1{letter-spacing:0}

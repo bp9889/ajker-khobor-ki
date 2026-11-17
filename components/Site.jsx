@@ -5,6 +5,7 @@ import React from 'react';
 import view from './SiteView';
 import { STORIES } from '../data/stories';
 import { pathFor, parsePath, titleFor, artFor } from '../lib/route';
+import { tr } from '../lib/i18n';
 import { CURRENCIES } from '../lib/currencies';
 
 class DCLogic extends React.Component {
@@ -14,7 +15,7 @@ class DCLogic extends React.Component {
 export default class Site extends DCLogic {
   constructor(props){
     super(props);
-    this.state = { view: 'home', si: 0, f: 'all', q: '', liveF: 'all', gone: false, now: 0, faqOpen: 0, trN: 0, tr: 'none', dir: 1, read: [], dark: false, trDone: true, word: 0, phase: 'ambient', invite: true, answers: {}, ansSlot: null, dykOpen: {}, learned: [], onboard: -1, picked: [], flash: 0, best: 0, crashMsg: '', all: false, score: 0, rushBest: 0, overMsg: '', joined: false, saved: [], newN: 0, panel: false, pq: '', ptab: 'find', more: false, canSpeak: false, speaking: false, simple: {}, simpleOn: {}, simpleBusy: '', simpleErr: '', report: null, rNote: '', rState: '', quizI: 0, toast: '', toastOn: false, liveAll: false, fxAmt: '100', fxFrom: 'USD', fxTo: 'BDT' };
+    this.state = { view: 'home', si: 0, f: 'all', q: '', liveF: 'all', gone: false, now: 0, faqOpen: 0, trN: 0, tr: 'none', dir: 1, read: [], dark: false, trDone: true, word: 0, phase: 'ambient', invite: true, answers: {}, ansSlot: null, dykOpen: {}, learned: [], lang: 'en', onboard: -1, picked: [], flash: 0, best: 0, crashMsg: '', all: false, score: 0, rushBest: 0, overMsg: '', joined: false, saved: [], newN: 0, panel: false, pq: '', ptab: 'find', more: false, canSpeak: false, speaking: false, simple: {}, simpleOn: {}, simpleBusy: '', simpleErr: '', report: null, rNote: '', rState: '', quizI: 0, toast: '', toastOn: false, liveAll: false, fxAmt: '100', fxFrom: 'USD', fxTo: 'BDT' };
     // Open the story named in the address. If it is no longer on the live list, show all stories instead.
     const at = props.view === 'story' ? this.list().findIndex((s) => s.id === props.sid) : -1;
     this.state.view = props.view === 'story' && at < 0 ? 'all' : (props.view || 'home');
@@ -26,24 +27,26 @@ export default class Site extends DCLogic {
   // The story list: live headlines (today's five first) when we have them, otherwise the built-in samples.
   list(){
     const D = this.props.digest;
-    if (this._L) return this._L;
+    if (this._L && this._LL === this.state.lang) return this._L;
     const SC = { Bangladesh: '#00924A', World: '#D21F14', Tech: '#2F5BEA', Sport: '#F28C00' };
     let L;
     if (D && D.items && D.items.length >= 5) {
-      L = D.items.map((x, i) => ({ id: x.id, live: true, hasAI: !!x.summary, cat: x.section, color: SC[x.section] || '#1A1714', title: x.headline || x.title, orig: x.title, time: '60 sec',
+      const bn = this.state.lang === 'bn';
+      L = D.items.map((x0, i) => { const x = bn && x0.bn ? Object.assign({}, x0, x0.bn, { bnOk: true }) : x0; return ({ id: x.id, live: true, hasAI: !!x.summary, cat: x.section, color: SC[x.section] || '#1A1714', title: x.headline || x.title, orig: x.title, time: '60 sec',
         summary: x.summary || '', quick: x.points && x.points.length ? x.points : (x.desc ? [x.desc] : []), quickTitle: x.summary ? 'The quick read' : "From the publisher's feed", why: x.why || '', terms: x.terms || [],
-        link: x.link, source: x.source, date: x.date, art: x.tag, alt: 'Illustration for this story', brief: x.brief || (x.summary ? x.summary.split(/(?<=[.!?])\s/)[0] : '') || x.desc || '', deep: !!x.deep, ask: x.ask || '', also: x.also || [], desc: x.desc || '', day: i < 5 ? "Today's five" : 'More live headlines' }));
+        link: x.link, source: x.source, date: x.date, art: x.tag, alt: 'Illustration for this story', brief: x.brief || (x.summary ? x.summary.split(/(?<=[.!?])\s/)[0] : '') || x.desc || '', deep: !!x.deep, ask: x.ask || '', also: x.also || [], desc: x.desc || '', day: i < 5 ? "Today's five" : 'More live headlines' }); });
       const pin = STORIES.find((s) => s.slug === this.props.sid);
       if (pin) L.push(Object.assign({ id: pin.slug, quickTitle: 'The quick read' }, pin, { day: 'Sample explainers' }));
     } else L = STORIES.map((s) => Object.assign({ id: s.slug, quickTitle: 'The quick read' }, s));
-    this._L = L; return L;
+    this._L = L; this._LL = this.state.lang; return L;
   }
   // The five passengers in the game are today's five stories.
   riders(){
-    if (this._R) return this._R;
+    if (this._R && this._RL === this.state.lang) return this._R;
     const L = this.list();
     if (!L[0].live) { this._R = this.sampleRiders(); return this._R; }
     const two = (t) => { const w = String(t || 'What is this story about?').split(' '); let a = ''; while (w.length > 1 && (a + ' ' + w[0]).trim().length <= Math.max(10, Math.ceil(String(t).length / 2))) a = (a + ' ' + w.shift()).trim(); if (!a) a = w.shift(); return [a.slice(0, 20), w.join(' ').slice(0, 20)]; };
+    this._RL = this.state.lang;
     this._R = L.slice(0, 5).map((s) => ({ ask: two(s.ask || s.title), cat: s.cat, color: s.color, title: s.title, brief: s.brief, why: s.why || 'Tap through for the simple version and the original report.', time: s.time }));
     return this._R;
   }
@@ -59,6 +62,7 @@ export default class Site extends DCLogic {
     // Saved choices are read after the first paint so the server and browser render the same page.
     const dark = this.initDark(), read = this.initRead();
     if (dark !== this.state.dark || read.length) this.setState({ dark: dark, read: read });
+    try { const lg = window.localStorage.getItem('akk-lang') || (new URLSearchParams(window.location.search).get('lang')); if (lg === 'bn') this.setLang('bn'); } catch (e) {}
     try { const l = JSON.parse(window.localStorage.getItem('akk-learned') || '[]'); if (Array.isArray(l) && l.length) this.setState({ learned: l.filter((x) => typeof x === 'string').slice(-2000) }); } catch (e) {}
     this.onPop = () => { const r = parsePath(window.location.pathname); if (!r) return; const at = r.view === 'story' ? this.list().findIndex((s) => s.id === r.sid) : 0; if (at < 0) this.go('all', { gone: true }, true); else this.go(r.view, r.view === 'story' ? { si: at } : {}, true); };
     window.addEventListener('popstate', this.onPop);
@@ -132,10 +136,10 @@ export default class Site extends DCLogic {
     } catch (e) {}
   }
   crash(type){
-    const g = this.g, m = Math.floor(g.x / 10), names = { pothole:'a pothole', cone:'a traffic cone', bricks:'a pile of bricks', dog:'a sleeping dog (try the bell next time)' };
+    const g = this.g, m = Math.floor(g.x / 10), bn = this.state.lang === 'bn', names = bn ? { pothole:'একটা গর্তে', cone:'একটা ট্রাফিক কোনে', bricks:'ইটের স্তূপে', dog:'ঘুমন্ত কুকুরের গায়ে (পরের বার বেল বাজান)' } : { pothole:'a pothole', cone:'a traffic cone', bricks:'a pile of bricks', dog:'a sleeping dog (try the bell next time)' };
     g.crashT = performance.now(); g.pedal = false;
-    if (g.mode === 'rush') { const sc = this.rushScore(), best = Math.max(this.state.rushBest, sc); this.setState({ phase: 'over', score: sc, rushBest: best, overMsg: 'You hit ' + names[type].replace(' (try the bell next time)', '') + ' after clearing ' + g.cleared + ' obstacles. ' + (sc >= best && sc > 0 ? 'New best!' : 'Best: ' + best + ' points.') }); return; }
-    this.setState({ phase: 'crashed', best: Math.max(this.state.best, m), crashMsg: 'You hit ' + names[type] + '. Your passengers are fine.' });
+    if (g.mode === 'rush') { const sc = this.rushScore(), best = Math.max(this.state.rushBest, sc); this.setState({ phase: 'over', score: sc, rushBest: best, overMsg: bn ? (g.cleared + 'টি বাধা পার করার পর ' + names[type].replace(' (পরের বার বেল বাজান)', '') + ' ধাক্কা। ' + (sc >= best && sc > 0 ? 'নতুন সেরা!' : 'সেরা: ' + best + ' পয়েন্ট।')) : ('You hit ' + names[type].replace(' (try the bell next time)', '') + ' after clearing ' + g.cleared + ' obstacles. ' + (sc >= best && sc > 0 ? 'New best!' : 'Best: ' + best + ' points.')) }); return; }
+    this.setState({ phase: 'crashed', best: Math.max(this.state.best, m), crashMsg: bn ? names[type] + ' ধাক্কা লেগেছে। যাত্রীরা ঠিক আছে।' : 'You hit ' + names[type] + '. Your passengers are fine.' });
   }
   board(k){
     const g = this.g, r = k % 5; g.boarded[k] = true; g.board = { k: k, t: performance.now() };
@@ -171,8 +175,8 @@ export default class Site extends DCLogic {
   }
   drawBack(ctx, P, dark, g, W, H, GY){
     ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = dark ? '#FFF6C2' : '#FFD400'; ctx.beginPath(); ctx.arc(880, 70, 36, 0, Math.PI * 2); ctx.fill();
-    if (dark) { ctx.fillStyle = P.bg; ctx.beginPath(); ctx.arc(866, 62, 32, 0, Math.PI * 2); ctx.fill(); }
+    ctx.fillStyle = dark ? '#FFF6C2' : '#FFD400'; ctx.beginPath(); ctx.arc(W - (W < 700 ? 200 : 120), 70, 36, 0, Math.PI * 2); ctx.fill();
+    if (dark) { ctx.fillStyle = P.bg; ctx.beginPath(); ctx.arc(W - (W < 700 ? 214 : 134), 62, 32, 0, Math.PI * 2); ctx.fill(); }
     const off = (g.x * 0.3) % 1200;
     for (let kk = -1; kk < 3; kk++) for (let b = 0; b < 12; b++) {
       const bx = Math.round(kk * 1200 + b * 100 - off), bh = 50 + ((b * 37) % 80);
@@ -184,9 +188,12 @@ export default class Site extends DCLogic {
   }
   tick(now){
     const cv = this.cv; if (!cv || !cv.getContext) return;
-    const ctx = cv.getContext('2d'), W = 1000, H = 380, RX = this.RX, GY = this.GY;
-    const cw = cv.clientWidth || 1000, dpr = window.devicePixelRatio || 1;
-    if (cv.width !== Math.round(cw * dpr)) { cv.width = Math.round(cw * dpr); cv.height = Math.round(cw * dpr * H / W); }
+    // On phones the game shows a shorter stretch of road, so everything is drawn bigger (the canvas is taller, see .np3-game in globals.css).
+    const narrow = window.innerWidth <= 700;
+    if (narrow !== this.narrow) { this.narrow = narrow; this.RX = narrow ? 130 : 190; }
+    const ctx = cv.getContext('2d'), W = narrow ? 560 : 1000, H = 380, RX = this.RX, GY = this.GY;
+    const cw = cv.clientWidth || W, dpr = window.devicePixelRatio || 1;
+    if (cv.width !== Math.round(cw * dpr) || cv.height !== Math.round(cw * dpr * H / W)) { cv.width = Math.round(cw * dpr); cv.height = Math.round(cw * dpr * H / W); }
     ctx.setTransform(cv.width / W, 0, 0, cv.width / W, 0, 0);
     const g = this.g, playing = this.state.phase === 'playing', crashed = this.state.phase === 'crashed';
     const dt = Math.min(50, now - (g.last || now)); g.last = now; const f = dt / 16.67;
@@ -267,16 +274,16 @@ export default class Site extends DCLogic {
     if (crashed) { const t = now / 300; ctx.fillStyle = '#FFD400'; ctx.font = "800 24px 'Anek Bangla', sans-serif"; for (let i = 0; i < 3; i++) { const a = t + i * 2.1; ctx.fillText('*', RX + 40 + Math.cos(a) * 26, GY - 120 + Math.sin(a) * 8); } }
     if (rush) {
       const sc = this.state.phase === 'over' ? this.state.score : this.rushScore();
-      ctx.fillStyle = P.ink; ctx.font = "800 30px 'Anek Bangla', sans-serif"; ctx.fillText(sc + ' pts', 24, 44);
-      ctx.font = "600 15px 'Anek Bangla', sans-serif"; ctx.fillStyle = P.muted; ctx.fillText('Rush hour, ' + g.cleared + ' cleared, best ' + this.state.rushBest, 24, 68);
-      const it = now - g.rushT; if (it < 1800) { ctx.globalAlpha = Math.max(0, 1 - it / 1800); ctx.fillStyle = '#D21F14'; ctx.font = "800 64px 'Anek Bangla', sans-serif"; ctx.textAlign = 'center'; ctx.fillText('Rush hour!', W / 2, 150); ctx.textAlign = 'left'; ctx.globalAlpha = 1; }
+      ctx.fillStyle = P.ink; ctx.font = "800 30px 'Anek Bangla', sans-serif"; ctx.fillText(sc + (this.state.lang === 'bn' ? ' পয়েন্ট' : ' pts'), 24, 44);
+      ctx.font = "600 15px 'Anek Bangla', sans-serif"; ctx.fillStyle = P.muted; ctx.fillText(this.state.lang === 'bn' ? 'ভিড়ের সময়, ' + g.cleared + 'টি পার, সেরা ' + this.state.rushBest : 'Rush hour, ' + g.cleared + ' cleared, best ' + this.state.rushBest, 24, 68);
+      const it = now - g.rushT; if (it < 1800) { ctx.globalAlpha = Math.max(0, 1 - it / 1800); ctx.fillStyle = '#D21F14'; ctx.font = "800 64px 'Anek Bangla', sans-serif"; ctx.textAlign = 'center'; ctx.fillText(this.state.lang === 'bn' ? 'ভিড়ের সময়!' : 'Rush hour!', W / 2, 150); ctx.textAlign = 'left'; ctx.globalAlpha = 1; }
       return;
     }
     if (this.state.phase === 'ambient') return;
-    ctx.fillStyle = P.ink; ctx.font = "800 24px 'Anek Bangla', sans-serif"; ctx.fillText(Math.floor(g.x / 10) + ' m', 24, 40);
+    ctx.fillStyle = P.ink; ctx.font = "800 24px 'Anek Bangla', sans-serif"; ctx.fillText(Math.floor(g.x / 10) + (this.state.lang === 'bn' ? ' মি' : ' m'), 24, 40);
     const kn = Math.round((g.x + RX - 900) / 1300), near = kn >= 0 && !g.boarded[kn] && Math.abs(this.stopWx(kn) - (g.x + RX)) < 320;
     ctx.font = "600 15px 'Anek Bangla', sans-serif"; ctx.fillStyle = near ? '#D21F14' : P.muted;
-    ctx.fillText(near ? 'Bus stand ahead: stop pedalling to pick up' : (g.pedal ? 'Pedalling' : (g.speed > 0.2 ? 'Coasting' : 'Stopped')), 24, 64);
+    ctx.fillText(tr(this.state.lang, near ? 'Bus stand ahead: stop pedalling to pick up' : (g.pedal ? 'Pedalling' : (g.speed > 0.2 ? 'Coasting' : 'Stopped'))), 24, 64);
   }
   // One-shot animations that should play when a block scrolls into view (the Dhaka signs, the word of the day).
   arm(){
@@ -286,6 +293,11 @@ export default class Site extends DCLogic {
     if (this.reduce || !('IntersectionObserver' in window)) { els.forEach((el) => { el.setAttribute('data-armed', '1'); el.classList.add('io-in'); }); return; }
     this.io = this.io || new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('io-in'); this.io.unobserve(en.target); } }), { threshold: 0.3 });
     els.forEach((el) => { el.setAttribute('data-armed', '1'); el.classList.add('ak-armed'); this.io.observe(el); });
+  }
+  setLang(lang){
+    this._L = null; this._R = null;
+    this.setState({ lang: lang });
+    try { window.localStorage.setItem('akk-lang', lang); document.documentElement.lang = lang === 'bn' ? 'bn' : 'en'; } catch (e) {}
   }
   initSaved(){ try { const v = JSON.parse(window.localStorage.getItem('akk-saved') || '[]'); if (Array.isArray(v)) return v.filter((x) => x && typeof x.id === 'string' && typeof x.t === 'string').slice(0, 50); } catch (e) {} return []; }
   toggleSave(st){
@@ -306,13 +318,14 @@ export default class Site extends DCLogic {
   }
   stopSpeak(){ try { if (this.state.speaking) { window.speechSynthesis.cancel(); this.setState({ speaking: false }); } } catch (e) {} }
   async simpler(id){
-    if (this.state.simple[id]) { this.setState({ simpleOn: Object.assign({}, this.state.simpleOn, { [id]: !this.state.simpleOn[id] }) }); return; }
+    const key = id + (this.state.lang === 'bn' ? ':bn' : '');
+    if (this.state.simple[key]) { this.setState({ simpleOn: Object.assign({}, this.state.simpleOn, { [id]: !this.state.simpleOn[id] }) }); return; }
     if (this.state.simpleBusy) return;
     this.setState({ simpleBusy: id, simpleErr: '' });
     try {
-      const r = await fetch('/api/simpler?id=' + encodeURIComponent(id)), j = await r.json();
+      const r = await fetch('/api/simpler?id=' + encodeURIComponent(id) + (key !== id ? '&lang=bn' : '')), j = await r.json();
       if (!r.ok || !j.text) throw new Error('no text');
-      this.setState((st) => ({ simple: Object.assign({}, st.simple, { [id]: j.text }), simpleOn: Object.assign({}, st.simpleOn, { [id]: true }), simpleBusy: '' }));
+      this.setState((st) => ({ simple: Object.assign({}, st.simple, { [key]: j.text }), simpleOn: Object.assign({}, st.simpleOn, { [id]: true }), simpleBusy: '' }));
     } catch (e) { this.setState({ simpleBusy: '', simpleErr: id }); }
   }
   openReport(r){ this.setState({ report: r, rNote: '', rState: '' }); }
@@ -374,6 +387,7 @@ export default class Site extends DCLogic {
     } catch (e) {}
   }
   renderVals() {
+    const LG = this.state.lang, B = (en, bn) => (LG === 'bn' ? bn : en);
     const R = this.riders(), isDark = this.state.dark, on = this.state.onboard, fl = this.state.flash;
     const wire = (a, b, c, t) => (1 - t) * (1 - t) * a + 2 * (1 - t) * t * b + t * t * c;
     const bands = [ { y: 2, a: 30, b: 95, c: 40 }, { y: 31, a: 20, b: 90, c: 55 }, { y: 61, a: 45, b: 100, c: 25 }, { y: 88, a: 25, b: 85, c: 50 } ];
@@ -393,14 +407,14 @@ export default class Site extends DCLogic {
     const step = (k) => base + (si - base + k + size) % size;
     const SC = { Bangladesh: '#00924A', World: 'var(--accent2)', Tech: '#2F5BEA', Sport: '#F28C00' };
     const lf = this.state.liveF;
-    const ago = (d) => { if (!now || !d) return ''; const m = Math.max(1, Math.round((now - new Date(d).getTime()) / 60000)); return m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' hr ago' : Math.round(m / 1440) + ' d ago'; };
+    const ago = (d) => { if (!now || !d) return ''; const m = Math.max(1, Math.round((now - new Date(d).getTime()) / 60000)); return m < 60 ? m + B(' min ago', ' মিনিট আগে') : m < 1440 ? Math.round(m / 60) + B(' hr ago', ' ঘণ্টা আগে') : Math.round(m / 1440) + B(' d ago', ' দিন আগে'); };
     const from = (s) => s.source + (ago(s.date) ? ', ' + ago(s.date) : '');
     const liveAll = E.map((x, i) => ({ x: x, i: i })).filter((o) => o.x.live && o.i >= 5);
     const liveFiltered = liveAll.filter((o) => lf === 'all' || o.x.cat === lf);
     const liveShown = liveFiltered.slice(0, this.state.liveAll ? 30 : 12).map((o) => ({ isNew: !!(this.prevVisit && o.x.date && new Date(o.x.date).getTime() > this.prevVisit), title: o.x.title, section: o.x.cat, color: SC[o.x.cat] || 'var(--ink)', from: from(o.x), img: pic(o.i), href: pathFor('story', o.x), open: nav(() => this.go('story', { si: o.i })), read: this.state.read.indexOf(o.x.id) >= 0 ? 'Read' : '' }));
     const liveChips = ['all', 'Bangladesh', 'World', 'Tech', 'Sport'].filter((c) => c === 'all' || liveAll.some((o) => o.x.cat === c)).map((c) => { const on = lf === c; return { name: c === 'all' ? 'All' : c, on: on ? 'true' : 'false', go: () => this.setState({ liveF: c }), style: 'font-family:inherit;font-weight:700;font-size:16px;padding:9px 14px;border-radius:999px;cursor:pointer;border:2px solid ' + (on ? 'var(--ink)' : 'var(--line)') + ';background:' + (on ? 'var(--ink)' : 'transparent') + ';color:' + (on ? 'var(--bg)' : 'var(--ink)') }; });
-    const until = (t) => { if (!now || !t) return ''; const m = Math.max(1, Math.round((t - now) / 60000)); return m >= 60 ? Math.floor(m / 60) + ' hr ' + (m % 60) + ' min' : m + ' min'; };
-    const QUIZ = D.quiz && D.quiz.length >= 3 ? D.quiz : [
+    const until = (t) => { if (!now || !t) return ''; const m = Math.max(1, Math.round((t - now) / 60000)); return m >= 60 ? Math.floor(m / 60) + B(' hr ', ' ঘণ্টা ') + (m % 60) + B(' min', ' মিনিট') : m + B(' min', ' মিনিট'); };
+    const QUIZ0 = D.quiz && D.quiz.length >= 3 ? D.quiz : [
       { topic: 'Sports', q: 'How many players from one team are on the pitch in a standard football match?', opts: ['9', '11', '12'], a: 1, why: 'Each side plays with 11, including the goalkeeper. A team must have at least 7 to start or carry on.' },
       { topic: 'Health', q: 'About how much sleep do most teenagers need each night?', opts: ['6 to 7 hours', '8 to 10 hours', '11 to 12 hours'], a: 1, why: 'Teenagers need around 8 to 10 hours. Less than that makes it harder to focus, learn and stay in a good mood.' },
       { topic: 'Sex ed', q: 'What does "consent" mean?', opts: ['Staying silent and not saying no', 'Agreeing freely and clearly, and being free to change your mind', 'Agreeing because someone keeps pushing'], a: 1, why: 'Consent must be given freely, can be taken back at any time, and is never real if someone is pressured, scared or unable to decide.' },
@@ -409,6 +423,8 @@ export default class Site extends DCLogic {
       { topic: 'Science', q: 'Which gas do plants take in to make their food?', opts: ['Oxygen', 'Carbon dioxide', 'Nitrogen'], a: 1, why: 'Plants use sunlight to turn carbon dioxide and water into sugar, and they release oxygen as a by-product.' },
       { topic: 'Bangladesh', q: 'Which day is International Mother Language Day?', opts: ['26 March', '16 December', '21 February'], a: 2, why: 'It honours the 1952 Language Movement in Dhaka. UNESCO made it an international day in 1999.' }
     ];
+    // In Bangla, each AI question carries its own Bangla wording (q, opts, why in x.bn); the topic name comes from the dictionary.
+    const QUIZ = QUIZ0.map((x) => (LG === 'bn' && x.bn && x.bn.q && Array.isArray(x.bn.opts) && x.bn.opts.length === x.opts.length ? Object.assign({}, x, x.bn, { topic: tr('bn', x.topic || 'News') }) : Object.assign({}, x, { topic: tr(LG, x.topic || 'News') })));
     // Answers belong to one quiz. When a fresh quiz arrives (every 6 hours), start clean.
     const ANS = this.state.ansSlot === (D.slot || null) ? this.state.answers : {};
     // ---- reader features -------------------------------------------------------------------------------------------
@@ -441,7 +457,7 @@ export default class Site extends DCLogic {
     const todayNote = 'Weather and air quality are for Dhaka only and refresh through the day.' + (fx && fx.asOf ? ' Exchange rates change once a day (latest: ' + fx.asOf + ').' : '');
     const terms = []; E.forEach((x, i) => { if (x.live && x.terms) x.terms.forEach((t) => { if (t.term.length <= 18 && t.term.indexOf('  ') < 0) terms.push({ term: t.term, meaning: t.meaning, i: i }); }); });
     const wt = terms.length ? terms[Math.floor((D.slot || 0) / 4) % terms.length] : null;
-    const checked = D.checkedAt && now ? (() => { const m = Math.max(1, Math.round((now - D.checkedAt) / 60000)); return m < 60 ? 'News checked ' + m + ' min ago' : 'News checked ' + Math.round(m / 60) + ' hr ago'; })() : '';
+    const checked = D.checkedAt && now ? (() => { const m = Math.max(1, Math.round((now - D.checkedAt) / 60000)); return m < 60 ? B('News checked ' + m + ' min ago', m + ' মিনিট আগে খবর দেখা হয়েছে') : B('News checked ' + Math.round(m / 60) + ' hr ago', Math.round(m / 60) + ' ঘণ্টা আগে খবর দেখা হয়েছে'); })() : '';
     // Search covers the stories on the site right now.
     const needle = this.state.pq.trim().toLowerCase().split(/\s+/).filter(Boolean);
     const hay = (x) => (x.title + ' ' + x.orig + ' ' + x.summary + ' ' + x.source + ' ' + x.cat + ' ' + (x.terms || []).map((t) => t.term).join(' ')).toLowerCase();
@@ -449,10 +465,10 @@ export default class Site extends DCLogic {
     const row = (o) => ({ title: o.x.title, color: o.x.color, sub: o.x.source + (ago(o.x.date) ? ', ' + ago(o.x.date) : ''), href: pathFor('story', o.x), open: nav(() => this.go('story', { si: o.i })), saved: isSaved(o.x.id), toggle: () => this.toggleSave(o.x) });
     const savedRows = saved.map((x) => { const ix = E.findIndex((e) => e.id === x.id); return { title: x.t, color: x.co || 'var(--ink)', sub: x.s + (ix < 0 ? ', no longer on the site' : ''), href: ix >= 0 ? pathFor('story', E[ix]) : (x.l || '#'), ext: ix < 0, open: ix >= 0 ? nav(() => this.go('story', { si: ix })) : undefined, saved: true, toggle: () => this.toggleSave({ id: x.id }) }; });
     const sumOf = (x) => x.summary || x.brief || '';
-    const sid = es.id, simpleOn = !!(this.state.simpleOn[sid] && this.state.simple[sid]);
-    const leadText = simpleOn ? this.state.simple[sid] : sumOf(es);
+    const sid = es.id, skey = sid + (LG === 'bn' ? ':bn' : ''), simpleOn = !!(this.state.simpleOn[sid] && this.state.simple[skey]);
+    const leadText = simpleOn ? this.state.simple[skey] : sumOf(es);
     const st = {
-      aiNote: isLive ? (es.hasAI ? "Retold by AI from " + es.source + "'s " + (es.deep ? 'article' : 'headline and short description') + '. It can leave things out or be wrong.' : "This is the publisher's own short description. The simple version arrives with the next update.") : 'A sample explainer that shows the format.',
+      aiNote: isLive ? (es.hasAI ? B("Retold by AI from " + es.source + "'s " + (es.deep ? 'article' : 'headline and short description') + '. It can leave things out or be wrong.', es.source + '-এর ' + (es.deep ? 'খবর' : 'শিরোনাম ও ছোট বিবরণ') + ' থেকে এআই সহজ করে লিখেছে। কিছু বাদ পড়তে বা ভুল হতে পারে।' + (es.bnOk ? '' : ' (এই খবরের বাংলা এখনও তৈরি হয়নি।)')) : "This is the publisher's own short description. The simple version arrives with the next update.") : 'A sample explainer that shows the format.',
       isAI: isLive && es.hasAI, leadText: leadText, simpleOn: simpleOn, busy: this.state.simpleBusy === sid, err: this.state.simpleErr === sid,
       canSimple: isLive && es.hasAI,
       simpleLabel: this.state.simpleBusy === sid ? 'Making it simpler' : (simpleOn ? 'Show the first version' : (this.state.simple[sid] ? 'Explain it simpler' : 'Explain it simpler')),
@@ -477,17 +493,17 @@ export default class Site extends DCLogic {
       vHome: V === 'home',
       st: st, rep: rep, signs: signs, fx: fx, todayNote: todayNote, hasSigns: signs.length > 0 || !!fx, signCols: signs.length + (fx ? 1 : 0), signCols2: signs.length >= 2 && fx ? '1fr 1fr 1.8fr' : 'repeat(' + Math.max(1, signs.length + (fx ? 1 : 0)) + ',minmax(0,1fr))',
       wotd: wt ? { term: wt.term, letters: wt.term.split(''), meaning: wt.meaning, from: E[wt.i].title, open: nav(() => this.go('story', { si: wt.i })), href: pathFor('story', E[wt.i]) } : null,
-      checked: checked, newN: this.state.newN, newLabel: this.state.newN + (this.state.newN === 1 ? ' new story' : ' new stories') + ' since your last visit',
+      checked: checked, newN: this.state.newN, newLabel: B(this.state.newN + (this.state.newN === 1 ? ' new story' : ' new stories') + ' since your last visit', 'শেষবারের পর ' + this.state.newN + 'টি নতুন খবর'),
       seeNew: () => { this.setState({ liveF: 'all' }); try { const el = document.getElementById('live-h'); if (el) el.scrollIntoView({ behavior: this.reduce ? 'auto' : 'smooth' }); } catch (x) {} },
-      liveMore: liveFiltered.length > liveShown.length && !this.state.liveAll, liveMoreLabel: 'Show ' + Math.min(18, liveFiltered.length - liveShown.length) + ' more', showMoreLive: () => this.setState({ liveAll: true }), toAll: () => this.go('all'),
+      liveMore: liveFiltered.length > liveShown.length && !this.state.liveAll, liveMoreLabel: B('Show ' + Math.min(18, liveFiltered.length - liveShown.length) + ' more', 'আরও ' + Math.min(18, liveFiltered.length - liveShown.length) + 'টি দেখুন'), showMoreLive: () => this.setState({ liveAll: true }), toAll: () => this.go('all'),
       panel: { open: this.state.panel, q: this.state.pq, onQ: (e) => this.setState({ pq: e.target.value, ptab: 'find' }), tab: this.state.ptab, findTab: () => this.setState({ ptab: 'find' }), savedTab: () => this.setState({ ptab: 'saved' }), find: this.state.ptab === 'find', savedOn: this.state.ptab === 'saved', results: found.map(row), noResults: needle.length > 0 && !found.length, idle: !needle.length, savedRows: savedRows, noSaved: !saved.length, savedN: saved.length, close: () => this.setState({ panel: false }) },
       togglePanel: () => this.setState({ panel: !this.state.panel, ptab: 'find' }), panelBtnLabel: this.state.panel ? 'Close search' : 'Search stories and see saved', savedN: saved.length,
       toast: this.state.toast, toastOn: this.state.toastOn,
-      quizI: Math.min(this.state.quizI, QUIZ.length - 1), quizTotal: QUIZ.length, quizPos: 'Question ' + (Math.min(this.state.quizI, QUIZ.length - 1) + 1) + ' of ' + QUIZ.length,
+      quizI: Math.min(this.state.quizI, QUIZ.length - 1), quizTotal: QUIZ.length, quizPos: B('Question ' + (Math.min(this.state.quizI, QUIZ.length - 1) + 1) + ' of ' + QUIZ.length, QUIZ.length + 'টির মধ্যে ' + (Math.min(this.state.quizI, QUIZ.length - 1) + 1) + ' নম্বর প্রশ্ন'),
       quizDone: Object.keys(ANS).length === QUIZ.length, quizHasNext: Math.min(this.state.quizI, QUIZ.length - 1) < QUIZ.length - 1, quizAnswered: ANS[Math.min(this.state.quizI, QUIZ.length - 1)] !== undefined,
       quizDots: QUIZ.map((x, i) => ({ on: i === Math.min(this.state.quizI, QUIZ.length - 1), done: ANS[i] !== undefined, right: ANS[i] === x.a, go: () => this.setState({ quizI: i }) })),
       quizNext: () => this.setState({ quizI: Math.min(QUIZ.length - 1, this.state.quizI + 1) }), quizAgain: () => this.setState({ answers: {}, quizI: 0, ansSlot: D.slot || null }),
-      quizScore: 'You got ' + QUIZ.filter((x, i) => ANS[i] === x.a).length + ' of ' + QUIZ.length + '.',
+      quizScore: B('You got ' + QUIZ.filter((x, i) => ANS[i] === x.a).length + ' of ' + QUIZ.length + '.', QUIZ.length + 'টির মধ্যে ' + QUIZ.filter((x, i) => ANS[i] === x.a).length + 'টি ঠিক।'),
       goFaq: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go('about'); setTimeout(() => { try { const el = document.getElementById('faq-h'); if (el) el.scrollIntoView({ behavior: this.reduce ? 'auto' : 'smooth' }); } catch (x) {} }, 750); },
       facts: (() => {
         const T = this.props.dyk; if (!T) return null;
@@ -495,7 +511,8 @@ export default class Site extends DCLogic {
         const n = learned.length;
         return {
           date: T.date,
-          learnedLabel: n ? 'You have learned ' + n + (n === 1 ? ' new fact' : ' new facts') + ' here so far.' : 'Tap "New to me" on any fact you did not know, and we will keep count.',
+          learnedLabel: n ? B('You have learned ' + n + (n === 1 ? ' new fact' : ' new facts') + ' here so far.', 'এ পর্যন্ত এখানে ' + n + 'টি নতুন তথ্য জেনেছেন।') : 'Tap "New to me" on any fact you did not know, and we will keep count.',
+          note: LG === 'bn' ? 'Facts are in English for now. Bangla versions are on the way.' : '',
           sections: T.sections.map((sec) => ({ name: sec.name, color: sec.color, id: 'dyk-' + sec.name.toLowerCase(), facts: sec.facts.map((f) => {
             const open = !!opened[f.id], got = learned.indexOf(f.id) >= 0;
             return { id: f.id, hook: f.hook, more: f.more, open: open, got: got,
@@ -509,14 +526,14 @@ export default class Site extends DCLogic {
       reportSite: () => this.openReport({ kind: 'other', id: '', title: '' }),
       related: [1, 2, 3].map((k) => { const j = step(k), e = E[j]; return { title: e.title, cat: e.cat, color: e.color, time: e.time, img: pic(j), href: pathFor('story', e), open: nav(() => this.go('story', { si: j })) }; }),
       heroImg: pic(si), heroAlt: es.alt, rideImg: pic(on >= 0 ? on : 0), rideHref: pathFor('story', E[on >= 0 ? on : 0]),
-      crumb: es.cat, posText: si < 5 ? 'Story ' + (si + 1) + ' of ' + Math.min(5, N) : (isLive ? 'Headline ' : 'Story ') + (si - 4) + ' of ' + (N - 5),
+      crumb: es.cat, posText: si < 5 ? B('Story ' + (si + 1) + ' of ' + Math.min(5, N), Math.min(5, N) + 'টির মধ্যে ' + (si + 1) + ' নম্বর') : B((isLive ? 'Headline ' : 'Story ') + (si - 4) + ' of ' + (N - 5), (N - 5) + 'টির মধ্যে ' + (si - 4) + ' নম্বর'),
       nextLabel: si < 5 ? "Next in today's five" : 'Next headline',
       hasLive: liveAll.length > 0, live: liveShown, liveChips: liveChips, isLive: isLive, isSample: !isLive, gone: this.state.gone,
       allIntro: E[0].live ? 'Every story on the site right now, each explained in simple words. New ones arrive through the day.' : 'Sample explainers that show how a story reads here.',
       storyMeta: isLive ? (es.hasAI ? es.time + ' read, from ' : 'From ') + from(es) : es.time + ' quick read, sample explainer',
       hasWhy: !!es.why, hasTerms: !!(es.terms && es.terms.length), hasSummary: !!es.summary, noAI: isLive && !es.hasAI,
       goLive: nav(() => { if (this.state.view !== 'home') this.go('home'); setTimeout(() => { try { const el = document.getElementById('live-h'); if (el) el.scrollIntoView({ behavior: 'smooth' }); } catch (x) {} }, this.state.view !== 'home' ? 700 : 0); }),
-      topics: [['Bangladesh', '#00924A', '#FFFFFF', 'Prices, power, air and everyday life at home.'], ['World', '#D21F14', '#FFFFFF', 'Big stories abroad, and why they reach us.'], ['Tech', '#2F5BEA', '#FFFFFF', 'Phones, chips, apps and AI, explained.'], ['Sport', '#F28C00', '#1A1714', 'Cricket, football and the money behind them.']].map((t) => { const n = AS.filter((x) => x.cat === t[0]).length; return { name: t[0], color: t[1], fg: t[2], blurb: t[3], count: n + (n === 1 ? ' story' : ' stories'), go: () => this.go('all', { f: t[0] }) }; }), pageClass: 'tr-page p' + (this.state.trN % 2), vStory: V === 'story', vAll: V === 'all', vAbout: V === 'about', vFacts: V === 'facts',
+      topics: [['Bangladesh', '#00924A', '#FFFFFF', 'Prices, power, air and everyday life at home.'], ['World', '#D21F14', '#FFFFFF', 'Big stories abroad, and why they reach us.'], ['Tech', '#2F5BEA', '#FFFFFF', 'Phones, chips, apps and AI, explained.'], ['Sport', '#F28C00', '#1A1714', 'Cricket, football and the money behind them.']].map((t) => { const n = AS.filter((x) => x.cat === t[0]).length; return { name: t[0], color: t[1], fg: t[2], blurb: t[3], count: B(n + (n === 1 ? ' story' : ' stories'), n + 'টি খবর'), go: () => this.go('all', { f: t[0] }) }; }), pageClass: 'tr-page p' + (this.state.trN % 2), vStory: V === 'story', vAll: V === 'all', vAbout: V === 'about', vFacts: V === 'facts',
       navItems: [['home', "Today's five"], ['all', 'All stories'], ['facts', 'Did you know?'], ['about', 'How we work']].map((n) => { const cur = V === n[0] || (n[0] === 'home' && V === 'story'); return { label: n[1], cur: cur ? 'page' : 'false', line: cur ? 'underline' : 'none', go: () => this.go(n[0]) }; }),
       goHome: (e) => { if (e && e.preventDefault) e.preventDefault(); this.go('home'); },
       goJoin: (e) => { if (e && e.preventDefault) e.preventDefault(); if (this.state.view !== 'home') this.go('home'); setTimeout(() => { try { const el = document.getElementById('join'); if (el) el.scrollIntoView({ behavior: 'smooth' }); } catch (x) {} }, this.state.view !== 'home' ? 700 : 0); },
@@ -536,6 +553,11 @@ export default class Site extends DCLogic {
       trShutter: TR === 'shutter', trRickshaw: TR === 'rickshaw', trHalftone: TR === 'halftone', trUnfold: TR === 'unfold', trTicket: TR === 'ticket', trRoot: TR === 'unfold' && !this.state.trDone ? 'tr-unfold' : '', trLive: !this.state.trDone, trName: V === 'story' ? 'the explainer' : (V === 'all' ? 'All stories' : (V === 'about' ? 'How we work' : (V === 'facts' ? 'Did you know?' : "Today's five"))),
       theme: isDark ? 'np3-dark' : 'np3-light', rootClass: (isDark ? 'np3-dark' : 'np3-light') + (!this.state.trDone ? ' fz-go' : '') + ' fz-t-kite', isDark: isDark, isLight: !isDark,
       themeLabel: isDark ? 'Switch to light mode' : 'Switch to dark mode',
+      lang: LG, t: (x) => tr(LG, x), langBtn: LG === 'bn' ? 'English' : 'বাংলা', langAria: LG === 'bn' ? 'Read in English' : 'বাংলায় পড়ুন', langOther: LG === 'bn' ? 'en' : 'bn', toggleLang: () => this.setLang(LG === 'bn' ? 'en' : 'bn'),
+      readLabel: (cat, time) => LG === 'bn' ? tr('bn', cat) + ', ' + String(time).replace('60 sec', '৬০ সেকেন্ডে') + ' পড়া' : cat + ', ' + time + ' read',
+      pickedLabel: (a, b) => LG === 'bn' ? b + ' জনের মধ্যে ' + a + ' জন উঠেছে' : a + ' of ' + b + ' picked up',
+      origLabel: (src) => LG === 'bn' ? src + '-এর মূল খবর' : 'Original report from ' + src,
+      keysLabel: (best) => LG === 'bn' ? 'কিবোর্ড: রাস্তায় ক্লিক করুন, প্যাডেল করতে → চেপে রাখুন, ব্রেক ←, লাফাতে স্পেস, বেল B। ভিড়ের সময়ে সেরা: ' + best + ' পয়েন্ট' : 'Keyboard: click the road, hold → to pedal, ← to brake, Space to jump, B for the bell. Rush hour best: ' + best + ' points',
       toggleTheme: () => { const d = !this.state.dark; this.setState({ dark: d }); try { document.documentElement.dataset.akk = d ? 'dark' : 'light'; } catch (e) {} try { window.localStorage.setItem('akk-theme', d ? 'dark' : 'light'); } catch (e) {} },
       wires: bands.map((w, i) => ({ y: w.y, d1: 'M0 ' + w.a + ' Q720 ' + w.b + ' 1440 ' + w.c, d2: 'M0 ' + (w.a + 14) + ' Q620 ' + (w.b + 22) + ' 1440 ' + (w.c - 6), d3: 'M0 ' + (w.c + 4) + ' Q820 ' + (w.b - 8) + ' 1440 ' + (w.a + 20), crows: crows.filter((c) => c.band === i) })),
       kites: [ { x: 94.4, y: 3, s: .75 }, { x: .6, y: 17, s: .7 }, { x: 94.6, y: 36, s: .7 }, { x: .5, y: 55, s: .65 }, { x: 94.5, y: 73, s: .75 }, { x: .6, y: 89, s: .6 } ].map((k, i) => { const kc = [['#D21F14','#FFD400'],['#00924A','#F3EFE7'],['#2F5BEA','#FFD400'],['#F28C00','#1A1714'],['#D21F14','#F3EFE7'],['#FFD400','#00924A']][i]; return { x: k.x, y: k.y, w: Math.round(90 * k.s), h: Math.round(195 * k.s), c1: kc[0], c2: kc[1], o: isDark ? .45 : .6, d: 5 + i, dl: i * 1.3 }; }),
@@ -570,7 +592,7 @@ export default class Site extends DCLogic {
         const Q = QUIZ;
         return Q.map((x, i) => {
           const ans = ANS[i], done = ans !== undefined;
-          return { key: i + '-' + (D.slot || 0), idx: i, q: x.q, topic: x.topic || 'News', done: done, report: () => this.openReport({ kind: 'quiz', id: 'quiz-' + (D.slot || 0) + '-' + i, title: x.q }), why: x.why, verdict: done && ans === x.a ? 'Right.' : 'Not quite. The answer is ' + x.opts[x.a] + '.', verdictColor: done && ans === x.a ? '#00924A' : 'var(--accent2)',
+          return { key: i + '-' + (D.slot || 0), idx: i, q: x.q, topic: x.topic || 'News', done: done, report: () => this.openReport({ kind: 'quiz', id: 'quiz-' + (D.slot || 0) + '-' + i, title: x.q }), why: x.why, verdict: done && ans === x.a ? B('Right.', 'ঠিক।') : B('Not quite. The answer is ' + x.opts[x.a] + '.', 'হয়নি। সঠিক উত্তর: ' + x.opts[x.a] + '।'), verdictColor: done && ans === x.a ? '#00924A' : 'var(--accent2)',
             opts: x.opts.map((t, j) => {
               const picked = ans === j, right = j === x.a;
               let st = 'width:100%;text-align:left;font-family:inherit;font-weight:600;font-size:17px;padding:11px 14px;border-radius:12px;color:var(--ink);cursor:' + (done ? 'default' : 'pointer') + ';border:2px solid var(--line);background:transparent';
@@ -580,7 +602,7 @@ export default class Site extends DCLogic {
             }) };
         });
       })(),
-      quizMeta: (() => { const A = ANS, n = Object.keys(A).length, T = QUIZ.length, right = QUIZ.filter((x, i) => A[i] === x.a).length, next = until(D.nextAt); return (n === T ? 'You got ' + right + ' of ' + T + '.' : T + ' questions on sport, health, politics, science and more. Tap an answer.') + (next ? ' New quiz in ' + next + '.' : ' A new quiz every 6 hours.'); })(),
+      quizMeta: (() => { const A = ANS, n = Object.keys(A).length, T = QUIZ.length, right = QUIZ.filter((x, i) => A[i] === x.a).length, next = until(D.nextAt); return B((n === T ? 'You got ' + right + ' of ' + T + '.' : T + ' questions on sport, health, politics, science and more. Tap an answer.') + (next ? ' New quiz in ' + next + '.' : ' A new quiz every 6 hours.'), (n === T ? T + 'টির মধ্যে ' + right + 'টি ঠিক।' : 'খেলা, স্বাস্থ্য, রাজনীতি, বিজ্ঞান আর আরও নানা বিষয়ে ' + T + 'টি প্রশ্ন। উত্তরে ট্যাপ করুন।') + (next ? ' নতুন কুইজ ' + next + ' পরে।' : ' প্রতি ৬ ঘণ্টায় নতুন কুইজ।')); })(),
       pickedCount: this.state.picked.length,
       empty: on < 0, evenFlash: on >= 0 && fl % 2 === 0, oddFlash: on >= 0 && fl % 2 === 1,
       ride: on >= 0 ? R[on] : R[0],

@@ -129,7 +129,14 @@ function storyHead(v) {
   </div>);
 }
 
+import { localize } from '../lib/i18n';
+
+// The page is written in English; localize() swaps in Bangla when the reader picks it (lib/i18n.js).
 export default function view(v) {
+  return localize(page(v), v.lang);
+}
+
+function page(v) {
   return (<>
     <div className={v.rootClass} data-theme={v.theme} style={css("position:relative;overflow:hidden;font-family:'Anek Bangla',system-ui,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;transition:background-color 300ms ease,color 300ms ease")}>
       {v.trLiveA ? (<>
@@ -181,6 +188,7 @@ export default function view(v) {
               {Ico.find}
               {v.savedN > 0 ? <span className={"ak-pip"} aria-hidden={"true"}>{v.savedN}</span> : null}
             </button>
+            <button type={"button"} className={"np3-btn ak-lang"} data-noi18n={"1"} onClick={v.toggleLang} aria-label={v.langAria} lang={v.langOther}>{v.langBtn}</button>
             <button type={"button"} className={"np3-btn"} onClick={v.toggleTheme} aria-label={v.themeLabel} style={css("width:46px;height:46px;border-radius:12px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center")}>
               {v.isDark ? (<>
                 <svg viewBox={"0 0 24 24"} width={"22"} height={"22"} aria-hidden={"true"}>
@@ -327,7 +335,7 @@ export default function view(v) {
                   <span style={css("display:block;height:1.05em;overflow:hidden;color:var(--hl)")}>
                     <span className={"np3-words"} style={css(`display:block;transform:translateY(-${v.wordOffset}em)`)}>
                       <span style={css("display:block;height:1.05em")}>
-                        {"from "}<span lang={"bn"}>{"ঢাকা"}</span>{"."}
+                        {v.lang === "bn" ? "ঢাকা থেকে।" : (<>{"from "}<span lang={"bn"}>{"ঢাকা"}</span>{"."}</>)}
                       </span>
                       <span style={css("display:block;height:1.05em")}>
                         {"from the world."}
@@ -348,7 +356,7 @@ export default function view(v) {
               <section id={"game"} aria-label={"Passenger stops"} onContextMenu={(e) => e.preventDefault()} style={css("position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:0 32px")}>
                 <div style={css("background:var(--bg);border-radius:30px;padding:16px;margin:-16px;box-shadow:0 0 0 1px var(--line)")}>
                   <div className={"np3-game"} tabIndex={"0"} role={"application"} aria-label={"Passenger stops. Hold Right arrow to pedal, Left arrow to brake, Space to jump, B to ring the bell. Stop at a bus stand to pick up a passenger."} onKeyDown={v.keyDown} onKeyUp={v.keyUp} style={css("position:relative;border:2px solid var(--line);border-radius:22px;overflow:hidden;background:var(--canvas);touch-action:manipulation")}>
-                    <canvas id={"np3-canvas"} ref={v.setCanvas} onPointerDown={v.tapJump} style={css("display:block;width:100%;aspect-ratio:1000/380;cursor:pointer")} />
+                    <canvas id={"np3-canvas"} className={"np3-cv"} ref={v.setCanvas} onPointerDown={v.tapJump} style={css("display:block;width:100%;cursor:pointer")} />
                     {v.crashed ? (<>
                       <div className={"np3-pop"} role={"status"} style={css("position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none")}>
                         <div style={css("background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:20px 24px;text-align:center;pointer-events:auto;max-width:440px")}>
@@ -472,7 +480,7 @@ export default function view(v) {
                       </div>
                     </div>
                     <p style={css("margin:10px 0 0;font-size:15px;color:var(--muted)")}>
-                      {`Keyboard: click the road, hold → to pedal, ← to brake, Space to jump, B for the bell. Rush hour best: ${v.rushBest} points`}
+                      {v.keysLabel(v.rushBest)}
                     </p>
                   </>) : null}
                 </div>
@@ -511,7 +519,7 @@ export default function view(v) {
                     {"Today's five"}
                   </h2>
                   <span style={css("font-weight:600;font-size:17px;color:var(--muted)")}>
-                    {`${v.pickedCount} of ${v.fiveN} picked up`}
+                    {v.pickedLabel(v.pickedCount, v.fiveN)}
                   </span>
                 </div>
                 {v.empty ? (<>
@@ -527,7 +535,7 @@ export default function view(v) {
                   <article className={"np3-in"} style={css(`background:var(--panel);border:2px solid var(--line);border-left:10px solid ${v.ride.color};border-radius:20px;padding:30px;display:grid;gap:14px`)}>
                     <img src={v.rideImg} alt={""} width={"400"} height={"260"} style={css("display:block;width:100%;max-width:520px;height:auto;aspect-ratio:400/260;border-radius:14px")} />
                     <p style={css("margin:0;font-weight:600;font-size:16px;color:var(--muted)")}>
-                      {`${v.ride.cat}, ${v.ride.time} read`}
+                      {v.readLabel(v.ride.cat, v.ride.time)}
                     </p>
                     <h3 className={"np3-disp"} style={css("font-weight:800;font-size:44px;line-height:1.02;margin:0;max-width:900px")}>
                       {v.ride.title}
@@ -550,7 +558,7 @@ export default function view(v) {
                   <article className={"np3-in"} style={css(`background:var(--panel);border:2px solid var(--line);border-left:10px solid ${v.ride.color};border-radius:20px;padding:30px;display:grid;gap:14px`)}>
                     <img src={v.rideImg} alt={""} width={"400"} height={"260"} style={css("display:block;width:100%;max-width:520px;height:auto;aspect-ratio:400/260;border-radius:14px")} />
                     <p style={css("margin:0;font-weight:600;font-size:16px;color:var(--muted)")}>
-                      {`${v.ride.cat}, ${v.ride.time} read`}
+                      {v.readLabel(v.ride.cat, v.ride.time)}
                     </p>
                     <h3 className={"np3-disp"} style={css("font-weight:800;font-size:44px;line-height:1.02;margin:0;max-width:900px")}>
                       {v.ride.title}
@@ -733,7 +741,7 @@ export default function view(v) {
                   <span className={"ak-wlab"}>{"Word of the day"}</span>
                   <p className={"ak-wterm np3-disp"}><Flap word={v.wotd.term} /></p>
                   <p className={"ak-wmean"}>{v.wotd.meaning}</p>
-                  <a className={"ak-wfrom"} href={v.wotd.href} onClick={v.wotd.open}>{"From: " + v.wotd.from}</a>
+                  <a className={"ak-wfrom"} href={v.wotd.href} onClick={v.wotd.open}>{(v.lang === "bn" ? "যে খবর থেকে: " : "From: ") + v.wotd.from}</a>
                 </div>) : null}
               </section>
               <section id={"join"} aria-labelledby={"join-h"} style={css("padding:20px 32px 100px")}>
@@ -771,7 +779,7 @@ export default function view(v) {
                   <a href={"/"} onClick={v.goHome}>
                     {"Today's five"}
                   </a>
-                  {` / ${v.crumb} / ${v.posText}`}
+                  {` / ${v.t(v.crumb)} / ${v.posText}`}
                 </p>
                 <div style={css("display:flex;gap:8px")}>
                   <button type={"button"} className={"pg-btn"} onClick={v.prev} style={css("font-family:inherit;font-weight:700;font-size:16px;padding:9px 14px;border-radius:10px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer")}>
@@ -794,7 +802,7 @@ export default function view(v) {
                   </p>
                   <a className={"fz-srcbtn"} href={v.s.link} target={"_blank"} rel={"noopener noreferrer"}>
                     <span style={css("font-weight:700;font-size:15px;color:var(--muted)")}>
-                      {`Original report from ${v.s.source}`}
+                      {v.origLabel(v.s.source)}
                     </span>
                     <span className={"pg-disp"} style={css("font-weight:800;font-size:24px;line-height:1.15")}>
                       {v.s.orig}
@@ -1034,6 +1042,7 @@ export default function view(v) {
                 <strong>{"Today's ten, " + v.facts.date}</strong>
                 <span>{v.facts.learnedLabel}</span>
               </p>
+              {v.facts.note ? <p className={"dk-note"}>{v.facts.note}</p> : null}
               {(v.facts.sections || []).map((sec) => (<section key={sec.id} aria-labelledby={sec.id} className={"dk-sec"} style={{ '--dk': sec.color }}>
                 <h2 id={sec.id} className={"pg-disp dk-h"}>{sec.name}</h2>
                 <div className={"dk-grid"}>
@@ -1235,7 +1244,7 @@ export default function view(v) {
         </form>
       </div>) : null}
       <Extras d={v.extras} />
-      <InstallBanner />
+      <InstallBanner lang={v.lang} />
       <div className={"ak-toast" + (v.toastOn ? " on" : "")} role={"status"} aria-live={"polite"}>{v.toast}</div>
     </div>
   </>);

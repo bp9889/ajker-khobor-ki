@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002F[[...path]]","\u002Fpic\u002F[file]","\u002Fsimpler-src\u002F[file]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

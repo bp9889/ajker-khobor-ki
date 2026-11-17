@@ -7,7 +7,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - `components/SiteView.jsx`: the whole layout (header, home, story, all stories, about, footer). Converted from the approved Claude Design board "B. Rickshaw ride", so styles are inline text passed through `css()`.
 - `components/Site.jsx`: all behaviour. `list()` is the story list (live headlines, today's five first), `renderVals()` builds what the view shows. Also holds the rickshaw game, dark mode, the kite page transition and the quiz.
 - `lib/news.js`: reads the RSS feeds in `data/feeds.json` (cached 30 minutes) and picks a picture tag for each headline using `data/art-tags.json`.
-- `lib/digest.js`: reads each main article's public text (`lib/article.js`) and asks an AI model (Gemini through `GEMINI_API_KEY`; other keys or Vercel AI Gateway are fallbacks, see `provider()`) to retell it in its own words: one 5 to 7 sentence overview, a one-line teaser, key points, "why care" and tricky words. **Each story's overview is saved on its own** (`overviewOf`, cache key `akk-ov-v1`, 3 days), so a story that appears an hour from now gets its overview at the next page refresh (10 to 40 minutes), not at the next 6-hour slot. A small batcher spreads the calls out and rests 5 minutes after a rate-limit failure. The 8-question quiz is written once per 6-hour slot (`extrasOf`, key `akk-extras-v2`). `getSimpler(id)` writes the "Explain it simpler" version on first tap and saves it (`akk-simple-v1`). The Vercel data cache is shared by deployments, so **bump the cache key whenever a prompt or the saved shape changes**.
+- `lib/digest.js`: reads each main article's public text (`lib/article.js`) and asks an AI model (Gemini through `GEMINI_API_KEY`; other keys or Vercel AI Gateway are fallbacks, see `provider()`) to retell it in its own words: one 5 to 7 sentence overview, a one-line teaser, key points, "why care" and tricky words. **Each story's overview is saved on its own** (`overviewOf`, cache key `akk-ov-v2`, 3 days), so a story that appears an hour from now gets its overview at the next page refresh (10 to 40 minutes), not at the next 6-hour slot. A small batcher spreads the calls out and rests 5 minutes after a rate-limit failure. The 8-question quiz is written once per 6-hour slot (`extrasOf`, key `akk-extras-v3`). `getSimpler(id)` writes the "Explain it simpler" version on first tap and saves it (`akk-simple-v2`, English and Bangla kept apart). The Vercel data cache is shared by deployments, so **bump the cache key whenever a prompt or the saved shape changes**.
 - `lib/today.js`: "Today in Dhaka" (weather and air quality from open-meteo, exchange rates for about 20 currencies from open.er-api.com, which updates once a day; readers pick any two currencies and an amount in the money converter, `lib/currencies.js`). No keys. Any part that fails is left out. `AKK_TODAY` serves fixed values offline.
 - `app/api/simpler` (writes the easier retelling), `app/api/report` ("Report a mistake": readers' reports are written to the Vercel runtime log as `[report] {...}`, nothing else is stored), `app/api/health` (feed status), `app/api/news`.
 - `components/Extras.jsx` + `app/extras.css`: the cha cup that fills as you read (every page) and the open sky (kites, clouds, birds, stars at night) beside the content on wide screens (shown when the window leaves at least 96px each side). The word of the day is brushed in by CSS in `globals.css` (`.ak-flap`).
@@ -19,6 +19,13 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - `app/[[...path]]/page.jsx`: one page component serves every address, so page changes animate without a reload. Pages refresh every 10 minutes.
 - Pictures are in `public/art/<tag>.svg` (day) and `<tag>-n.svg` (night). Share images are in `public/og`.
 - To work offline: `AKK_FIXTURE=path/to/digest.json npm run dev` serves a saved copy of `/api/news`.
+
+## English and Bangla
+
+- The **বাংলা / English** button in the header switches the whole site (saved on the phone as `akk-lang`; `?lang=bn` also works).
+- Layout text: the page is written in English and `localize()` in `lib/i18n.js` swaps every piece of text found in its `BN` dictionary (plus aria-label, title, placeholder, alt). **When you add or change English text in SiteView.jsx, add its Bangla to `BN`**, or it stays English. Text built with numbers or names (times, counts, game messages) is made in Site.jsx with `B(en, bn)`.
+- Stories and the quiz: the AI writes every story and question in both languages at once (`bn` field, see `STORY_PROMPT`, `quizPrompt`, `shapeBn`). A story whose Bangla is missing shows in English with a note. Headlines still waiting for the AI are the publisher's English titles.
+- The Did you know facts are hand-written in English only; in Bangla the page says so.
 
 ## Today's five
 
@@ -39,6 +46,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
   - in a phone browser: "Tap to download the app" (snoozed 14 days by `akk-app-no`);
   - inside the app, a "what's new" note once per `release.n` (remembered in `akk-rel`). **Bump `release.n` and change `title`/`note` whenever there is news worth telling app users.**
   - inside the app, "Download the update" when `apkVersion` is higher than the version the app opened with. The manifest's start URL carries `av=<apkVersion>` and the first APK opens without it (counts as 1). **To ship a new APK: bump `apkVersion`, deploy, build the APK on pwabuilder.com with the SAME signing key (Google Play tab, "Use mine"), replace the file, deploy again.** The key is NOT in the repo (on Bishan's PC in Downloads/the package zip, and in the workspace under `~/ajker-signing`); a different key means phones refuse the update.
+- The rickshaw game draws a shorter, bigger stretch of road on phones (≤700px: `W = 560`, `.np3-cv`), and its messages sit under the road there instead of on top.
 - The rickshaw game (`#game`) blocks text selection and the long-press copy menu, since it is played by holding buttons.
 - Respect `prefers-reduced-motion`. Must work on a 360px-wide phone.
 
@@ -47,7 +55,8 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - Overviews are AI-written from the article text, and a person does not check them. Some sites block our fetch, then the overview falls back to the headline and short description (`deep` is false and the page says so).
 - A live story's page disappears once the headline leaves the feeds (old links then show the all-stories page). Saving stories to a database would fix that.
 - "Join the waitlist" only shows a thank-you. It does not save the email anywhere yet.
-- Bangla edition.
+- Bangla versions of the Did you know facts (data/dyk is English only).
+- The free Cloudflare version (plain files built by GitHub every 20 minutes) is on the `cf` branch, paused at the user's request. It predates the Bangla work: merge main into it before going live (the worker's /api/simpler also needs the `lang=bn` option).
 - "Report a mistake" reports only appear in the Vercel runtime logs (search for `[report]`). Email or a database would make them easier to act on.
 - "Published N min ago" is the publisher's time. "News checked N min ago" is when the page was last built.
 - `SiteView.jsx` is one big file. Splitting it into smaller components is a good first clean-up.

@@ -2,10 +2,12 @@
   "apk": "/ajker-khobor-ki.apk",
   "apkVersion": 1,
   "release": {
-    "n": 2,
-    "title": "New: a Did you know page",
-    "note": "Ten surprising facts every day, two from each section. Find it in the menu at the top.",
-    "href": "/did-you-know",
+    "n": 3,
+    "title": "Now in Bangla too",
+    "note": "Tap the বাংলা button at the top to read the whole site in Bangla. The game is bigger on phones as well.",
+    "title_bn": "এখন বাংলাতেও",
+    "note_bn": "ওপরের বাংলা বোতাম চাপুন, পুরো সাইট বাংলায় পড়ুন। ফোনে খেলাটাও এখন বড়।",
+    "href": "",
     "go": "Show me"
   }
 }
