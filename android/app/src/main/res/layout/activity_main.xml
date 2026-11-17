@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/paper">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh" android:layout_width="match_parent" android:layout_height="match_parent">
+        <WebView android:id="@+id/web" android:layout_width="match_parent" android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Thin bar while a page loads (after the first one) -->
+    <ProgressBar android:id="@+id/bar" style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        android:layout_width="match_parent" android:layout_height="3dp" android:layout_gravity="top"
+        android:max="100" android:progressTint="@color/yellow" android:progressBackgroundTint="@android:color/transparent"
+        android:visibility="gone" />
+
+    <!-- Loading screen: a kite bobbing in the wind until the news is ready -->
+    <LinearLayout android:id="@+id/loader" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:background="@color/red" android:gravity="center" android:orientation="vertical" android:clickable="true">
+        <ImageView android:id="@+id/kite" android:layout_width="120dp" android:layout_height="120dp"
+            android:src="@drawable/kite" android:contentDescription="@null" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="22dp"
+            android:text="AJKER খবর KI?" android:textColor="#FFFFFF" android:textSize="30sp" android:textStyle="bold" />
+        <TextView android:id="@+id/loadingText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp"
+            android:text="@string/loading" android:textColor="#FFE9E6" android:textSize="15sp" />
+        <ProgressBar android:layout_width="160dp" android:layout_height="4dp" android:layout_marginTop="22dp"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal" android:indeterminate="true"
+            android:indeterminateTint="@color/yellow" />
+    </LinearLayout>
+
+    <!-- No internet -->
+    <LinearLayout android:id="@+id/offline" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:background="@color/paper" android:gravity="center" android:orientation="vertical" android:padding="32dp"
+        android:visibility="gone" android:clickable="true">
+        <ImageView android:layout_width="84dp" android:layout_height="84dp" android:src="@drawable/kite" android:contentDescription="@null" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="18dp"
+            android:text="@string/offline_title" android:textColor="@color/ink" android:textSize="22sp" android:textStyle="bold" android:gravity="center" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp"
+            android:text="@string/offline_body" android:textColor="#5F574E" android:textSize="16sp" android:gravity="center" android:lineSpacingMultiplier="1.2" />
+        <Button android:id="@+id/retry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="24dp"
+            android:text="@string/retry" android:textAllCaps="false" android:textSize="16sp" android:textStyle="bold"
+            android:textColor="@color/ink" android:backgroundTint="@color/yellow" android:paddingHorizontal="22dp" />
+    </LinearLayout>
+</FrameLayout>

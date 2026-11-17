@@ -1,0 +1,13 @@
+<resources>
+    <!-- Shown the instant the app is tapped, before anything loads -->
+    <style name="Theme.Ajker.Launch" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/launch_bg</item>
+        <item name="android:statusBarColor">@color/red</item>
+        <item name="android:navigationBarColor">@color/red</item>
+    </style>
+    <style name="Theme.Ajker" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/red</item>
+        <item name="android:statusBarColor">@color/red</item>
+        <item name="android:navigationBarColor">@color/red</item>
+    </style>
+</resources>

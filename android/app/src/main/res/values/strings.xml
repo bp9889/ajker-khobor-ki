@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Ajker Khobor</string>
+    <string name="loading">খবর আসছে… Loading the news</string>
+    <string name="offline_title">ইন্টারনেট নেই · No internet</string>
+    <string name="offline_body">মোবাইল ডেটা বা ওয়াই-ফাই চালু করে আবার চেষ্টা করুন।\nTurn on mobile data or Wi-Fi and try again.</string>
+    <string name="retry">আবার চেষ্টা করুন · Try again</string>
+</resources>

@@ -10,3 +10,9 @@ signing-key-info.txt
 # Local build and Cloudflare test output
 out/
 .wrangler/
+
+# Android build output
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
