@@ -11,7 +11,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - `lib/today.js`: "Today in Dhaka" (weather and air quality from open-meteo, exchange rates for about 20 currencies from open.er-api.com, which updates once a day; readers pick any two currencies and an amount in the money converter, `lib/currencies.js`). No keys. Any part that fails is left out. `AKK_TODAY` serves fixed values offline.
 - `app/api/simpler` (writes the easier retelling), `app/api/report` ("Report a mistake": readers' reports are written to the Vercel runtime log as `[report] {...}`, nothing else is stored), `app/api/health` (feed status), `app/api/news`.
 - `components/Extras.jsx` + `app/extras.css`: the cha cup that fills as you read (every page) and the open sky (kites, clouds, birds, stars at night) beside the content on wide screens (shown when the window leaves at least 96px each side). The word of the day is brushed in by CSS in `globals.css` (`.ak-flap`).
-- **Did you know** has its own page, `/did-you-know` (view `facts`), not on the home page. Ten facts a day, two each from Bangladesh, World, Science, Tech and Sport, all hand-written in `data/dyk/<section>.json` as `[hook, more]` pairs (no AI, so they can be checked). `lib/dyk.js` `factsForDay()` walks each bank in one fixed shuffled order, so nothing repeats until the whole bank has been shown (the smallest bank sets how many days that is: add facts to make it longer). New ten at midnight Dhaka time. "New to me" ticks are counted on the reader's phone (`akk-learned`). Reports use kind `fact` with the fact id.
+- **Did you know** has its own page, `/did-you-know` (view `facts`), not on the home page. Ten facts a day, two each from Bangladesh, World, Science, Tech and Sport, all hand-written in `data/dyk/<section>.json` as `[hook, more, hookBn, moreBn]` (no AI, so they can be checked). The fact id comes from the English hook only, so editing the Bangla keeps "New to me" ticks and reports linked. `lib/dyk.js` `factsForDay()` walks each bank in one fixed shuffled order, so nothing repeats until the whole bank has been shown (the smallest bank sets how many days that is: add facts to make it longer). New ten at midnight Dhaka time. "New to me" ticks are counted on the reader's phone (`akk-learned`). Reports use kind `fact` with the fact id.
 - `lib/dedupe.js`: drops headlines about the same event (used by `lib/news.js`). The dropped copies from other publishers are kept on the story as `also`, which the story page shows as "Also reported by".
 - `lib/article.js`: fetches an article page and pulls out its paragraphs (not stored, not shown to readers).
 - `data/stories.js`: built-in sample explainers, used only when no live news can be loaded.
@@ -25,7 +25,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - The **বাংলা / English** button in the header switches the whole site (saved on the phone as `akk-lang`; `?lang=bn` also works).
 - Layout text: the page is written in English and `localize()` in `lib/i18n.js` swaps every piece of text found in its `BN` dictionary (plus aria-label, title, placeholder, alt). **When you add or change English text in SiteView.jsx, add its Bangla to `BN`**, or it stays English. Text built with numbers or names (times, counts, game messages) is made in Site.jsx with `B(en, bn)`.
 - Stories and the quiz: the AI writes every story and question in both languages at once (`bn` field, see `STORY_PROMPT`, `quizPrompt`, `shapeBn`). A story whose Bangla is missing shows in English with a note. Headlines still waiting for the AI are the publisher's English titles.
-- The Did you know facts are hand-written in English only; in Bangla the page says so.
+- The Did you know facts carry their own Bangla (items 3 and 4 of each entry), shown when the site is in Bangla. Numbers use English digits; millions are given as কোটি/লাখ and centuries as শতক. A fact without Bangla falls back to English. Add both languages when adding a fact.
 
 ## Today's five
 
@@ -34,7 +34,8 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 ## Rules
 
 - Keep the look: Anek Bangla font, the colour variables in `app/globals.css`, kite swoop transition, pictures switch with dark mode.
-- Saved on the reader's own phone only: dark mode `akk-theme`, read stories `akk-read`, saved stories `akk-saved`, last visit `akk-visit` (and `akk-prev` in sessionStorage) for the "new since your last visit" count.
+- There is no waitlist or email signup (removed on purpose: nothing would be sent to readers). Its place at the bottom of the home page is "Enjoying the ride?" (`#thanks`): tap to pour the maker a cha (cup animation in `app/extras.css`, `.th-*`), plus a link to the maker's Instagram. The header button "Say thanks" scrolls there.
+- Saved on the reader's own phone only: cha cups poured `akk-cha`, dark mode `akk-theme`, read stories `akk-read`, saved stories `akk-saved`, last visit `akk-visit` (and `akk-prev` in sessionStorage) for the "new since your last visit" count.
 - Motion: shared curves are `--ak-out`, `--ak-io`, `--ak-drawer` in `app/globals.css` (section "Reader features and motion"). One-shot scroll-into-view moments use `data-io` on an element (`Site.arm()` adds `ak-armed` then `io-in`). Every animation has a gentler `prefers-reduced-motion` version.
 - Summaries must be in our own words. Always name and link the original publisher. Never copy article text or publishers' photos. The overview must retell in new words, with no quotation marks.
 - Never draw real, recognisable people, not even as cartoons, and never an avatar made for one named person. Pictures are scenes of the topic with no faces.
@@ -56,8 +57,6 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 
 - Overviews are AI-written from the article text, and a person does not check them. Some sites block our fetch, then the overview falls back to the headline and short description (`deep` is false and the page says so).
 - A live story's page disappears once the headline leaves the feeds (old links then show the all-stories page). Saving stories to a database would fix that.
-- "Join the waitlist" only shows a thank-you. It does not save the email anywhere yet.
-- Bangla versions of the Did you know facts (data/dyk is English only).
 - ON HOLD, do not work on it unless Bishan asks: moving to free Cloudflare hosting (the `cf` branch). It predates the Bangla work.
 - "Report a mistake" reports only appear in the Vercel runtime logs (search for `[report]`). Email or a database would make them easier to act on.
 - "Published N min ago" is the publisher's time. "News checked N min ago" is when the page was last built.

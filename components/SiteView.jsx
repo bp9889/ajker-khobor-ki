@@ -202,8 +202,8 @@ function page(v) {
                 </svg>
               </>) : null}
             </button>
-            <a href={"#join"} onClick={v.goJoin} className={"np3-btn"} style={css("font-weight:700;font-size:17px;padding:10px 18px;border-radius:12px;background:var(--ink);color:var(--bg);text-decoration:none")}>
-              {"Join the waitlist"}
+            <a href={"#thanks"} onClick={v.goThanks} className={"np3-btn"} style={css("font-weight:700;font-size:17px;padding:10px 18px;border-radius:12px;background:var(--ink);color:var(--bg);text-decoration:none")}>
+              {"Say thanks"}
             </a>
           </div>
         </header>
@@ -744,30 +744,36 @@ function page(v) {
                   <a className={"ak-wfrom"} href={v.wotd.href} onClick={v.wotd.open}>{(v.lang === "bn" ? "যে খবর থেকে: " : "From: ") + v.wotd.from}</a>
                 </div>) : null}
               </section>
-              <section id={"join"} aria-labelledby={"join-h"} style={css("padding:20px 32px 100px")}>
-                <div style={css("max-width:1000px;margin:0 auto;background:var(--panel);border:2px solid var(--line);border-radius:24px;padding:52px 40px;text-align:center")}>
-                  <h2 id={"join-h"} className={"np3-disp"} style={css("font-weight:800;font-size:62px;line-height:1;margin:0 0 10px")}>
-                    {"Catch the first ride"}
+              <section id={"thanks"} aria-labelledby={"thanks-h"} style={css("padding:20px 32px 100px")}>
+                <div className={"th-card"} style={css("max-width:1000px;margin:0 auto;background:var(--panel);border:2px solid var(--line);border-radius:24px;padding:52px 40px;text-align:center")}>
+                  <h2 id={"thanks-h"} className={"np3-disp"} style={css("font-weight:800;font-size:62px;line-height:1;margin:0 0 10px")}>
+                    {"Enjoying the ride?"}
                   </h2>
-                  <p style={css("font-size:20px;margin:0 auto 26px;max-width:520px;line-height:1.5;color:var(--muted)")}>
-                    {"Five stories every morning. Free, and you can hop off any time."}
+                  <p style={css("font-size:20px;margin:0 auto 22px;max-width:520px;line-height:1.5;color:var(--muted)")}>
+                    {"If the news felt a little easier today, pour the maker a cup of cha. It costs nothing, just tap."}
                   </p>
-                  {v.notJoined ? (<>
-                    <form onSubmit={v.join} style={css("display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:560px;margin:0 auto")}>
-                      <label htmlFor={"np3-email"} style={css("position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)")}>
-                        {"Email address"}
-                      </label>
-                      <input id={"np3-email"} type={"email"} required placeholder={"you@example.com"} style={css("flex:1 1 260px;min-width:0;font-family:inherit;font-size:19px;padding:14px 20px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink)")} />
-                      <button type={"submit"} className={"np3-btn"} style={css("font-family:inherit;font-weight:700;font-size:19px;padding:14px 24px;border-radius:14px;border:0;background:#D21F14;color:#FFFFFF;cursor:pointer")}>
-                        {"Join the waitlist"}
-                      </button>
-                    </form>
-                  </>) : null}
-                  {v.joined ? (<>
-                    <p className={"np3-pop np3-disp"} role={"status"} style={css("font-weight:800;font-size:32px;margin:0")}>
-                      {"You're on the list. First ride tomorrow morning."}
-                    </p>
-                  </>) : null}
+                  <svg key={v.thanks.k} className={v.thanks.cupClass} viewBox={"0 0 64 92"} width={"112"} height={"161"} aria-hidden={"true"}>
+                    <defs><clipPath id={"th-in"}><path d={"M12 22 H48 L44 74 Q44 78 40 78 H20 Q16 78 16 74 Z"} /></clipPath></defs>
+                    <rect className={"th-stream"} x={"28.5"} y={"-14"} width={"5"} height={"88"} rx={"2.5"} fill={"#B5651D"} />
+                    <g className={"th-steam"}><path d={"M22 16 q-5 -6 0 -11 t0 -11"} /><path d={"M30 16 q-5 -6 0 -11 t0 -11"} /><path d={"M38 16 q-5 -6 0 -11 t0 -11"} /></g>
+                    <g clipPath={"url(#th-in)"}><g className={"th-liq"}><rect x={"0"} y={"22"} width={"64"} height={"70"} fill={"#B5651D"} /><rect x={"0"} y={"22"} width={"64"} height={"9"} fill={"#E3B27A"} /></g></g>
+                    <path d={"M12 22 H48 L44 74 Q44 78 40 78 H20 Q16 78 16 74 Z"} fill={"none"} strokeWidth={"2.6"} strokeLinejoin={"round"} style={{ stroke: 'var(--ink)' }} />
+                    <path d={"M48 30 q10 0 9 11 q-1 9 -9 9"} fill={"none"} strokeWidth={"2.6"} strokeLinecap={"round"} style={{ stroke: 'var(--ink)' }} />
+                    <ellipse cx={"30"} cy={"82"} rx={"22"} ry={"4.5"} fill={"#D21F14"} strokeWidth={"2.2"} style={{ stroke: 'var(--ink)' }} />
+                  </svg>
+                  <div style={css("margin:18px 0 6px")}>
+                    <button type={"button"} onClick={v.thanks.pour} className={"np3-btn"} style={css("font-family:inherit;font-weight:700;font-size:19px;padding:14px 24px;border-radius:14px;border:0;background:#D21F14;color:#FFFFFF;cursor:pointer")}>
+                      {v.thanks.pourLabel}
+                    </button>
+                  </div>
+                  <p className={"th-status"} role={"status"} aria-live={"polite"} style={css("min-height:1.6em;font-weight:700;font-size:18px;margin:8px 0 18px")}>
+                    {v.thanks.status}
+                  </p>
+                  <a className={"th-ig"} href={"https://www.instagram.com/bp._.09/"} target={"_blank"} rel={"noopener noreferrer"}>
+                    <svg viewBox={"0 0 24 24"} width={"22"} height={"22"} aria-hidden={"true"}><rect x={"3"} y={"3"} width={"18"} height={"18"} rx={"5"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} /><circle cx={"12"} cy={"12"} r={"4"} fill={"none"} stroke={"currentColor"} strokeWidth={"2"} /><circle cx={"17.3"} cy={"6.7"} r={"1.2"} fill={"currentColor"} /></svg>
+                    <span>{"Say thanks on Instagram"}</span>
+                    <span className={"th-handle"}>{"@bp._.09"}</span>
+                  </a>
                 </div>
               </section>
             </div>
@@ -1039,7 +1045,7 @@ function page(v) {
                 {"Ten facts most people have never heard, two from each section. A fresh ten arrives every day at midnight, Dhaka time."}
               </p>
               <p className={"dk-meta"}>
-                <strong>{"Today's ten, " + v.facts.date}</strong>
+                <strong>{v.facts.dateLabel}</strong>
                 <span>{v.facts.learnedLabel}</span>
               </p>
               {v.facts.note ? <p className={"dk-note"}>{v.facts.note}</p> : null}
