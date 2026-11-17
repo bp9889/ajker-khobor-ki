@@ -6,3 +6,7 @@ node_modules
 # Android signing key, never commit
 *.keystore
 signing-key-info.txt
+
+# Local build and Cloudflare test output
+out/
+.wrangler/

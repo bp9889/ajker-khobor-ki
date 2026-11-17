@@ -1,6 +1,0 @@
-:HL["/_next/static/chunks/1v294wi6is_1u.css","style"]
-:HL["/_next/static/chunks/1fm6-j7xoz9lz.css","style"]
-:HL["https://fonts.googleapis.com/css2?family=Anek+Bangla:wdth,wght@75..125,400..800&display=swap","style"]
-2:[["children",{"s":"__PAGE__","h":160}]]
-1:[["children",{"s":{"n":"path","t":"oc","k":"story/ai-chatbots","s":["pic","simpler-src"]},"h":65600,"c":"$Q2"}]]
-0:{"b":"q1mxmmFt6EoaN0fGtsVXt","t":{"t":{"s":"","h":131088,"c":"$Q1"}}}
