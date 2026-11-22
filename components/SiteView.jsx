@@ -782,7 +782,7 @@ function page(v) {
                       {"The rides are free, but the rickshaw still needs fuel (ours runs on AI, which is always hungry). Tip any amount: scan with bKash or any bank app and Send Money. No change needed."}
                     </p>
                     <div className={"th-qr"}>
-                      <img src={"/pay/bkash-qr.png"} width={"220"} height={"220"} loading={"lazy"} decoding={"async"} alt={"QR code to send a tip with bKash"} />
+                      <img src={"/pay/bkash-qr.svg"} width={"280"} height={"280"} loading={"lazy"} decoding={"async"} alt={"QR code to send a tip with bKash"} />
                     </div>
                     <a className={"th-save"} href={"/pay/bkash-qr.png"} download={"ajker-khobor-ki-bkash-qr.png"}>
                       {"Save QR"}
