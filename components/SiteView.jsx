@@ -774,6 +774,26 @@ function page(v) {
                     <span>{v.thanks.igLabel}</span>
                     <span className={"th-handle"}>{"@bp._.09"}</span>
                   </a>
+                  <div className={"th-fare"} aria-labelledby={"fare-h"} role={"group"}>
+                    <h3 id={"fare-h"} className={"np3-disp th-fare-h"}>
+                      {"Pay the fare, mama"}
+                    </h3>
+                    <p className={"th-fare-p"}>
+                      {"The rides are free, but the rickshaw still needs fuel (ours runs on AI, which is always hungry). Tip any amount: scan with bKash or any bank app and Send Money. No change needed."}
+                    </p>
+                    <div className={"th-qr"}>
+                      <img src={"/pay/bkash-qr.png"} width={"220"} height={"220"} loading={"lazy"} decoding={"async"} alt={"QR code to send a tip with bKash"} />
+                    </div>
+                    <a className={"th-save"} href={"/pay/bkash-qr.png"} download={"ajker-khobor-ki-bkash-qr.png"}>
+                      {"Save QR"}
+                    </a>
+                    <p className={"th-fare-small"}>
+                      {"On this phone? Save the QR, then in bKash tap Scan QR and pick it from your gallery."}
+                    </p>
+                    <p className={"th-fare-small"}>
+                      {"Totally optional. bKash's normal Send Money charge applies."}
+                    </p>
+                  </div>
                 </div>
               </section>
             </div>
