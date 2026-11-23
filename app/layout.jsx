@@ -1,3 +1,4 @@
+import './fonts.css';
 import './globals.css';
 
 export const metadata = {
@@ -15,9 +16,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wdth,wght@75..125,400..800&display=swap" />
+        {/* The font is served from this site (app/fonts.css). Every page shows Latin and Bangla letters, so fetch both files early. */}
+        <link rel="preload" href="/fonts/anek-bangla-latin.woff2" as="font" type="font/woff2" crossOrigin="" />
+        <link rel="preload" href="/fonts/anek-bangla-bengali.woff2" as="font" type="font/woff2" crossOrigin="" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>{children}</body>
