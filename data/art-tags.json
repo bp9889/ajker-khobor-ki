@@ -1,5 +1,5 @@
 {
-  "note": "Each headline gets ONE tag. Tags are checked in this order and the first whose keyword appears as a whole word in the headline wins. If none match, the feed's own tag (data/feeds.json) or fallbackBySection is used.",
+  "note": "Each headline gets ONE tag. Tags are checked in this order and the first whose keyword appears as a whole word in the headline wins. If none match, the feed's own tag (data/feeds.json) or fallbackBySection is used. A tag with \"variants\": n also has <tag>-2.svg ... <tag>-n.svg; each story gets one of them, picked from its headline, so busy topics do not repeat one picture. New pictures are drawn by scripts/make-art.mjs.",
   "fallbackBySection": {
     "Bangladesh": "government",
     "World": "diplomacy",
@@ -7,6 +7,36 @@
     "Sport": "trophy"
   },
   "tags": [
+    {
+      "tag": "game",
+      "label": "Video games",
+      "group": "Tech, science and culture",
+      "day": "/art/game.svg",
+      "night": "/art/game-n.svg",
+      "keywords": [
+        "video game",
+        "gaming",
+        "gamer",
+        "GTA",
+        "GTA 6",
+        "GTA VI",
+        "Grand Theft Auto",
+        "Rockstar Games",
+        "PlayStation",
+        "PS5",
+        "Xbox",
+        "Nintendo",
+        "esports",
+        "e-sports",
+        "Fortnite",
+        "Minecraft",
+        "Roblox",
+        "Call of Duty",
+        "game studio",
+        "games console",
+        "Steam Deck"
+      ]
+    },
     {
       "tag": "clash",
       "label": "Clash",
@@ -251,6 +281,25 @@
       ]
     },
     {
+      "tag": "social",
+      "label": "Social media",
+      "group": "Tech, science and culture",
+      "day": "/art/social.svg",
+      "night": "/art/social-n.svg",
+      "keywords": [
+        "Facebook",
+        "TikTok",
+        "Instagram",
+        "WhatsApp",
+        "YouTube",
+        "YouTuber",
+        "social media",
+        "Snapchat",
+        "Telegram",
+        "influencer"
+      ]
+    },
+    {
       "tag": "ai",
       "label": "AI",
       "group": "Tech, science and culture",
@@ -292,18 +341,9 @@
         "Musk",
         "Zuckerberg",
         "Bezos",
-        "Altman",
-        "scientist",
-        "scientists",
-        "researchers",
-        "discovery",
-        "discovers",
-        "vaccine",
-        "Nobel",
-        "breakthrough",
-        "study finds",
-        "lab"
-      ]
+        "Altman"
+      ],
+      "variants": 2
     },
     {
       "tag": "space",
@@ -317,6 +357,59 @@
         "rocket",
         "satellite",
         "moon"
+      ]
+    },
+    {
+      "tag": "science",
+      "label": "Science",
+      "group": "Tech, science and culture",
+      "day": "/art/science.svg",
+      "night": "/art/science-n.svg",
+      "keywords": [
+        "scientist",
+        "researchers",
+        "study finds",
+        "study shows",
+        "new study",
+        "research",
+        "vaccine",
+        "fossil",
+        "dinosaur",
+        "physics",
+        "chemistry",
+        "Nobel",
+        "laboratory",
+        "experiment",
+        "scientists",
+        "discovery",
+        "discovers",
+        "breakthrough",
+        "lab"
+      ]
+    },
+    {
+      "tag": "tennis",
+      "label": "Tennis and badminton",
+      "group": "Sport",
+      "day": "/art/tennis.svg",
+      "night": "/art/tennis-n.svg",
+      "keywords": [
+        "tennis",
+        "Wimbledon",
+        "Grand Slam",
+        "ATP",
+        "WTA",
+        "Roland Garros",
+        "French Open",
+        "Australian Open",
+        "US Open",
+        "badminton",
+        "Djokovic",
+        "Alcaraz",
+        "Sinner",
+        "Nadal",
+        "Swiatek",
+        "Sabalenka"
       ]
     },
     {
@@ -343,7 +436,8 @@
         "wicket",
         "wickets",
         "innings"
-      ]
+      ],
+      "variants": 2
     },
     {
       "tag": "football",
@@ -371,7 +465,8 @@
         "Ronaldo",
         "Mbappe",
         "Haaland"
-      ]
+      ],
+      "variants": 2
     },
     {
       "tag": "trophy",
@@ -384,6 +479,53 @@
         "champion",
         "medal",
         "title"
+      ],
+      "variants": 2
+    },
+    {
+      "tag": "wildlife",
+      "label": "Wildlife",
+      "group": "Society",
+      "day": "/art/wildlife.svg",
+      "night": "/art/wildlife-n.svg",
+      "keywords": [
+        "tiger",
+        "elephant",
+        "wildlife",
+        "animal",
+        "zoo",
+        "deer",
+        "dolphin",
+        "whale",
+        "crocodile",
+        "leopard",
+        "monkey",
+        "migratory birds",
+        "forest",
+        "Sundarbans",
+        "species",
+        "poaching"
+      ]
+    },
+    {
+      "tag": "farm",
+      "label": "Farming and harvest",
+      "group": "Money and daily life",
+      "day": "/art/farm.svg",
+      "night": "/art/farm-n.svg",
+      "keywords": [
+        "farmer",
+        "farming",
+        "harvest",
+        "paddy",
+        "crop",
+        "agriculture",
+        "agricultural",
+        "fertiliser",
+        "fertilizer",
+        "irrigation",
+        "cultivation",
+        "growers"
       ]
     },
     {
@@ -412,6 +554,29 @@
         "export",
         "import",
         "shipping"
+      ]
+    },
+    {
+      "tag": "stocks",
+      "label": "Share market",
+      "group": "Money and daily life",
+      "day": "/art/stocks.svg",
+      "night": "/art/stocks-n.svg",
+      "keywords": [
+        "stock market",
+        "stocks",
+        "share market",
+        "share price",
+        "DSE",
+        "Dhaka Stock Exchange",
+        "Wall Street",
+        "Nasdaq",
+        "Dow",
+        "S&P",
+        "Sensex",
+        "IPO",
+        "investors",
+        "bourse"
       ]
     },
     {
@@ -557,7 +722,8 @@
         "president",
         "prime minister",
         "chancellor"
-      ]
+      ],
+      "variants": 2
     },
     {
       "tag": "government",
@@ -582,7 +748,8 @@
         "MP",
         "mayor",
         "governor"
-      ]
+      ],
+      "variants": 2
     },
     {
       "tag": "speech",

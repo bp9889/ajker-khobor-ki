@@ -17,7 +17,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 - `data/stories.js`: built-in sample explainers, used only when no live news can be loaded.
 - `lib/route.js`: web addresses (`/`, `/news/<id>`, `/story/<slug>`, `/stories`, `/did-you-know`, `/about`).
 - `app/[[...path]]/page.jsx`: one page component serves every address, so page changes animate without a reload. Pages refresh every 10 minutes.
-- Pictures are in `public/art/<tag>.svg` (day) and `<tag>-n.svg` (night). Share images are in `public/og` (`share.png`, a screenshot of the home page, is the preview for every page that is not a story).
+- Pictures are in `public/art/<tag>.svg` (day) and `<tag>-n.svg` (night). New ones are drawn in code by `node scripts/make-art.mjs` (same frame, sun/moon and outline style as the originals; objects only, never people), then `node scripts/make-og.mjs` makes the missing 1200x780 link previews in `public/og` (every picture needs one). Topics are matched in the order of `data/art-tags.json` (game is first so game news never gets a sport picture; wildlife comes after cricket because of the "Tigers"). Busy topics have `"variants": 2` and a second drawing (`football-2.svg`, `government-2-w.svg`, ...); `variantOf()` in lib/news.js picks one per headline so neighbouring stories look different. Share images are in `public/og` (`share.png`, a screenshot of the home page, is the preview for every page that is not a story).
 - To work offline: `AKK_FIXTURE=path/to/digest.json npm run dev` serves a saved copy of `/api/news`.
 
 ## English and Bangla
