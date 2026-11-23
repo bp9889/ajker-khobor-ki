@@ -78,6 +78,7 @@ function Flap({ word }) {
 }
 
 const Ico = {
+  pic: <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"}><rect x={"3"} y={"5"} width={"18"} height={"14"} rx={"2.5"} fill={"none"} strokeWidth={"2.2"} style={css("stroke:currentColor")} /><circle cx={"9"} cy={"10"} r={"1.8"} style={css("fill:currentColor")} /><path d={"M4 17l5-4.5 3.5 3 3-2.5L20 17"} fill={"none"} strokeWidth={"2.2"} strokeLinejoin={"round"} style={css("stroke:currentColor")} /></svg>,
   find: <svg viewBox={"0 0 24 24"} width={"22"} height={"22"} aria-hidden={"true"}><circle cx={"10.5"} cy={"10.5"} r={"6.5"} fill={"none"} strokeWidth={"2.4"} style={css("stroke:var(--ink)")} /><path d={"M15.5 15.5L21 21"} strokeWidth={"2.6"} strokeLinecap={"round"} style={css("stroke:var(--ink)")} /></svg>,
   listen: <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"} className={"ak-eq"}><rect x={"3"} y={"4"} width={"3.4"} height={"16"} rx={"1.7"} /><rect x={"8.5"} y={"4"} width={"3.4"} height={"16"} rx={"1.7"} /><rect x={"14"} y={"4"} width={"3.4"} height={"16"} rx={"1.7"} /><rect x={"19.5"} y={"4"} width={"3.4"} height={"16"} rx={"1.7"} /></svg>,
   simple: <svg viewBox={"0 0 24 24"} width={"20"} height={"20"} aria-hidden={"true"}><path d={"M4 6h16M4 12h10M4 18h6"} fill={"none"} strokeWidth={"2.4"} strokeLinecap={"round"} style={css("stroke:currentColor")} /></svg>,
@@ -124,6 +125,7 @@ function storyHead(v) {
       <button type={"button"} className={"ak-act"} onClick={st.wa}>{Ico.wa}<span>{"WhatsApp"}</span></button>
       <button type={"button"} className={"ak-act"} onClick={st.ms}>{Ico.ms}<span>{"Messenger"}</span></button>
       <button type={"button"} className={"ak-act"} onClick={st.copy}>{Ico.copy}<span>{"Copy link"}</span></button>
+      <button type={"button"} className={"ak-act"} onClick={st.img} aria-busy={st.imgBusy ? "true" : "false"}>{Ico.pic}<span>{st.imgLabel}</span></button>
       <button type={"button"} className={"ak-act ak-flag"} onClick={st.report}>{Ico.flag}<span>{"Report a mistake"}</span></button>
     </div>
   </div>);

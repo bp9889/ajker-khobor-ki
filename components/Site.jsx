@@ -348,6 +348,29 @@ export default class Site extends DCLogic {
       else this.copy(st, 'Link copied. Paste it into Messenger.');
     } catch (e) {}
   }
+  // "Share as image": draws the story as a picture (lib/shareCard.js, loaded only now) and opens the phone's share sheet
+  // with it. Where a browser cannot share files (most computers, some in-app browsers), the picture is downloaded instead.
+  async shareImage(st){
+    if (this.state.cardBusy) return;
+    const bn = this.state.lang === 'bn', B = (en, b) => (bn ? b : en);
+    const SEC = { Bangladesh: 'বাংলাদেশ', World: 'বিশ্ব', Tech: 'প্রযুক্তি', Sport: 'খেলা' };
+    this.setState({ cardBusy: true });
+    try {
+      const { drawCard } = await import('../lib/shareCard');
+      const link = this.link(st);
+      const canvas = await drawCard({ title: st.title, brief: st.brief || st.summary || '', picture: artFor(st.art, false), section: B(st.cat, SEC[st.cat] || st.cat), color: st.color, source: st.source ? B('Source: ', 'সূত্র: ') + st.source : '', link: link, footer: B('The news, explained in 60 seconds', '60 সেকেন্ডে সহজ করে খবর') });
+      const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
+      const file = new File([blob], 'ajker-khobor-ki-' + st.id + '.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: st.title, text: st.title + ' ' + link }); } catch (e) { if (!e || e.name !== 'AbortError') throw e; }
+      } else {
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name;
+        document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+        this.say(B('Picture saved. Share it from your downloads.', 'ছবি সেভ হয়েছে। ডাউনলোড থেকে শেয়ার করুন।'));
+      }
+    } catch (e) { this.say(B('Could not make the picture. Try again.', 'ছবি বানানো গেল না। আবার চেষ্টা করুন।')); }
+    this.setState({ cardBusy: false });
+  }
   copy(st, msg){
     const url = this.link(st);
     const done = () => this.say(msg || 'Link copied');
@@ -476,6 +499,7 @@ export default class Site extends DCLogic {
       simple: () => this.simpler(sid),
       canSpeak: this.state.canSpeak && !!leadText, speaking: this.state.speaking, listen: () => this.speak(es.title + '. ' + leadText),
       saved: isSaved(sid), save: () => this.toggleSave(es), wa: () => this.shareWA(es), ms: () => this.shareMS(es), copy: () => this.copy(es),
+      img: () => this.shareImage(es), imgBusy: !!this.state.cardBusy, imgLabel: this.state.cardBusy ? B('Making the picture', 'ছবি তৈরি হচ্ছে') : B('Share as image', 'ছবি হিসেবে শেয়ার'),
       report: () => this.openReport({ kind: 'overview', id: sid, title: es.title }),
       more: this.state.more, toggleMore: () => this.setState({ more: !this.state.more }), hasMore: isLive ? !!(es.hasAI && (es.quick.length || es.why || (es.terms && es.terms.length))) : true,
       also: (es.also || []).map((a) => ({ source: a.source, title: a.title, link: a.link })), hasAlso: !!(es.also && es.also.length),
