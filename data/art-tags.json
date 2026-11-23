@@ -1,5 +1,5 @@
 {
-  "note": "Each headline gets ONE tag. Tags are checked in this order and the first whose keyword appears as a whole word in the headline wins. If none match, the feed's own tag (data/feeds.json) or fallbackBySection is used. A tag with \"variants\": n also has <tag>-2.svg ... <tag>-n.svg; each story gets one of them, picked from its headline, so busy topics do not repeat one picture. New pictures are drawn by scripts/make-art.mjs.",
+  "note": "Each headline gets ONE tag. Tags are checked in this order and the first whose keyword appears as a whole word in the headline wins. If none match, the feed's own tag (data/feeds.json) or fallbackBySection is used. A tag with \"variants\": n also has <tag>-2.svg ... <tag>-n.svg; each story gets one of them, picked from its headline, so busy topics do not repeat one picture. New pictures are drawn by scripts/make-art.mjs. \"sportOnlyKeywords\" count only for headlines on the Sport pages.",
   "fallbackBySection": {
     "Bangladesh": "government",
     "World": "diplomacy",
@@ -422,22 +422,30 @@
         "cricket",
         "Tigers",
         "BPL",
-        "Test",
         "ODI",
         "T20",
         "Shakib",
         "BCB",
-        "century",
         "half-century",
-        "sixes",
         "batter",
         "batsman",
         "batters",
         "wicket",
         "wickets",
-        "innings"
+        "innings",
+        "Test match",
+        "Test series",
+        "Test cricket",
+        "first Test",
+        "second Test",
+        "third Test"
       ],
-      "variants": 2
+      "variants": 2,
+      "sportOnlyKeywords": [
+        "Test",
+        "century",
+        "sixes"
+      ]
     },
     {
       "tag": "football",
@@ -448,25 +456,27 @@
       "keywords": [
         "football",
         "FIFA",
-        "transfer",
         "Premier League",
-        "goal",
         "Man Utd",
         "Liverpool",
         "Arsenal",
         "Chelsea",
         "Real Madrid",
         "Barcelona",
-        "striker",
         "hat-trick",
-        "brace",
-        "scored",
         "Messi",
         "Ronaldo",
         "Mbappe",
         "Haaland"
       ],
-      "variants": 2
+      "variants": 2,
+      "sportOnlyKeywords": [
+        "transfer",
+        "goal",
+        "scored",
+        "brace",
+        "striker"
+      ]
     },
     {
       "tag": "trophy",
