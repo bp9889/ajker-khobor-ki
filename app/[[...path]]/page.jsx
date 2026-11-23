@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Site from '../../components/Site';
 import { STORIES } from '../../data/stories';
-import { getDigest } from '../../lib/digest';
+import { getDigest, getStory } from '../../lib/digest';
 import { getToday } from '../../lib/today';
 import { parsePath, titleFor } from '../../lib/route';
 import { factsForDay } from '../../lib/dyk';
@@ -20,7 +20,9 @@ async function load(params) {
   try { digest = await getDigest(); } catch (e) { console.error('[page] digest failed', e); }
   let story = null;
   if (r.view === 'story') {
-    const live = digest && digest.items.find((x) => x.id === r.sid);
+    // A story that has left the feeds comes from the week-long archive and is added to this page's list, so its link still works.
+    const live = await getStory(r.sid, digest);
+    if (live && digest && !digest.items.some((x) => x.id === live.id)) digest = Object.assign({}, digest, { items: digest.items.concat([live]) });
     const sample = STORIES.find((s) => s.slug === r.sid);
     story = live ? { title: live.headline || live.title, text: live.brief || live.desc || '', art: live.tag } : sample ? { title: sample.title, text: sample.quick[0], art: sample.art } : null;
   }

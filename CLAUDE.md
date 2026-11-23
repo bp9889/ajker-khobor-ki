@@ -56,7 +56,7 @@ News site for young people (about 10 to 40). Bangladesh and world news, explaine
 ## Not done yet
 
 - Overviews are AI-written from the article text, and a person does not check them. Some sites block our fetch, then the overview falls back to the headline and short description (`deep` is false and the page says so).
-- A live story's page disappears once the headline leaves the feeds (old links then show the all-stories page). Saving stories to a database would fix that.
+- A story's link works for 7 days after it leaves the feeds: every story shown is saved in the Vercel data cache (`archive()` / `getStory()` in lib/digest.js, key `akk-arc-v1`, a plain copy and one with its overview), and `/news/<id>` adds the saved copy to that page's list. After 7 days old links show the all-stories page.
 - ON HOLD, do not work on it unless Bishan asks: moving to free Cloudflare hosting (the `cf` branch). It predates the Bangla work.
 - "Report a mistake" reports only appear in the Vercel runtime logs (search for `[report]`). Email or a database would make them easier to act on.
 - "Published N min ago" is the publisher's time. "News checked N min ago" is when the page was last built.
