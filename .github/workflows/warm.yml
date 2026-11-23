@@ -1,0 +1,36 @@
+# After each deploy of main, visit the main pages and the newest story pages once, so Vercel has them built and cached
+# before real readers arrive (a page nobody has opened since the deploy otherwise takes a few seconds to build for the
+# first visitor). It waits until /api/version shows the pushed commit is live. It can also be run by hand.
+name: Warm the site after a deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  warm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SITE: https://ajker-khobor-ki.vercel.app
+    steps:
+      - name: Wait for this commit to be live (up to 10 minutes)
+        if: github.event_name == 'push'
+        run: |
+          for i in $(seq 1 60); do
+            live=$(curl -s --max-time 15 "$SITE/api/version" | jq -r '.sha // empty' || true)
+            if [ "$live" = "$GITHUB_SHA" ]; then echo "live after ~$((i * 10))s"; exit 0; fi
+            sleep 10
+          done
+          echo "The new version did not show up within 10 minutes (a later push may have replaced it). Warming anyway."
+      - name: Main pages
+        run: |
+          for p in / /stories /did-you-know /about /api/news; do
+            curl -s -o /dev/null --max-time 90 -w "%{http_code} %{time_total}s $p\n" "$SITE$p" || echo "failed $p"
+          done
+      - name: The newest 30 story pages, 4 at a time
+        run: |
+          curl -s --max-time 90 "$SITE/api/news" | jq -r '.items[:30][].id' > ids.txt || true
+          echo "$(wc -l < ids.txt) stories"
+          xargs -P 4 -I{} curl -s -o /dev/null --max-time 90 -w "%{http_code} %{time_total}s /news/{}\n" "$SITE/news/{}" < ids.txt || true
